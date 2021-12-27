@@ -1,14 +1,12 @@
 package com.example.config;
 
+import com.example.member.MemberService;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-
-import com.example.service.MemberService;
-
-import lombok.extern.java.Log;
 
 @Log
 @EnableWebSecurity

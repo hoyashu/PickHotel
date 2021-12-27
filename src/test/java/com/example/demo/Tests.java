@@ -7,10 +7,10 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //
-//import com.example.dao.board.CommentDao;
-//import com.example.dao.member.MemberDao;
-//import com.example.service.MemberService;
-//import com.example.vo.CommentVo;
+//import com.example.board.CommentDao;
+//import com.example.member.MemberDao;
+//import com.example.member.MemberService;
+//import com.example.board.CommentVo;
 //
 //import lombok.extern.java.Log;
 //import lombok.extern.slf4j.Slf4j;
