@@ -84,17 +84,17 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-				<!-- ... other dependency elements ... -->
-				<dependency>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-security</artifactId>
-				</dependency>
+<!--				&lt;!&ndash; ... other dependency elements ... &ndash;&gt;-->
+<!--				<dependency>-->
+<!--					<groupId>org.springframework.boot</groupId>-->
+<!--					<artifactId>spring-boot-starter-security</artifactId>-->
+<!--				</dependency>-->
 
-				<!--thymeleaf에서 Security 명령어를 사용하기 위해 포함 -->
-				<dependency>
-					<groupId>org.thymeleaf.extras</groupId>
-					<artifactId>thymeleaf-extras-springsecurity5</artifactId>
-				</dependency>
+<!--				&lt;!&ndash;thymeleaf에서 Security 명령어를 사용하기 위해 포함 &ndash;&gt;-->
+<!--				<dependency>-->
+<!--					<groupId>org.thymeleaf.extras</groupId>-->
+<!--					<artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
+<!--				</dependency>-->
 
 		<!-- @Valid 사용을 위한 코드-->
 		<dependency>
