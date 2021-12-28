@@ -37,14 +37,29 @@ import java.util.List;
 @Validated
 public class BoardController {
 
-    @Autowired
-    public MemberService memberService;
+    class notFoundPost extends Exception {
+        notFoundPost() {
+            super("존재하는 게시글이 아닙니다.");
+        }
+    }
+
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private AttachService attachService;
+
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private ReviewService reviewService;
+
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    public MemberService memberService;
 
     // ########## 게시글 ########## //
     // 게시글 작성 폼
@@ -59,47 +74,21 @@ public class BoardController {
             i++;
         }
 
+        List<RoomVo> roomList = this.roomService.retrieveRoomList();
+
+        model.addAttribute("roomList", roomList);
         // request 영역에 디폴트 게시판 정보를 저장한다.
         model.addAttribute("defaultListNo", defaultListNo);
         // request 영역에 게시판 리스트 정보를 저장한다.
         model.addAttribute("boardList", boardList);
 
-        // request 영역에 숙소목록을 저장한다.
-        ArrayList<RoomVo> roomList = roomService.retrieveRoomList();
-
-        model.addAttribute("roomList", roomList);
         return "page/post_write";
     }
 
-    // 게시글 작성
-    @PostMapping("/post/create")
-    //@ResponseBody
-    public String create(@Valid @NotBlank(message = "게시판 번호를 정확히 해주세요.") @RequestParam("boardNo") String boardNo,
-                         @RequestParam("subject") String subject,
-                         @RequestParam("content") String content,
-                         @RequestParam("tag") String tag, HttpServletRequest request) {
-        System.out.println("ㅋㅋ" + boardNo);
-        int writerNo = 1;
-        //HttpSession session = request.getSession();
-        //MemberVo memberVo = (MemberVo) session.getAttribute("member");
-        //writerNo = 1;
-
-        PostVo postVo = new PostVo();
-        postVo.setWriterNo(writerNo);
-        postVo.setBoardNo(Integer.parseInt(boardNo));
-        postVo.setSubject(subject);
-        postVo.setContent(content);
-        postVo.setTag(tag);
-
-        postService.registerPost(postVo);
-        //session.setAttribute("boardNo", boardNo);
-
-        return "redirect:/post/" + postVo.getPostNo();
-    }
 
     // 게시글 목록
     @GetMapping("/post/list/{boardNo}")
-    public String list(@PathVariable("boardNo") int boardNo, Model model,
+    public String list(@PathVariable(name = "boardNo", required = false) int boardNo, Model model,
                        HttpServletRequest request) {
         try {
             List<PostVo> posts = postService.retrieveAllPosts(boardNo);
@@ -139,40 +128,27 @@ public class BoardController {
         return "page/member_post_list";
     }
 
-    // 게시글 상세보기 -- @ExceptionHandler 전역
+    // 게시글 상세보기
     @GetMapping("/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model) {
-        // 게시글 상세정보
-        PostVo post = this.postService.retrieveDetailBoard(postNo);
-        if (post == null) {
-            throw new RuntimeException("오류다ㅋㅋㅋㅋ");
-        }
-        model.addAttribute("post", post);
-
-        // 댓글 상세정보 -- 소진 : 이걸 따로 분리할 수 없을까? comment컨트롤러에도 있는 내용임..
-        List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
-        for (CommentVo commentVo : comments) {
-            // DB에서 대댓글의 댓글인 경우 대댓글 작성자의 닉네임 가져오기
-            int parentMemNo = commentVo.getParentMemNo();
-            if (parentMemNo > 0) {
-                String parentMemNick = memberService.retrieveMember(parentMemNo).getNick();
-                commentVo.setParentMemNick(parentMemNick);
-            }
-        }
-        model.addAttribute("comments", comments);
-        return "page/post_detail";
-    }
-
-    // 게시글 상세보기-- @ExceptionHandler 매소드
-    @GetMapping("/postttt/{postNo}")
-    public String readttt(@PathVariable("postNo") int postNo, Model model) throws PostDetailException {
+    public String read(@PathVariable("postNo") int postNo, Model model) throws Exception {
         try {
             // 게시글 상세정보
             PostVo post = this.postService.retrieveDetailBoard(postNo);
             if (post == null) {
-                throw new PostDetailException("오류다ㅋㅋㅋㅋ");
+                throw new notFoundPost();
             }
+            List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
+            ReviewVo review = this.reviewService.retrieveReview(postNo);
+            RoomVo room = new RoomVo();
+            if(review != null){
+                room = this.roomService.retrieveRoom(review.getRoomNo());
+            }
+
             model.addAttribute("post", post);
+            model.addAttribute("attachList", attachVoList);
+            model.addAttribute("review", review);
+            model.addAttribute("room", room);
+
 
             // 댓글 상세정보 -- 소진 : 이걸 따로 분리할 수 없을까? comment컨트롤러에도 있는 내용임..
             List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
@@ -186,7 +162,7 @@ public class BoardController {
             }
             model.addAttribute("comments", comments);
         } catch (Exception e) {
-            throw new PostDetailException("오류다ㅋㅋㅋㅋ");
+            throw new notFoundPost();
         }
         return "page/post_detail";
     }
@@ -247,7 +223,7 @@ public class BoardController {
         try {
             PostVo post = this.postService.retrieveDetailBoard(postNo);
             if (post == null) {
-                throw new PostDetailException("오류다ㅋㅋㅋㅋ");
+                throw new notFoundPost();
             }
             // 해당 게시글의 board pk값 받아옴 (삭제 후 목록이로 이동하기 위함)
             boardNo = post.getBoardNo();
@@ -256,6 +232,9 @@ public class BoardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(postNo + "abcde");
         return "redirect:/post/list/" + boardNo;
     }
+
+
 }
