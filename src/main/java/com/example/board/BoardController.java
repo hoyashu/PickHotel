@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -32,6 +29,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Validated
@@ -42,6 +40,8 @@ public class BoardController {
             super("존재하는 게시글이 아닙니다.");
         }
     }
+    @Autowired
+    private BoardService boardService;
 
     @Autowired
     private PostService postService;
@@ -83,6 +83,17 @@ public class BoardController {
         model.addAttribute("boardList", boardList);
 
         return "page/post_write";
+    }
+
+    //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
+    @ResponseBody
+    @GetMapping("/post/checkUse")
+    public Map checkUse(@RequestParam(value = "boardNo",required = false, defaultValue = "1") int boardNo){
+        BoardVo board = this.boardService.selectBoard(boardNo);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("board", board);
+
+        return map;
     }
 
 
@@ -139,6 +150,7 @@ public class BoardController {
             }
             List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
             ReviewVo review = this.reviewService.retrieveReview(postNo);
+            BoardVo board = this.boardService.selectBoard(post.getBoardNo());
             RoomVo room = new RoomVo();
             if(review != null){
                 room = this.roomService.retrieveRoom(review.getRoomNo());

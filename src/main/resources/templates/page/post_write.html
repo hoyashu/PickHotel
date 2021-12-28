@@ -25,7 +25,7 @@
 		</div>
 		<div class="mb-3">
 			<label for="bordNo">게시판 선택</label>
-			<select name="bordNo" id="bordNo">
+			<select name="bordNo" id="bordNo" onchange="OnChange();">
 				<div th:each="board : ${boardList}">
 					<span th:if="${board.key}==${defaultListNo}">
 						<option th:value="${board.key}" selected="${defaultListNo}"><span
@@ -43,21 +43,23 @@
 			<label for="content">내용</label>
 			<textarea class="form-control" rows="5" name="content" id="content" placeholder="내용을 입력해 주세요"></textarea>
 		</div>
-		<div class="mb-3">
+		<div class="photos">
 			<label for="images">사진(3MB 이하)</label>
 			<input type="file" id="images" name="images" accept="image/*" multiple />
 			<div class="photogallery"></div>
 		</div>
 
-		<div class="mb-3">
+		<div class="videos">
 			<label for="videos">동영상(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
 			<input type="file" id="videos" name="videos" multiple />
 			<div class="videogallery"></div>
 		</div>
 
-		<div class="mb-3" th:if="${roomList} != null">
+
+		<div class="room" th:if="${roomList} != null">
+			<div>방 리스트</div>
 			<div th:each="room : ${roomList}">
-				<input type="radio" name="roomNo" id="roomNo" th:value="${room.no}" required />
+				<input type="radio" name="roomNo" id="roomNo" th:value="${room.no}" />
 				<div th:text="${room.roomName}"></div>
 				<div th:text="${room.roomDeco}"></div>
 				<div th:text="${room.roomAddress}"></div>
@@ -65,7 +67,7 @@
 			</div>
 		</div>
 
-		<div class="mb-3">
+		<div class="review">
 			<label for="rateLoc">위치</label>
 			<select name="rateLoc" id="rateLoc">
 				<option value="1">1</option>
@@ -98,7 +100,7 @@
 				<option value="4">4</option>
 				<option value="5">5</option>
 			</select>
-		</div>
+
 
 		<div class="mb-3">
 			<label for="visitDate">방문 날짜를 선택하세요</label>
@@ -112,7 +114,7 @@
 			<label for="notRecommendPerson">이런분들께는 비추에요</label>
 			<input type="text" class="form-control" name="notRecommendPerson" id="notRecommendPerson">
 		</div>
-
+		</div>
 		<div class="mb-3">
 			<label for="tag">태그</label>
 			<input type="text" class="form-control" name="tag" id="tag" placeholder="#태그입력">
@@ -123,6 +125,47 @@
 	</form>
 
 	<script type="text/javascript">
+
+		//페이지 로딩시 사용성 체크 사용
+		window.onload = function(){
+			OnChange();
+		}
+
+		// 사용성 체크
+		function OnChange() {
+			var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+			$.ajax({
+				url : '/post/checkUse?boardNo=' + bordNoSelect,
+				type : 'GET',
+				success : function(data){
+					const result = data;
+					if(result.board.usePhoto == 1){
+						$('.photos').show();
+					} else {
+						$('.photos').hide();
+					}
+
+					if(result.board.useVideo == 1){
+						$('.videos').show();
+					} else {
+						$('.videos').hide();
+					}
+
+					if(result.board.type == "review"){
+						$('.room').show();
+						$('.review').show();
+					} else {
+						$('.room').hide();
+						$('.review').hide();
+					}
+				},
+				error : function(){
+					console.log("failed");
+				}
+			});
+		}
+
+		// 이미지 유효성 검사
 		var sel_files = [];
 
 		$(document).ready(function() {
@@ -172,6 +215,7 @@
 
 		}
 
+		//비디오 유효성 검사
 		var video_files = [];
 
 		$(document).ready(function() {

@@ -12,7 +12,7 @@
             height : auto;
         }
 
-        #roomImage img {
+        #room img {
             width : 250px;
             height : auto;
         }
@@ -33,26 +33,30 @@
                     <div id="content" th:utext="${post.content}"></div>
                 </div>
                 <div th:if="${attachList != null}">
-                    <div class="mb-3">
-                        <div id="images" th:each="attach : ${attachList}">
-							<span th:if="${attach.fileType == 1}">
-								<img th:src="'/upload/' + ${attach.systemFileName}"/>
-							</span>
+                    <div class="photos">
+                        <div class="mb-3">
+                            <div id="images" th:each="attach : ${attachList}">
+                                <span th:if="${attach.fileType == 1}">
+                                    <img th:src="'/upload/' + ${attach.systemFileName}"/>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div id="videos" th:each="attach : ${attachList}">
-							<span th:if="${attach.fileType == 2}">
-								<video controls>
-									<source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4"/>
-									<source th:src="'/upload/' + ${attach.systemFileName}" type="video/webm"/>
-									<source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg"/>
-								</video>
-							</span>
+                    <div class="videos">
+                        <div class="mb-3">
+                            <div id="videos" th:each="attach : ${attachList}">
+                                <span th:if="${attach.fileType == 2}">
+                                    <video controls>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4"/>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/webm"/>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg"/>
+                                    </video>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div th:if="${room != null}">
+                <div th:if="${room.no != 0}" class="room">
                     <div>
                         <span th:text="${room.roomName}"></span>
                     </div>
@@ -62,11 +66,11 @@
                     <div>
                         <span th:text="${room.roomAddress}"></span>
                     </div>
-                    <div id="roomImage">
+                    <div>
                         <img th:src="'/upload/' + ${room.systemFileName}" />
                     </div>
                 </div>
-                    <div  th:if="${review != null}">
+                    <div  th:if="${review != null}" class="review">
                         <div class="mb-3">
                             <label for="rateLoc">위치</label>
                             <span id="rateLoc" th:text="${review.rateLoc}"></span>
@@ -152,6 +156,7 @@
                     </ul>
                 </div>
                 <script>
+
                     const postNo = $("#postNo").val();
 
                     // 글 수정
