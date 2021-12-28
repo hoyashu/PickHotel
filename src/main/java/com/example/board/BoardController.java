@@ -1,6 +1,5 @@
 package com.example.board;
 
-import com.example.exception.PostDetailException;
 import com.example.member.MemberService;
 import com.example.member.MemberVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,12 +19,8 @@ import java.util.List;
 @Validated
 public class BoardController {
 
-    class notFoundPost extends Exception {
-        notFoundPost() {
-            super("존재하는 게시글이 아닙니다.");
-        }
-    }
-
+    @Autowired
+    public MemberService memberService;
     @Autowired
     private PostService postService;
 
@@ -44,9 +35,6 @@ public class BoardController {
 
     @Autowired
     private CommentService commentService;
-
-    @Autowired
-    public MemberService memberService;
 
     // ########## 게시글 ########## //
     // 게시글 작성 폼
@@ -71,7 +59,6 @@ public class BoardController {
 
         return "page/post_write";
     }
-
 
     // 게시글 목록
     @GetMapping("/post/list/{boardNo}")
@@ -117,7 +104,7 @@ public class BoardController {
 
     // 게시글 상세보기
     @GetMapping("/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model) {
+    public String read(@PathVariable("postNo") int postNo, Model model) throws Exception {
         // 게시글 상세정보
         PostVo post = this.postService.retrieveDetailBoard(postNo);
         if (post == null) {
@@ -163,22 +150,6 @@ public class BoardController {
         return "page/post_detail";
     }
 
-//    @ExceptionHandler(value = Exception.class)
-//    public ResponseEntity<Map<String, String>> ExceptionHandler(Exception e) {
-//        HttpHeaders responseHeaders = new HttpHeaders();
-//        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-//
-//        System.out.println("exceptionHandler실행");
-//
-//        Map<String, String> map = new HashMap<>();
-//        map.put("error type", httpStatus.getReasonPhrase());
-//        map.put("code", "400");
-//        map.put("message", "에러발생");
-//
-//        return new ResponseEntity<>(map, responseHeaders, httpStatus);
-//    }
-
-
     // 게시글 수정폼
     @GetMapping("/post/modify/{postNo}")
     public String modifyFrom(@PathVariable("postNo") int postNo, HttpServletRequest request, Model model) {
@@ -208,6 +179,21 @@ public class BoardController {
         }
         return "page/post_modify";
     }
+
+//    @ExceptionHandler(value = Exception.class)
+//    public ResponseEntity<Map<String, String>> ExceptionHandler(Exception e) {
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+//
+//        System.out.println("exceptionHandler실행");
+//
+//        Map<String, String> map = new HashMap<>();
+//        map.put("error type", httpStatus.getReasonPhrase());
+//        map.put("code", "400");
+//        map.put("message", "에러발생");
+//
+//        return new ResponseEntity<>(map, responseHeaders, httpStatus);
+//    }
 
     // 게시글 수정
     @PostMapping("/post/update")
@@ -246,6 +232,12 @@ public class BoardController {
         }
         System.out.println(postNo + "abcde");
         return "redirect:/post/list/" + boardNo;
+    }
+
+    class notFoundPost extends Exception {
+        notFoundPost() {
+            super("존재하는 게시글이 아닙니다.");
+        }
     }
 
 
