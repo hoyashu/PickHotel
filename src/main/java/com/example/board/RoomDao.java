@@ -1,24 +1,35 @@
 package com.example.board;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository("roomDao")
 public class RoomDao {
 	@Autowired
 	private SqlSession sqlSession;
-	
-	// 방을 조회한다.
-	public ArrayList<RoomVo> selectRoomList(){
-		List<RoomVo> list = this.sqlSession.selectList("RoomDao.selectRoomList");
-		ArrayList<RoomVo> roomList = (ArrayList<RoomVo>) list;
-		return roomList;
+
+	public void insertRoom(RoomVo room){
+		this.sqlSession.insert("RoomDao.insertRoom", room);
 	}
-	
+
+	public void deleteRoom(int roomNo){
+		this.sqlSession.delete("RoomDao.deleteRoom", roomNo);
+	}
+
+	public List<RoomVo> selectRoomList(){
+		return this.sqlSession.selectList("RoomDao.selectRoomList");
+	}
+
+	public RoomVo selectRoom(int roomNo){
+		return this.sqlSession.selectOne("RoomDao.selectRoom", roomNo);
+	}
+
 }
 
 
