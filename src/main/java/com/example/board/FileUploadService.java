@@ -12,8 +12,8 @@ public class FileUploadService {
 	@Autowired
 	private AttachDao attachDao;
 
-	private static final String SAVE_PATH = "/upload";
-	private static final String PREFIX_URL = "/upload/";
+	private static final String SAVE_PATH = "/home/upload";
+	private static final String PREFIX_URL = "/home/upload/";
 
 	public String restore(MultipartFile multipartFile, int postNo, int fileType) {
 		String url = null;
