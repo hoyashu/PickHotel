@@ -1,16 +1,14 @@
 package com.example.board;
 
+import java.util.ArrayList;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
 public class PostVo {
-    //@NotNull(message = "게시글 번호를 정확히 해주세요.")
     private int postNo;
-    //@NotBlank(message = "게시판 번호를 정확히 해주세요.")
     private int boardNo;
     private String subject;
     private String content;

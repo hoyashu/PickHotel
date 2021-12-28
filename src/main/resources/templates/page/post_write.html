@@ -1,17 +1,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/user_layout}">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/user_layout}">
+
 <div layout:fragment="content">
+
+	<style>
+		.mb-3 img {
+			width : 250px;
+			height : auto;
+		}
+
+		.mb-3 video {
+			width : 300px;
+			height : auto;
+		}
+	</style>
+
 	<div id="page-title" class="row">
 		<h1 class="text-center">게시글 작성</h1>
 	</div>
-	<form th:action="@{/post/create}" method="POST">
+	<form th:action="@{/uploadFile}" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
 		<div class="mb-3">
 			<label for="subject">제목</label>
 			<input type="text" class="form-control" name="subject" id="subject" placeholder="제목을 입력하세요">
 		</div>
 		<div class="mb-3">
-			<label for="boardNo">게시판 선택</label>
-			<select name="boardNo" id="boardNo">
+			<label for="bordNo">게시판 선택</label>
+			<select name="bordNo" id="bordNo">
 				<div th:each="board : ${boardList}">
 					<span th:if="${board.key}==${defaultListNo}">
 						<option th:value="${board.key}" selected="${defaultListNo}"><span
@@ -30,6 +44,76 @@
 			<textarea class="form-control" rows="5" name="content" id="content" placeholder="내용을 입력해 주세요"></textarea>
 		</div>
 		<div class="mb-3">
+			<label for="images">사진(3MB 이하)</label>
+			<input type="file" id="images" name="images" accept="image/*" multiple />
+			<div class="photogallery"></div>
+		</div>
+
+		<div class="mb-3">
+			<label for="videos">동영상(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
+			<input type="file" id="videos" name="videos" multiple />
+			<div class="videogallery"></div>
+		</div>
+
+		<div class="mb-3" th:if="${roomList} != null">
+			<div th:each="room : ${roomList}">
+				<input type="radio" name="roomNo" id="roomNo" th:value="${room.no}" required />
+				<div th:text="${room.roomName}"></div>
+				<div th:text="${room.roomDeco}"></div>
+				<div th:text="${room.roomAddress}"></div>
+				<img th:src="'/upload/' + ${room.systemFileName}" />
+			</div>
+		</div>
+
+		<div class="mb-3">
+			<label for="rateLoc">위치</label>
+			<select name="rateLoc" id="rateLoc">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<label for="rateClean">위생</label>
+			<select name="rateClean" id="rateClean">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<label for="rateComu">의사소통</label>
+			<select name="rateComu" id="rateComu">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<label for="rateChip">가성비</label>
+			<select name="rateChip" id="rateChip">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+		</div>
+
+		<div class="mb-3">
+			<label for="visitDate">방문 날짜를 선택하세요</label>
+			<input type="date" name="visitDate" id = "visitDate" />
+		</div>
+		<div class="mb-3">
+			<label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
+			<input type="text" class="form-control" name="recommendPlace" id="recommendPlace">
+		</div>
+		<div class="mb-3">
+			<label for="notRecommendPerson">이런분들께는 비추에요</label>
+			<input type="text" class="form-control" name="notRecommendPerson" id="notRecommendPerson">
+		</div>
+
+		<div class="mb-3">
 			<label for="tag">태그</label>
 			<input type="text" class="form-control" name="tag" id="tag" placeholder="#태그입력">
 		</div>
@@ -37,4 +121,128 @@
 			<button type="submit" class="btn btn-sm btn-primary" id="saveBtn">글등록</button>
 		</div>
 	</form>
+
+	<script type="text/javascript">
+		var sel_files = [];
+
+		$(document).ready(function() {
+			console.log("asdf")
+			$("#images").on("change", handleImgsFilesSelect);
+		});
+
+		function handleImgsFilesSelect(e) {
+
+			sel_files = [];
+			$(".photogallery").empty();
+
+			var files = e.target.files;
+			var filesArr = Array.prototype.slice.call(files);
+			var sizeCheck = true;
+
+			filesArr.forEach(function(f){
+				video_files.push(f);
+			});
+
+			filesArr.forEach(function(file){
+				var fileSize = file.size;
+				var maxSize = 3 * 1024 * 1024;
+
+				if(fileSize > maxSize ){
+					alert("이미지 사이즈는 3MB 이내로 등록 가능합니다.");
+					sizeCheck = false;
+
+					$("#images").val("");
+					sel_files = [];
+					$(".photogallery").empty();
+					return;
+				}
+			});
+
+			if(sizeCheck == true){
+				filesArr.forEach(function (f) {
+
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var img_html = "<img src=\"" + e.target.result + "\" />&nbsp;&nbsp;";
+						$(".photogallery").append(img_html);
+					}
+					reader.readAsDataURL(f);
+				});
+			}
+
+		}
+
+		var video_files = [];
+
+		$(document).ready(function() {
+			$("#videos").on("change", handleVideosFilesSelect);
+		});
+
+		function handleVideosFilesSelect(e) {
+
+			video_files = [];
+			$(".videogallery").empty();
+
+			var files = e.target.files;
+			var filesArr = Array.prototype.slice.call(files);
+			var fileExtensionCheck = true;
+			var fileSizeCheck = true;
+
+			filesArr.forEach(function(f){
+				video_files.push(f);
+			});
+
+			video_files.forEach(function(file){
+				var abc = file.name.lastIndexOf(".");
+				var fileNameLength = file.name.length;
+				var fileExtension = file.name.substring(abc + 1, fileNameLength);
+
+				if(fileExtension == "mov" || fileExtension == "ogg" || fileExtension == "webm" || fileExtension == "mp4"){
+
+				} else {
+					alert("사용할 수 없는 확장자가 포함되어 있습니다.");
+					fileExtensionCheck = false;
+
+					$("#videos").val("");
+					video_files = [];
+					$(".videogallery").empty();
+					return;
+				}
+			});
+
+			video_files.forEach(function (file) {
+				var fileSize = file.size;
+				var maxSize = 30 * 1024 * 1024;
+				if (fileExtensionCheck == true) {
+					if (file.size > maxSize) {
+						alert("동영상은 30MB 이내로 등록 가능합니다.");
+						fileSizeCheck = false;
+
+						$("#videos").val("");
+						video_files = [];
+						$(".videogallery").empty();
+						return;
+					}
+				}
+			});
+
+			if (fileExtensionCheck == true && fileSizeCheck == true) {
+				filesArr.forEach(function (f) {
+
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var video_html = "<video controls>";
+						video_html += "<source src=\"" + e.target.result + "\" type=\"video/mp4\" />";
+						video_html += "<source src=\"" + e.target.result + "\" type=\"video/webm\" />";
+						video_html += "<source src=\"" + e.target.result + "\" type=\"video/ogg\" />";
+						video_html += "이 동영상은 지원하지 않습니다.</video>&nbsp;&nbsp;"
+						$(".videogallery").append(video_html);
+					}
+					reader.readAsDataURL(f);
+
+				});
+			}
+		}
+	</script>
 </div>
+

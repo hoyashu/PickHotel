@@ -24,14 +24,29 @@ import java.util.List;
 @Validated
 public class BoardController {
 
-    @Autowired
-    public MemberService memberService;
+    class notFoundPost extends Exception {
+        notFoundPost() {
+            super("존재하는 게시글이 아닙니다.");
+        }
+    }
+
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private AttachService attachService;
+
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private ReviewService reviewService;
+
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    public MemberService memberService;
 
     // ########## 게시글 ########## //
     // 게시글 작성 폼
@@ -46,47 +61,21 @@ public class BoardController {
             i++;
         }
 
+        List<RoomVo> roomList = this.roomService.retrieveRoomList();
+
+        model.addAttribute("roomList", roomList);
         // request 영역에 디폴트 게시판 정보를 저장한다.
         model.addAttribute("defaultListNo", defaultListNo);
         // request 영역에 게시판 리스트 정보를 저장한다.
         model.addAttribute("boardList", boardList);
 
-        // request 영역에 숙소목록을 저장한다.
-        ArrayList<RoomVo> roomList = roomService.retrieveRoomList();
-
-        model.addAttribute("roomList", roomList);
         return "page/post_write";
     }
 
-    // 게시글 작성
-    @PostMapping("/post/create")
-    //@ResponseBody
-    public String create(@Valid @NotBlank(message = "게시판 번호를 정확히 해주세요.") @RequestParam("boardNo") String boardNo,
-                         @RequestParam("subject") String subject,
-                         @RequestParam("content") String content,
-                         @RequestParam("tag") String tag, HttpServletRequest request) {
-        System.out.println("ㅋㅋ" + boardNo);
-        int writerNo = 1;
-        //HttpSession session = request.getSession();
-        //MemberVo memberVo = (MemberVo) session.getAttribute("member");
-        //writerNo = 1;
-
-        PostVo postVo = new PostVo();
-        postVo.setWriterNo(writerNo);
-        postVo.setBoardNo(Integer.parseInt(boardNo));
-        postVo.setSubject(subject);
-        postVo.setContent(content);
-        postVo.setTag(tag);
-
-        postService.registerPost(postVo);
-        //session.setAttribute("boardNo", boardNo);
-
-        return "redirect:/post/" + postVo.getPostNo();
-    }
 
     // 게시글 목록
     @GetMapping("/post/list/{boardNo}")
-    public String list(@PathVariable("boardNo") int boardNo, Model model,
+    public String list(@PathVariable(name = "boardNo", required = false) int boardNo, Model model,
                        HttpServletRequest request) {
         try {
             List<PostVo> posts = postService.retrieveAllPosts(boardNo);
@@ -126,13 +115,13 @@ public class BoardController {
         return "page/member_post_list";
     }
 
-    // 게시글 상세보기 -- @ExceptionHandler 전역
+    // 게시글 상세보기
     @GetMapping("/post/{postNo}")
     public String read(@PathVariable("postNo") int postNo, Model model) {
         // 게시글 상세정보
         PostVo post = this.postService.retrieveDetailBoard(postNo);
         if (post == null) {
-            throw new RuntimeException("오류다ㅋㅋㅋㅋ");
+            throw new Exception();
         }
         model.addAttribute("post", post);
 
@@ -150,7 +139,7 @@ public class BoardController {
         return "page/post_detail";
     }
 
-    // 게시글 상세보기-- @ExceptionHandler 매소드
+    // 게시글 상세보기-- @ExceptionHandler 매소드 예시를 위한 임시코드
     @GetMapping("/postttt/{postNo}")
     public String readttt(@PathVariable("postNo") int postNo, Model model) throws Exception {
         // 게시글 상세정보
@@ -246,7 +235,7 @@ public class BoardController {
         try {
             PostVo post = this.postService.retrieveDetailBoard(postNo);
             if (post == null) {
-                throw new PostDetailException("오류다ㅋㅋㅋㅋ");
+                throw new notFoundPost();
             }
             // 해당 게시글의 board pk값 받아옴 (삭제 후 목록이로 이동하기 위함)
             boardNo = post.getBoardNo();
@@ -255,6 +244,9 @@ public class BoardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(postNo + "abcde");
         return "redirect:/post/list/" + boardNo;
     }
+
+
 }

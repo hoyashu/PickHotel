@@ -1,9 +1,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/user_layout}">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/user_layout}">
 <div layout:fragment="content">
+	<style>
+		img {
+			width : 250px;
+			height : auto;
+		}
+
+		video {
+			width : 300px;
+			height : auto;
+		}
+	</style>
+
 	<div id="page-title" class="row">
 		<h1 class="text-center">게시글 수정</h1>
 	</div>
+
 	<form th:action="@{/post/update}" method="POST">
 		<div class="mb-3">
 			<label for="subject">제목</label>
@@ -30,7 +43,7 @@
 		</div>
 		<div class="mb-3">
 			<label for="tag">태그</label> <input type="text" class="form-control" name="tag" id="tag"
-				th:value="${post.tag}">
+											   th:value="${post.tag}">
 		</div>
 		<div>
 			<button type="submit" class="btn btn-sm btn-primary" id="modifyBtn" style="font-size: 12px;">수정</button>

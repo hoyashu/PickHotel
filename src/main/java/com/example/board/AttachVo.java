@@ -7,12 +7,12 @@ public class AttachVo {
 	private String systemFileName;
 	private int fileSize;
 	private int fileType;
-	
+
 	public AttachVo() {
 		super();
 	}
-	
-	
+
+
 	public AttachVo(String originalFileName, String systemFileName, int fileSize) {
 		this.originalFileName = originalFileName;
 		this.systemFileName = systemFileName;
@@ -28,9 +28,9 @@ public class AttachVo {
 		this.fileSize = fileSize;
 		this.fileType = fileType;
 	}
-	
+
 	public AttachVo(int postNo, String originalFileName, String systemFileName, int fileSize, int fileType) {
-		
+
 		this.postNo = postNo;
 		this.originalFileName = originalFileName;
 		this.systemFileName = systemFileName;
@@ -85,5 +85,5 @@ public class AttachVo {
 	public void setFileType(int fileType) {
 		this.fileType = fileType;
 	}
-	
+
 }
