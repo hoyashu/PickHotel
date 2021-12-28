@@ -1,23 +1,12 @@
 package com.example.board;
 
 import com.example.exception.PostDetailException;
-import com.example.board.CommentService;
 import com.example.member.MemberService;
-import com.example.board.PostService;
-import com.example.board.RoomService;
-import com.example.board.CommentVo;
 import com.example.member.MemberVo;
-import com.example.board.PostVo;
-import com.example.board.RoomVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -165,31 +152,43 @@ public class BoardController {
 
     // 게시글 상세보기-- @ExceptionHandler 매소드
     @GetMapping("/postttt/{postNo}")
-    public String readttt(@PathVariable("postNo") int postNo, Model model) throws PostDetailException {
-        try {
-            // 게시글 상세정보
-            PostVo post = this.postService.retrieveDetailBoard(postNo);
-            if (post == null) {
-                throw new PostDetailException("오류다ㅋㅋㅋㅋ");
-            }
-            model.addAttribute("post", post);
-
-            // 댓글 상세정보 -- 소진 : 이걸 따로 분리할 수 없을까? comment컨트롤러에도 있는 내용임..
-            List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
-            for (CommentVo commentVo : comments) {
-                // DB에서 대댓글의 댓글인 경우 대댓글 작성자의 닉네임 가져오기
-                int parentMemNo = commentVo.getParentMemNo();
-                if (parentMemNo > 0) {
-                    String parentMemNick = memberService.retrieveMember(parentMemNo).getNick();
-                    commentVo.setParentMemNick(parentMemNick);
-                }
-            }
-            model.addAttribute("comments", comments);
-        } catch (Exception e) {
-            throw new PostDetailException("오류다ㅋㅋㅋㅋ");
+    public String readttt(@PathVariable("postNo") int postNo, Model model) throws Exception {
+        // 게시글 상세정보
+        PostVo post = this.postService.retrieveDetailBoard(postNo);
+        if (post == null) {
+            throw new Exception();
         }
+        model.addAttribute("post", post);
+
+        // 댓글 상세정보 -- 소진 : 이걸 따로 분리할 수 없을까? comment컨트롤러에도 있는 내용임..
+        List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+        for (CommentVo commentVo : comments) {
+            // DB에서 대댓글의 댓글인 경우 대댓글 작성자의 닉네임 가져오기
+            int parentMemNo = commentVo.getParentMemNo();
+            if (parentMemNo > 0) {
+                String parentMemNick = memberService.retrieveMember(parentMemNo).getNick();
+                commentVo.setParentMemNick(parentMemNick);
+            }
+        }
+        model.addAttribute("comments", comments);
         return "page/post_detail";
     }
+
+//    @ExceptionHandler(value = Exception.class)
+//    public ResponseEntity<Map<String, String>> ExceptionHandler(Exception e) {
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+//
+//        System.out.println("exceptionHandler실행");
+//
+//        Map<String, String> map = new HashMap<>();
+//        map.put("error type", httpStatus.getReasonPhrase());
+//        map.put("code", "400");
+//        map.put("message", "에러발생");
+//
+//        return new ResponseEntity<>(map, responseHeaders, httpStatus);
+//    }
+
 
     // 게시글 수정폼
     @GetMapping("/post/modify/{postNo}")
