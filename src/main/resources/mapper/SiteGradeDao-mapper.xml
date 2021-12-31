@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SiteGradeDao">
+
+    <!--	 사이트등급조회-->
+    <resultMap id="SiteGradeListResult" type="SiteGradeVo">
+        <result property="memGrade" column="mg_grade"/>
+        <result property="memGradeName" column="mg_name"/>
+        <result property="memGradeType" column="mg_type"/>
+        <result property="memGradeBoard" column="mg_board"/>
+        <result property="memGradeComment" column="mg_com"/>
+        <result property="memGradeVisit" column="mg_visit"/>
+        <result property="memGradeUse" column="mg_use"/>
+    </resultMap>
+    <select id="selectSiteGrade" resultMap="SiteGradeListResult">
+        SELECT mg_grade,
+               mg_name,
+               mg_type,
+               mg_board,
+               mg_com,
+               mg_visit,
+               mg_use
+        FROM membergrade
+    </select>
+
+
+    <parameterMap id="updateSiteGradeParameter" type="SiteGradeVo">
+        <parameter property="memGrade" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+        <parameter property="memGradeName" javaType="String"
+                   jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="memGradeType" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+        <parameter property="memGradeBoard" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+        <parameter property="memGradeComment" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+        <parameter property="memGradeVisit" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+        <parameter property="memGradeUse" javaType="int"
+                   jdbcType="INTEGER" mode="IN"/>
+    </parameterMap>
+    <!-- 사이트 등급 수정 -->
+    <update id="updateSiteGrade" parameterType="SiteGradeVo" parameterMap="updateSiteGradeParameter">
+
+        UPDATE membergrade
+        SET mg_name=#{memGradeName},
+            mg_type=#{memGradeType},
+            mg_board=#{memGradeBoard},
+            mg_com=#{memGradeComment},
+            mg_visit=#{memGradeVisit},
+            mg_use=#{memGradeUse}
+        WHERE mg_grade = #{memGrade}
+    </update>
+
+
+</mapper>

@@ -30,6 +30,7 @@
 		<typeAlias type="com.example.board.PostVo" alias="PostVo" />
 		<typeAlias type="com.example.board.ReviewVo" alias="ReviewVo" />
 		<typeAlias type="com.example.board.RoomVo" alias="RoomVo" />
-
+		<!-- 사이트 등급 -->
+		<typeAlias type="com.example.grade.SiteGradeVo" alias="SiteGradeVo" />
 	</typeAliases>
 </configuration>
