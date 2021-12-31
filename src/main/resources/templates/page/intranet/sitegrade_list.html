@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/admin_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<div layout:fragment="page-title">회원 등급 목록</div>
+<div layout:fragment="content">
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form id="reqSiteGradeForm" method="POST" th:action="@{/intranet/grade/update}">
+                <div class="table-responsive">
+                    <div class="dataTables_wrapper dt-bootstrap4" id="dataTable_wrapper">
+                        <div class="row">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>등급명</th>
+                                    <th>등업방식</th>
+                                    <th>사용여부</th>
+                                    <th>등업기준</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="SiteGrade : ${SiteGrades}">
+                                    <td>
+                                        <input class="memGradeName" name="memGradeName[]"
+                                               th:value="${SiteGrade.memGradeName}"
+                                               type="text">
+
+                                        <input name="memGrade" th:value="${SiteGrade.memGrade}" type="hidden">
+                                    </td>
+                                    <td>
+                                        <div class="input-group-prepend">
+                                            <select class="form-control select2bs4 memGradeType"
+                                                    name="memGradeType[]">
+                                                <option th:selected="${SiteGrade.memGradeType == 0}" value="0">자동
+                                                </option>
+                                                <option th:selected="${SiteGrade.memGradeType == 1}" value="1">수동
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group-prepend">
+                                            <select class="form-control select2bs4 memGradeUse" name="memGradeUse[]">
+                                                <option th:selected="${SiteGrade.memGradeUse == 1 }" value="1">사용
+                                                </option>
+                                                <option th:selected="${SiteGrade.memGradeUse == 0 }" value="0">사용안함
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div>
+                                            <span>게시글</span>
+                                            <input class="memGradeBoard memSiteArg" min="0"
+                                                   name="memGradeBoard"
+                                                   th:value="${SiteGrade.memGradeBoard}" type="number">
+                                        </div>
+                                        <div>
+                                            <span>댓  글</span>
+                                            <input class="memGradeComment memSiteArg" min="0"
+                                                   name="memGradeComment"
+                                                   th:value="${SiteGrade.memGradeComment}"
+                                                   type="number">
+                                        </div>
+                                        <div>
+                                            <span>방문수</span> <input class="memGradeVisit memSiteArg" min="0"
+                                                                    name="memGradeVisit"
+                                                                    th:value="${SiteGrade.memGradeVisit}" type="number">
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary" id="updateGradeBtn" onclick="fnSubmit();">저장</button>
+        </div>
+        <script>
+
+            function fnSubmit() {
+                alert("작업 중... -시우-");
+                return false;
+
+
+                var rv = true;
+
+                $(".memGradeName").each(function (e, item) {
+                    if ($.trim($(item).val()) == "") {
+                        alert("등급명을 모두 작성해주세요.");
+                        rv = false;
+                        return false;
+                    }
+                });
+
+                $(".memSiteArg").each(function (e, item) {
+                    if ($.trim($(item).val()) < 0) {
+                        alert("등업기준은 양수만 가능합니다");
+                        rv = false;
+                        return false;
+                    }
+                });
+
+                if (rv == false) {
+                    return false;
+                }
+
+                if (confirm("등급수정을 완료 하시겠습니까?")) {
+                    alert("등급수정이 완료되었습니다.");
+                    $("#reqSiteGradeForm").submit();
+                } else {
+                    return false;
+                }
+            }
+        </script>
+    </div>
+</div>
