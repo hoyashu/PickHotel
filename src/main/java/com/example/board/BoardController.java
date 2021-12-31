@@ -7,22 +7,32 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+
+import org.springframework.validation.annotation.Validated;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
 public class BoardController {
 
+
     @Autowired
     public MemberService memberService;
+
+    @Autowired
+    private BoardService boardService;
 
     @Autowired
     private PostService postService;
@@ -62,7 +72,18 @@ public class BoardController {
 
         return "page/post_write";
     }
+  
+    //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
+    @ResponseBody
+    @GetMapping("/post/checkUse")
+    public Map checkUse(@RequestParam(value = "boardNo",required = false, defaultValue = "1") int boardNo){
+        BoardVo board = this.boardService.selectBoard(boardNo);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("board", board);
 
+        return map;
+    }
+  
     // 게시글 목록
     @GetMapping("/board/{boardNo}")
     public String list(@PathVariable("boardNo") int boardNo, Model model,
@@ -100,7 +121,20 @@ public class BoardController {
 
     // 게시글 상세보기
     @GetMapping("/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model) {
+    public String read(@PathVariable("postNo") int postNo, Model model) throws Exception {
+        try {
+            // 게시글 상세정보
+            PostVo post = this.postService.retrieveDetailBoard(postNo);
+            if (post == null) {
+                throw new notFoundPost();
+            }
+            List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
+            ReviewVo review = this.reviewService.retrieveReview(postNo);
+            BoardVo board = this.boardService.selectBoard(post.getBoardNo());
+            RoomVo room = new RoomVo();
+            if(review != null){
+                room = this.roomService.retrieveRoom(review.getRoomNo());
+            }
 
         // 게시글 상세정보
         PostVo post = this.postService.retrieveDetailBoard(postNo);
