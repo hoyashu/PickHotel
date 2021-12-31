@@ -1,20 +1,20 @@
 package com.example.board;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("commentService")
-public class CommentService {
+public class CommentServiceImpl implements CommentService {
+
     @Autowired
     private CommentDao commentDao;
 
-    //	댓글삭제
-    public void removeComment(int comNo) {
-        this.commentDao.deleteComment(comNo);
-    }
-
-    //	댓글 내용 수정
-    public void reviseComment(CommentVo comment) {
-        this.commentDao.updateComment(comment);
+    //	댓글 추가
+    public void registerComment(CommentVo comment) {
+        this.commentDao.insertComment(comment);
     }
 
     //	게시글 댓글 목록 조회
@@ -43,8 +43,14 @@ public class CommentService {
         return order;
     }
 
-    //	댓글 추가
-    public void registerComment(CommentVo comment) {
-        this.commentDao.insertComment(comment);
+    //	댓글 내용 수정
+    public void reviseComment(CommentVo comment) {
+        this.commentDao.updateComment(comment);
     }
+
+    //	댓글삭제
+    public void removeComment(int comNo) {
+        this.commentDao.deleteComment(comNo);
+    }
+
 }

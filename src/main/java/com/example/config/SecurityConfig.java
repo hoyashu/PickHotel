@@ -20,7 +20,6 @@
 //
 //		http.authorizeRequests().antMatchers("/").permitAll();
 //		http.authorizeRequests().antMatchers("/member/**").authenticated();
-//		http.authorizeRequests().antMatchers("/manager/**").hasRole("MANAGER");
 //		http.authorizeRequests().antMatchers("/intranet/**").hasRole("ADMIN");
 //
 //		//특정 주소 권한 해제

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +30,7 @@ public class FileController {
 								@RequestParam(value = "subject", required = false) String subject,
 								@RequestParam(value = "content", required = false) String content,
 								@RequestParam(value = "tag", required = false) String tag,
-								@RequestParam(value = "roomNo", required = false) int roomNo,
+								@RequestParam(value = "roomNo", required = false, defaultValue = "-1") int roomNo,
 								@RequestParam(value = "rateLoc",required = false) int rateLoc,
 								@RequestParam(value = "rateClean", required = false) int rateClean,
 								@RequestParam(value = "rateComu", required = false) int rateComu,
@@ -59,17 +58,19 @@ public class FileController {
 		int postNo = postService.registerPost(postVo);
 		session.setAttribute("boardNo", boardNo);
 
-		ReviewVo review = new ReviewVo();
-		review.setNo(postNo);
-		review.setRoomNo(roomNo);
-		review.setRateLoc(rateLoc);
-		review.setRateClean(rateClean);
-		review.setRateComu(rateComu);
-		review.setRateChip(rateChip);
-		review.setVisitDate(visitDate);
-		review.setRecommendPlace(recommendPlace);
-		review.setNotRecommendPerson(notRecommendPerson);
-		this.reviewService.registerReview(review);
+		if(roomNo != -1){
+			ReviewVo review = new ReviewVo();
+			review.setNo(postNo);
+			review.setRoomNo(roomNo);
+			review.setRateLoc(rateLoc);
+			review.setRateClean(rateClean);
+			review.setRateComu(rateComu);
+			review.setRateChip(rateChip);
+			review.setVisitDate(visitDate);
+			review.setRecommendPlace(recommendPlace);
+			review.setNotRecommendPerson(notRecommendPerson);
+			this.reviewService.registerReview(review);
+		}
 
 		if(images != null){
 			System.out.println("images");
