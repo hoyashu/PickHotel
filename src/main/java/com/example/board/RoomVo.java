@@ -1,18 +1,17 @@
 package com.example.board;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class RoomVo {
-	private int no;
-	private String roomName;
-	private String roomDeco;
-	private String roomAddress;
-	private String systemFileName;
-	private String originalFileName;
-
+    private int roomNo;
+    private String roomName;
+    private String roomDeco;
+    private String roomAddress;
+    private String systemFileName;
+    private String originalFileName;
 }
