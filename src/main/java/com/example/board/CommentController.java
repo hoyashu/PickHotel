@@ -1,10 +1,7 @@
 package com.example.board;
 
-import com.example.board.CommentService;
 import com.example.member.MemberService;
-import com.example.board.CommentVo;
 import com.example.member.MemberVo;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +17,13 @@ public class CommentController {
     @Autowired
     public MemberService memberService;
     @Autowired
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
 
     // ########## 댓글 ########## //
     // 댓글 등록 ajax (회원만 가능함)
     @ResponseBody
     @PostMapping("/comment/create")
     public String create(CommentVo comment, HttpServletRequest request) {
-        System.out.println("실행");
         String result = "false";
         CommentVo comment1 = new CommentVo();
         HttpSession session = request.getSession();

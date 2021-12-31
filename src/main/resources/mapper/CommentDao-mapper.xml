@@ -29,9 +29,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="parents" javaType="int" column="co_p_no" jdbcType="INTEGER" />
 		<result property="comClass" javaType="int" column="co_class" jdbcType="INTEGER" />
 		<result property="parentMemNo" javaType="int" column="co_p_mb_no" jdbcType="INTEGER" />
+		<result property="isblind" javaType="int" column="co_isblind" jdbcType="INTEGER" />
 		<result property="writeday" javaType="string" column="co_datetime" jdbcType="DATE" />
 		<result property="memNick" javaType="string" column="mb_nick" jdbcType="VARCHAR" />
-		
 	</resultMap>
 	<select id="selectCommentList" parameterType="int" resultMap="CommentResultMap">
 		SELECT co_no, post_no, co_mb_no, co_p_no, co_order, co_content, co_class, co_order, co_p_no, co_p_mb_no, co_isblind, 

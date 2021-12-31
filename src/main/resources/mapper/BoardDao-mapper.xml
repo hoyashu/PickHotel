@@ -4,20 +4,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="Board">
+<mapper namespace="BoardDao">
 	<resultMap id="BoardVoResult" type="BoardVo">
-		<result property="boardNo" column="bo_no" />
-		<result property="groupNo" column="bo_group_no"/>
-		<result property="groupName" column="bo_group_name"/>
-		<result property="title" column="bo_name" />
-		<result property="type" column="bo_type" />
-		<result property="boGrade" column="bo_grade" />
-		<result property="usePhoto" column="bo_use_photo" />
-		<result property="useVideo" column="bo_use_video" />
-		<result property="useFile" column="bo_use_fupdown" />
-		<result property="useComment" column="bo_use_comment" />
-		<result property="creatDatetime" column="bo_datetime" />
-		<result property="postCount" column="bo_post" />
+		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
+		<result property="groupNo" javaType="int" column="bo_group_no" jdbcType="INTEGER"/>
+		<result property="groupName" javaType="string" column="bo_group_name" jdbcType="VARCHAR"/>
+		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
+		<result property="type" javaType="string" column="bo_type" jdbcType="VARCHAR" />
+		<result property="boGrade" javaType="int" column="bo_grade" jdbcType="INTEGER" />
+		<result property="usePhoto" javaType="int" column="bo_use_photo" jdbcType="INTEGER" />
+		<result property="useVideo" javaType="int" column="bo_use_video" jdbcType="INTEGER" />
+		<result property="useFile" javaType="int" column="bo_use_fupdown" jdbcType="INTEGER" />
+		<result property="useComment" javaType="int" column="bo_use_comment" jdbcType="INTEGER" />
+		<result property="creatDatetime" javaType="string" column="bo_datetime" jdbcType="VARCHAR" />
+		<result property="postCount" javaType="int" column="bo_post" jdbcType="INTEGER" />
 	</resultMap>
 
 	<!-- 게시판 상세조회 -->
@@ -28,14 +28,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<!-- 게시판 목록조회 -->
-	<select id="selectBoardList" parameterType="BoardVo" resultType="BoardVo" resultMap="BoardVoResult">
-		SELECT a.bo_no, a.bo_group_no, b.bo_group_name ,a.bo_name, a.bo_type, a.bo_grade, a.bo_use_photo, a.bo_use_video, a.bo_use_fupdown, a.bo_use_comment, 
-		bo_datetime, bo_post 
+	<select id="selectBoardList" resultMap="BoardVoResult">
+		SELECT a.bo_no, a.bo_group_no, b.bo_group_name ,a.bo_name, a.bo_type, a.bo_grade, a.bo_use_photo, a.bo_use_video, a.bo_use_fupdown, a.bo_use_comment,
+			   bo_datetime, bo_post
 		FROM board a inner join board_group b on a.bo_group_no = b.bo_group_no
 	</select>
-	
-	
-	
 	
 	<!--게시판 등록 -->
 	<parameterMap type="BoardVo"  id="insertBoardParameter">
@@ -52,9 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO board(bo_group_no, bo_type, bo_name, bo_grade, bo_use_photo, bo_use_video, bo_use_fupdown, bo_use_comment, bo_datetime)
 		VALUES ( #{groupNo}, #{type}, #{title}, #{boGrade}, #{usePhoto}, #{useVideo}, #{useFile}, #{useComment}, now())
 	</insert>
-	
-	
-	
+
 	<!-- 게시판 수정 -->
 	<parameterMap type="BoardVo" id="updateBoardParameter">
 		<parameter property="boardNo" javaType="int" jdbcType="INTEGER" mode="IN"/>
@@ -67,14 +62,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<parameter property="useFile" javaType="int" jdbcType="INTEGER" mode="IN"/>
 		<parameter property="useComment" javaType="int" jdbcType="INTEGER" mode="IN"/>
 	</parameterMap>
-	<insert id="updateBoard" parameterType="boardVo" parameterMap="updateBoardParameter">
+	<insert id="updateBoard" parameterMap="updateBoardParameter">
 		UPDATE board SET 
 		bo_group_no=#{groupNo}, bo_name = #{title}, bo_grade = #{boGrade}, bo_use_photo = #{usePhoto},
 		bo_type = #{type}, bo_use_video = #{useVideo}, bo_use_fupdown = #{useFile}, bo_use_comment = #{useComment}
 		WHERE bo_no = #{boardNo}
 	</insert>
-	
-	
+
 	<!--게시판 삭제  --> 
 	<delete id="deleteBoard" parameterType="int">
       DELETE FROM board 
