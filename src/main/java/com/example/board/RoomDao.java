@@ -1,49 +1,20 @@
 package com.example.board;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+public interface RoomDao {
+    //숙소 등록
+    void insertRoom(RoomVo room);
 
+    //숙소 목록 조회
+    List<RoomVo> selectRoomList();
 
-@Repository("roomDao")
-public class RoomDao {
-	@Autowired
-	private SqlSession sqlSession;
+    //숙소 상세 조회
+    RoomVo selectRoom(int roomNo);
 
-	public void insertRoom(RoomVo room){
-		this.sqlSession.insert("RoomDao.insertRoom", room);
-	}
+    //숙소 수정
+    void updateRoom(RoomVo room);
 
-	public void deleteRoom(int roomNo){
-		this.sqlSession.delete("RoomDao.deleteRoom", roomNo);
-	}
-
-	public List<RoomVo> selectRoomList(){
-		return this.sqlSession.selectList("RoomDao.selectRoomList");
-	}
-
-	public RoomVo selectRoom(int roomNo){
-		return this.sqlSession.selectOne("RoomDao.selectRoom", roomNo);
-	}
-
+    //숙소 삭제
+    void deleteRoom(int roomNo);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

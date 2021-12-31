@@ -8,18 +8,14 @@
 	</settings>
 	<typeAliases>
 
-
 		<!-- 회원 -->
 		<typeAlias type="com.example.member.MemberVo" alias="MemberVo" />
-		<typeAlias type="com.example.member.MemberStateVo"
-			alias="MemberStateVo" />
-		<typeAlias type="com.example.member.MemberAndMemberStateVo"
-			alias="MemberAndMemberStateVo" />
+		<typeAlias type="com.example.member.MemberStateVo" alias="MemberStateVo" />
+		<typeAlias type="com.example.member.MemberAndMemberStateVo" alias="MemberAndMemberStateVo" />
 
 		<!-- 회원 등업 -->
 		<typeAlias type="com.example.grade.GradeUpVo" alias="GradeUpVo" />
-		<typeAlias type="com.example.grade.MemberGradeVo"
-			alias="MemberGradeVo" />
+		<typeAlias type="com.example.grade.MemberGradeVo" alias="MemberGradeVo" />
 
 		<!-- 게시판 -->
 		<typeAlias type="com.example.board.BoardVo" alias="BoardVo" />

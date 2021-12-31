@@ -1,33 +1,20 @@
 package com.example.board;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public interface RoomService {
+    //숙소 등록
+    void registerRoom(RoomVo room);
 
-@Service("roomService")
-@Transactional
-public class RoomService {
+    //숙소 목록 조회
+    List<RoomVo> retrieveRoomList();
 
-	@Autowired
-	private RoomDao roomDao;
+    //숙소 상세 조회
+    RoomVo retrieveRoom(int id);
 
-	public void registerRoom(RoomVo room){
-		this.roomDao.insertRoom(room);
-	}
+    //숙소 수정
+    void modifyReview(RoomVo room);
 
-	public void removeRoom(int roomNo){
-		this.roomDao.deleteRoom(roomNo);
-	}
-
-	public List<RoomVo> retrieveRoomList(){
-		return this.roomDao.selectRoomList();
-	}
-
-	public RoomVo retrieveRoom(int roomNo) {
-		return this.roomDao.selectRoom(roomNo);
-	}
-
+    //숙소 삭제
+    RoomVo removeRoom(int id);
 }
