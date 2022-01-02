@@ -5,7 +5,7 @@
 
 <mapper namespace="ReviewDao">
 	<parameterMap type="ReviewVo" id="ReviewParameterMap">
-		<parameter property="no" javaType="int" jdbcType="INTEGER" />
+		<parameter property="postNo" javaType="int" jdbcType="INTEGER" />
 		<parameter property="roomNo" javaType="int" jdbcType="INTEGER" />
 		<parameter property="rateLoc" javaType="int" jdbcType="INTEGER" />
 		<parameter property="rateClean" javaType="int" jdbcType="INTEGER" />
@@ -18,7 +18,7 @@
 	<insert id="insertReview" parameterType="ReviewVo" parameterMap="ReviewParameterMap">
 		INSERT INTO review (post_no,roo_no, re_rate_loc, re_rate_clean,
 							re_rate_comu, re_rate_chip, re_vsdate, re_push_pl, re_push_npl )
-		VALUES (#{no},#{roomNo}, #{rateLoc}, #{rateClean}, #{rateComu},
+		VALUES (#{postNo},#{roomNo}, #{rateLoc}, #{rateClean}, #{rateComu},
 				#{rateChip}, #{visitDate}, #{recommendPlace}, #{notRecommendPerson})
 	</insert>
 
@@ -31,7 +31,7 @@
 	</delete>
 
 	<resultMap id="ReviewVoResultMap" type="ReviewVo">
-		<result property="no" column="post_no" />
+		<result property="postNo" column="post_no" />
 		<result property="roomNo" column="roo_no" />
 		<result property="rateLoc" column="re_rate_loc" />
 		<result property="rateClean" column="re_rate_clean" />

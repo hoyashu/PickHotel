@@ -1,292 +1,278 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/user_layout}">
-
-<div layout:fragment="content">
-
-	<style>
-		.mb-3 img {
-			width : 250px;
-			height : auto;
-		}
-
-		.mb-3 video {
-			width : 300px;
-			height : auto;
-		}
-	</style>
-
-	<div id="page-title" class="row">
-		<h1 class="text-center">게시글 작성</h1>
-	</div>
-	<form th:action="@{/uploadFile}" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
-		<div class="mb-3">
-			<label for="subject">제목</label>
-			<input type="text" class="form-control" name="subject" id="subject" placeholder="제목을 입력하세요">
-		</div>
-		<div class="mb-3">
-			<label for="bordNo">게시판 선택</label>
-			<select name="bordNo" id="bordNo" onchange="OnChange();">
-				<div th:each="board : ${boardList}">
+<html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<div class="board-page" id="postWrite" layout:fragment="content">
+    <div class="row" id="page-title">
+        <h1 class="text-center">게시글 작성</h1>
+    </div>
+    <form accept-charset="UTF-8" enctype="multipart/form-data" method="POST" th:action="@{/uploadFile}">
+        <div class="mb-3">
+            <label for="subject">제목</label>
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text">
+        </div>
+        <div class="mb-3">
+            <label for="bordNo">게시판 선택</label>
+            <select id="bordNo" name="bordNo" onchange="OnChange();">
+                <div th:each="board : ${boardList}">
 					<span th:if="${board.key}==${defaultListNo}">
-						<option th:value="${board.key}" selected="${defaultListNo}"><span
-								th:text="${board.value}"></span></option>
+						<option selected="${defaultListNo}" th:value="${board.key}"><span
+                                th:text="${board.value}"></span></option>
 					</span>
-					<span th:unless="${board.key}==${defaultListNo}">
+                    <span th:unless="${board.key}==${defaultListNo}">
 						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
 					</span>
-				</div>
-			</select>
-		</div>
+                </div>
+            </select>
+        </div>
 
 
-		<div class="mb-3">
-			<label for="content">내용</label>
-			<textarea class="form-control" rows="5" name="content" id="content" placeholder="내용을 입력해 주세요"></textarea>
-		</div>
-		<div class="photos">
-			<label for="images">사진(3MB 이하)</label>
-			<input type="file" id="images" name="images" accept="image/*" multiple />
-			<div class="photogallery"></div>
-		</div>
+        <div class="mb-3">
+            <label for="content">내용</label>
+            <textarea class="form-control" id="content" name="content" placeholder="내용을 입력해 주세요" rows="5"></textarea>
+        </div>
+        <div class="photos">
+            <label for="images">사진(3MB 이하)</label>
+            <input accept="image/*" id="images" multiple name="images" type="file"/>
+            <div class="photogallery"></div>
+        </div>
 
-		<div class="videos">
-			<label for="videos">동영상(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
-			<input type="file" id="videos" name="videos" multiple />
-			<div class="videogallery"></div>
-		</div>
-
-
-		<div class="room" th:if="${roomList} != null">
-			<div>방 리스트</div>
-			<div th:each="room : ${roomList}">
-				<input type="radio" name="roomNo" id="roomNo" th:value="${room.no}" />
-				<div th:text="${room.roomName}"></div>
-				<div th:text="${room.roomDeco}"></div>
-				<div th:text="${room.roomAddress}"></div>
-				<img th:src="'/upload/' + ${room.systemFileName}" />
-			</div>
-		</div>
-
-		<div class="review">
-			<label for="rateLoc">위치</label>
-			<select name="rateLoc" id="rateLoc">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
-			<label for="rateClean">위생</label>
-			<select name="rateClean" id="rateClean">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
-			<label for="rateComu">의사소통</label>
-			<select name="rateComu" id="rateComu">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
-			<label for="rateChip">가성비</label>
-			<select name="rateChip" id="rateChip">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
+        <div class="videos">
+            <label for="videos">동영상(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
+            <input id="videos" multiple name="videos" type="file"/>
+            <div class="videogallery"></div>
+        </div>
 
 
-		<div class="mb-3">
-			<label for="visitDate">방문 날짜를 선택하세요</label>
-			<input type="date" name="visitDate" id = "visitDate" />
-		</div>
-		<div class="mb-3">
-			<label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
-			<input type="text" class="form-control" name="recommendPlace" id="recommendPlace">
-		</div>
-		<div class="mb-3">
-			<label for="notRecommendPerson">이런분들께는 비추에요</label>
-			<input type="text" class="form-control" name="notRecommendPerson" id="notRecommendPerson">
-		</div>
-		</div>
-		<div class="mb-3">
-			<label for="tag">태그</label>
-			<input type="text" class="form-control" name="tag" id="tag" placeholder="#태그입력">
-		</div>
-		<div>
-			<button type="submit" class="btn btn-sm btn-primary" id="saveBtn">글등록</button>
-		</div>
-	</form>
+        <div class="room" th:if="${roomList} != null">
+            <div>방 리스트</div>
+            <div th:each="room : ${roomList}">
+                <input id="roomNo" name="roomNo" th:value="${room.roomNo}" type="radio"/>
+                <div th:text="${room.roomName}"></div>
+                <div th:text="${room.roomDeco}"></div>
+                <div th:text="${room.roomAddress}"></div>
+                <img th:src="'/upload/' + ${room.systemFileName}"/>
+            </div>
+        </div>
 
-	<script type="text/javascript">
+        <div class="review">
+            <label for="rateLoc">위치</label>
+            <select id="rateLoc" name="rateLoc">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="rateClean">위생</label>
+            <select id="rateClean" name="rateClean">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="rateComu">의사소통</label>
+            <select id="rateComu" name="rateComu">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="rateChip">가성비</label>
+            <select id="rateChip" name="rateChip">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
 
-		//페이지 로딩시 사용성 체크 사용
-		window.onload = function(){
-			OnChange();
-		}
 
-		// 사용성 체크
-		function OnChange() {
-			var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
-			$.ajax({
-				url : '/post/checkUse?boardNo=' + bordNoSelect,
-				type : 'GET',
-				success : function(data){
-					const result = data;
-					if(result.board.usePhoto == 1){
-						$('.photos').show();
-					} else {
-						$('.photos').hide();
-					}
+            <div class="mb-3">
+                <label for="visitDate">방문 날짜를 선택하세요</label>
+                <input id="visitDate" name="visitDate" type="date"/>
+            </div>
+            <div class="mb-3">
+                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
+                <input class="form-control" id="recommendPlace" name="recommendPlace" type="text">
+            </div>
+            <div class="mb-3">
+                <label for="notRecommendPerson">이런분들께는 비추에요</label>
+                <input class="form-control" id="notRecommendPerson" name="notRecommendPerson" type="text">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="tag">태그</label>
+            <input class="form-control" id="tag" name="tag" placeholder="#태그입력" type="text">
+        </div>
+        <div>
+            <button class="btn btn-sm btn-primary" id="saveBtn" type="submit">글등록</button>
+        </div>
+    </form>
 
-					if(result.board.useVideo == 1){
-						$('.videos').show();
-					} else {
-						$('.videos').hide();
-					}
+    <script type="text/javascript">
 
-					if(result.board.type == "review"){
-						$('.room').show();
-						$('.review').show();
-					} else {
-						$('.room').hide();
-						$('.review').hide();
-					}
-				},
-				error : function(){
-					console.log("failed");
-				}
-			});
-		}
+        //페이지 로딩시 사용성 체크 사용
+        window.onload = function () {
+            OnChange();
+        }
 
-		// 이미지 유효성 검사
-		var sel_files = [];
+        // 사용성 체크
+        function OnChange() {
+            var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+            $.ajax({
+                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                type   : 'GET',
+                success: function (data) {
+                    const result = data;
+                    if (result.board.usePhoto == 1) {
+                        $('.photos').show();
+                    } else {
+                        $('.photos').hide();
+                    }
 
-		$(document).ready(function() {
-			console.log("asdf")
-			$("#images").on("change", handleImgsFilesSelect);
-		});
+                    if (result.board.useVideo == 1) {
+                        $('.videos').show();
+                    } else {
+                        $('.videos').hide();
+                    }
 
-		function handleImgsFilesSelect(e) {
+                    if (result.board.type == "review") {
+                        $('.room').show();
+                        $('.review').show();
+                    } else {
+                        $('.room').hide();
+                        $('.review').hide();
+                    }
+                },
+                error  : function () {
+                    console.log("failed");
+                }
+            });
+        }
 
-			sel_files = [];
-			$(".photogallery").empty();
+        // 이미지 유효성 검사
+        var sel_files = [];
 
-			var files = e.target.files;
-			var filesArr = Array.prototype.slice.call(files);
-			var sizeCheck = true;
+        $(document).ready(function () {
+            console.log("asdf")
+            $("#images").on("change", handleImgsFilesSelect);
+        });
 
-			filesArr.forEach(function(f){
-				video_files.push(f);
-			});
+        function handleImgsFilesSelect(e) {
 
-			filesArr.forEach(function(file){
-				var fileSize = file.size;
-				var maxSize = 3 * 1024 * 1024;
+            sel_files = [];
+            $(".photogallery").empty();
 
-				if(fileSize > maxSize ){
-					alert("이미지 사이즈는 3MB 이내로 등록 가능합니다.");
-					sizeCheck = false;
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var sizeCheck = true;
 
-					$("#images").val("");
-					sel_files = [];
-					$(".photogallery").empty();
-					return;
-				}
-			});
+            filesArr.forEach(function (f) {
+                video_files.push(f);
+            });
 
-			if(sizeCheck == true){
-				filesArr.forEach(function (f) {
+            filesArr.forEach(function (file) {
+                var fileSize = file.size;
+                var maxSize = 3 * 1024 * 1024;
 
-					var reader = new FileReader();
-					reader.onload = function (e) {
-						var img_html = "<img src=\"" + e.target.result + "\" />&nbsp;&nbsp;";
-						$(".photogallery").append(img_html);
-					}
-					reader.readAsDataURL(f);
-				});
-			}
+                if (fileSize > maxSize) {
+                    alert("이미지 사이즈는 3MB 이내로 등록 가능합니다.");
+                    sizeCheck = false;
 
-		}
+                    $("#images").val("");
+                    sel_files = [];
+                    $(".photogallery").empty();
+                    return;
+                }
+            });
 
-		//비디오 유효성 검사
-		var video_files = [];
+            if (sizeCheck == true) {
+                filesArr.forEach(function (f) {
 
-		$(document).ready(function() {
-			$("#videos").on("change", handleVideosFilesSelect);
-		});
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var img_html = "<img src=\"" + e.target.result + "\" />&nbsp;&nbsp;";
+                        $(".photogallery").append(img_html);
+                    }
+                    reader.readAsDataURL(f);
+                });
+            }
 
-		function handleVideosFilesSelect(e) {
+        }
 
-			video_files = [];
-			$(".videogallery").empty();
+        //비디오 유효성 검사
+        var video_files = [];
 
-			var files = e.target.files;
-			var filesArr = Array.prototype.slice.call(files);
-			var fileExtensionCheck = true;
-			var fileSizeCheck = true;
+        $(document).ready(function () {
+            $("#videos").on("change", handleVideosFilesSelect);
+        });
 
-			filesArr.forEach(function(f){
-				video_files.push(f);
-			});
+        function handleVideosFilesSelect(e) {
 
-			video_files.forEach(function(file){
-				var abc = file.name.lastIndexOf(".");
-				var fileNameLength = file.name.length;
-				var fileExtension = file.name.substring(abc + 1, fileNameLength);
+            video_files = [];
+            $(".videogallery").empty();
 
-				if(fileExtension == "mov" || fileExtension == "ogg" || fileExtension == "webm" || fileExtension == "mp4"){
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var fileExtensionCheck = true;
+            var fileSizeCheck = true;
 
-				} else {
-					alert("사용할 수 없는 확장자가 포함되어 있습니다.");
-					fileExtensionCheck = false;
+            filesArr.forEach(function (f) {
+                video_files.push(f);
+            });
 
-					$("#videos").val("");
-					video_files = [];
-					$(".videogallery").empty();
-					return;
-				}
-			});
+            video_files.forEach(function (file) {
+                var abc = file.name.lastIndexOf(".");
+                var fileNameLength = file.name.length;
+                var fileExtension = file.name.substring(abc + 1, fileNameLength);
 
-			video_files.forEach(function (file) {
-				var fileSize = file.size;
-				var maxSize = 30 * 1024 * 1024;
-				if (fileExtensionCheck == true) {
-					if (file.size > maxSize) {
-						alert("동영상은 30MB 이내로 등록 가능합니다.");
-						fileSizeCheck = false;
+                if (fileExtension == "mov" || fileExtension == "ogg" || fileExtension == "webm" || fileExtension == "mp4") {
 
-						$("#videos").val("");
-						video_files = [];
-						$(".videogallery").empty();
-						return;
-					}
-				}
-			});
+                } else {
+                    alert("사용할 수 없는 확장자가 포함되어 있습니다.");
+                    fileExtensionCheck = false;
 
-			if (fileExtensionCheck == true && fileSizeCheck == true) {
-				filesArr.forEach(function (f) {
+                    $("#videos").val("");
+                    video_files = [];
+                    $(".videogallery").empty();
+                    return;
+                }
+            });
 
-					var reader = new FileReader();
-					reader.onload = function (e) {
-						var video_html = "<video controls>";
-						video_html += "<source src=\"" + e.target.result + "\" type=\"video/mp4\" />";
-						video_html += "<source src=\"" + e.target.result + "\" type=\"video/webm\" />";
-						video_html += "<source src=\"" + e.target.result + "\" type=\"video/ogg\" />";
-						video_html += "이 동영상은 지원하지 않습니다.</video>&nbsp;&nbsp;"
-						$(".videogallery").append(video_html);
-					}
-					reader.readAsDataURL(f);
+            video_files.forEach(function (file) {
+                var fileSize = file.size;
+                var maxSize = 30 * 1024 * 1024;
+                if (fileExtensionCheck == true) {
+                    if (file.size > maxSize) {
+                        alert("동영상은 30MB 이내로 등록 가능합니다.");
+                        fileSizeCheck = false;
 
-				});
-			}
-		}
-	</script>
+                        $("#videos").val("");
+                        video_files = [];
+                        $(".videogallery").empty();
+                        return;
+                    }
+                }
+            });
+
+            if (fileExtensionCheck == true && fileSizeCheck == true) {
+                filesArr.forEach(function (f) {
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var video_html = "<video controls>";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/mp4\" />";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/webm\" />";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/ogg\" />";
+                        video_html += "이 동영상은 지원하지 않습니다.</video>&nbsp;&nbsp;"
+                        $(".videogallery").append(video_html);
+                    }
+                    reader.readAsDataURL(f);
+
+                });
+            }
+        }
+    </script>
 </div>
 

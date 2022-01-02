@@ -10,4 +10,10 @@ public class HomeController {
     public String index() {
         return "page/index";
     }
+
+    //권한 없음 페이지
+    @GetMapping(value = {"/denine"})
+    public String denine() {
+        return "error/denine";
+    }
 }
