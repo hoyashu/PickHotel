@@ -1,35 +1,25 @@
 <html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
-<div layout:fragment="content">
-    <style>
-        #images img {
-            width: 250px;
-            height: auto;
-        }
-
-        #videos video {
-            width: 300px;
-            height: auto;
-        }
-        #room img {
-            width : 250px;
-            height : auto;
-        }
-    </style>
-
-    <div class="row" id="page-title">
-        <h1 class="text-center">게시글 보기</h1>
-    </div>
+<div class="board-pageboard-page" id="postDetail" layout:fragment="content">
     <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-				<span class="pull-right">작성자 : <span th:text="${post.writerNick}"></span> / 작성시간 : <span
-                        th:text="${post.createDate}"></span></span> 제목 : <span th:text="${post.subject}"></span>
+        <div class="panel panel-default" th:object="${post}">
+            <div class="p-sm-4 panel-heading">
+                <p><span class="post-groupName" th:text="*{groupName}"></span><i>&gt;</i>
+                    <span class="post-boardTitle"><a class="" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}"
+                                                     th:text="*{boardTitle}"></a></span>
+                </p>
+                <div class="post-subject" th:text="*{subject}"></div>
+                <div class="post-info">
+                    <span th:text="*{writerNick}"></span>
+                    <i aria-hidden="true" class="fa fa-clock-o"></i> <span th:text="*{createDate}"></span>
+                    <i aria-hidden="true" class="fa fa-eye"></i> <span th:text="*{views}"></span>
+                    <i aria-hidden="true" class="fa fa-comment-o"></i> <span th:text="*{commont}"></span>
+                </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body post-content">
                 <div class="mb-3">
                     <label for="content">내용</label>
-                    <div id="content" th:utext="${post.content}"></div>
+                    <div id="content" th:utext="*{content}"></div>
                 </div>
                 <div th:if="${attachList != null}">
                     <div class="photos">
@@ -55,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${room.no != 0}" class="room">
+                <div class="room" th:if="${room.roomNo != 0}">
                     <div>
                         <span th:text="${room.roomName}"></span>
                     </div>
@@ -67,20 +57,20 @@
                     </div>
 
                     <div>
-                        <img th:src="'/upload/' + ${room.systemFileName}" />
+                        <img th:src="'/upload/' + ${room.systemFileName}"/>
                     </div>
                 </div>
-                    <div  th:if="${review != null}" class="review">
-                        <div class="mb-3">
-                            <label for="rateLoc">위치</label>
-                            <span id="rateLoc" th:text="${review.rateLoc}"></span>
-                            <label for="rateClean">위생</label>
-                            <span id="rateClean" th:text="${review.rateClean}"></span>
-                            <label for="rateComu">의사소통</label>
-                            <span id="rateComu" th:text="${review.rateComu}"></span>
-                            <label for="rateChip">가성비</label>
-                            <span id="rateChip" th:text="${review.rateChip}"></span>
-                        </div>
+                <div class="review" th:if="${review != null}">
+                    <div class="mb-3">
+                        <label for="rateLoc">위치</label>
+                        <span id="rateLoc" th:text="${review.rateLoc}"></span>
+                        <label for="rateClean">위생</label>
+                        <span id="rateClean" th:text="${review.rateClean}"></span>
+                        <label for="rateComu">의사소통</label>
+                        <span id="rateComu" th:text="${review.rateComu}"></span>
+                        <label for="rateChip">가성비</label>
+                        <span id="rateChip" th:text="${review.rateChip}"></span>
+                    </div>
 
                     <div class="mb-3">
                         <label for="visitDate">방문 날짜를 선택하세요</label>
@@ -98,16 +88,16 @@
 
                 <div class="mb-3">
                     <label for="tag">태그</label>
-                    <div id="tag" th:text="${post.tag}"></div>
+                    <div id="tag" th:text="*{tag}"></div>
                 </div>
-                <div class="mb-3 panel-heading">
+                <div class="mb-3 panel-heading text-end">
                     <a class="btn btn-secondary" onClick="editPost()">수정</a>
                     <a class="btn btn-danger" onClick="removePost()">삭제</a>
-                    <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=${post.boardNo})}">신고</a>
-                    <a class="btn btn-secondary" th:href="@{/board/{boardNo}(boardNo=${post.boardNo})}">목록보기</a>
+                    <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>
+                    <a class="btn btn-secondary" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
                 </div>
 
-                <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden">
+                <input id="postNo" name="postNo" th:value="*{postNo}" type="hidden">
             </div>
 
             <!-- 댓글시작 -->
@@ -124,19 +114,22 @@
                     </div>
                     <!-- 댓글 목록 -->
                     <ul class="list-group list-group-flush" id="ListComment">
+                        <li class="commont-noline" th:if="${comments} == null">첫번째 댓글을 남겨보세요✨</li>
                         <li th:class="'commont-line dept_'+${comment.comClass}" th:each="comment : ${comments}"
-                            th:id="'comment_'+${comment.comNo}">
-                            <!-- 댓글 내용 -->
-                            <div class="info">
-                                <span class="memNick" th:text="${comment.memNick}"></span>
-                                <input name="memNo" th:value="${comment.memNo}" type="hidden">
-                                <span th:text="${comment.writeday}"></span>
-                            </div>
+                            th:id="'comment_'+${comment.comNo}"
+                            th:if="${comments} != null">
 
-                            <div class="cmtContent"><a class="comment-mention" th:href="@{'/member/'+${comment.memNo}}"
-                                                       th:if="${comment.parentMemNick != null}"
-                                                       th:text="'@'+${comment.parentMemNick}"></a><span
-                                    th:text="${comment.content}"></span></div>
+                            <!-- 댓글 내용 -->
+                            <div class="info"><span class="memNick" th:text="${comment.memNick}"></span><span
+                                    th:text="${comment.writeday}"></span><input name="memNo" th:value="${comment.memNo}"
+                                                                                type="hidden"></div>
+
+                            <div class="cmtContent">
+                                <a class="comment-mention" th:href="@{'/member/'+${comment.memNo}}"
+                                   th:if="${comment.parentMemNick != null}"
+                                   th:text="'@'+${comment.parentMemNick}"></a>
+                                <span th:text="${comment.content}"></span>
+                            </div>
 
                             <!-- 댓글 설정 메뉴 -->
                             <div class="comment-menu">
@@ -150,8 +143,9 @@
                                 </ul>
                             </div>
                             <!-- 답글 -->
-                            <i aria-hidden="true" class="fa fa-commenting"></i><a class="btn btn-link link-dark dept2CommentOpenBtn"
-                                                                                  href="#">답글</a>
+                            <i aria-hidden="true" class="fa fa-commenting"></i><a
+                                class="btn btn-link link-dark dept2CommentOpenBtn"
+                                href="#">답글</a>
                             <div aria-expanded="true" class="dept2Comment" style="display:none">
                                 <div class="input-group">
                                     <textarea class="form-control"
@@ -187,9 +181,10 @@
                             $("#addCmtContent").attr("placeholder", "로그인 후 댓글 작성가능합니다.");
 
                             $(document).on("focus", "#addCmtContent", function (e) {
-                                const con = confirm("회원만 댓글 작성이 가능합니다\n로그인 창으로 이동하시겠습니까?")
+                                const con = confirm(_confirmLoginTxt)
                                 if (con == true) {
-                                    location.href = "/login";
+                                    location.href = _loginPage + "?redirectUrl=" + location.href;
+                                    ;
                                 }
                                 $(this).blur();
                             });
@@ -223,12 +218,19 @@
                                     rs = await getAjax(url, postNo);
                                     $('#ListComment').html("");
                                     let htmlStr = "";
+
+                                    //댓글이 존재하지 않을 경우
+                                    if (rs.length == 0) {
+                                        htmlStr += `<li class="commont-noline" >첫번째 댓글을 남겨보세요✨</li>`
+                                    }
+
+                                    //댓글이 존재하는 경우
                                     for (let i = 0; i < rs.length; i++) {
                                         htmlStr += `<li id="comment_${rs[i].comNo}" class="commont-line dept_${rs[i].comClass}">`
                                         htmlStr += `<div class="info">`;
                                         htmlStr += `<span class="memNick">${rs[i].memNick}</span>`;
-                                        htmlStr += `<input type="hidden" name="memNo" value="${rs[i].memNo}">`;
                                         htmlStr += `<span>${rs[i].writeday}</span>`;
+                                        htmlStr += `<input type="hidden" name="memNo" value="${rs[i].memNo}">`;
                                         htmlStr += `</div>`;
                                         htmlStr += `<div class="cmtContent">`;
                                         if (rs[i].parentMemNick != null) {
@@ -296,9 +298,10 @@
                                     if (rs == "OK") {
                                         init(postNo);
                                     } else if (rs == "isNotMember") {
-                                        const con = confirm("회원만 댓글 작성이 가능합니다\n로그인 창으로 이동하시겠습니까?")
+                                        const con = confirm(_confirmLoginTxt)
                                         if (con == true) {
-                                            location.href = "/login";
+                                            location.href = _loginPage + "?redirectUrl=" + location.href;
+                                            ;
                                         }
                                     } else {
                                         alert("등록에 실패했습니다.");
@@ -343,9 +346,9 @@
                                     if (rs == "OK") {
                                         init(postNo);
                                     } else if (rs == "isNotMember") {
-                                        const con = confirm("로그인 창으로 이동하시겠습니까?")
+                                        const con = confirm(_confirmLoginTxt)
                                         if (con == true) {
-                                            location.href = "/login";
+                                            location.href = _loginPage + "?redirectUrl=" + location.href;
                                         }
                                     } else if (rs == "denine") {
                                         alert("권한이 없습니다.");
@@ -389,9 +392,9 @@
                                     if (rs == "OK") {
                                         init(postNo);
                                     } else if (rs == "isNotMember") {
-                                        const con = confirm("로그인 창으로 이동하시겠습니까?")
+                                        const con = confirm(_confirmLoginTxt)
                                         if (con == true) {
-                                            location.href = "/login";
+                                            location.href = _loginPage + "?redirectUrl=" + location.href;
                                         }
                                     } else if (rs == "denine") {
                                         alert("권한이 없습니다.");
@@ -425,7 +428,7 @@
                         $(document).on("click", '#addCmtBtn', function (e) {
                             e.preventDefault();
 
-                            const cmtContent = $('#addCmtContent').val().trim().replace(/\n/g, '<br/>');
+                            const cmtContent = $('#addCmtContent').val().trim();
                             //addComment(게시글번호, 댓글 내용, 계층, 상위댓글);
                             addComment(postNo, cmtContent, 0, 0);
                         });
@@ -444,7 +447,7 @@
                         $(document).on("click", '.dept2CommentBtn', function (e) {
                             e.preventDefault();
 
-                            const cmtContent = $(this).siblings('textarea').val().trim().replace(/\n/g, '<br/>');
+                            const cmtContent = $(this).siblings('textarea').val().trim();
 
                             const comClass = $(this).parents("li").attr('class').split("dept_")[1] * 1;
                             const comNo = $(this).parents("li").attr('id').split("_")[1] * 1;
@@ -476,7 +479,7 @@
                             }
 
                             //수정하려는 댓글 내용 가져와서 댓글 폼에 추가
-                            const content = $(this).parent('li').parent('ul').parent('.comment-menu').siblings(".cmtContent").html().replace(/<br>/g, '\n');
+                            const content = $(this).parent('li').parent('ul').parent('.comment-menu').siblings(".cmtContent").children('span').html().replace(/(<([^>]+)>)/ig, "").trim();
 
                             let modifyHtml = "";
 
@@ -497,7 +500,7 @@
                             e.preventDefault();
                             const getComNo = $(this).parents('.commont-line').attr('id');
                             const comNo = getComNo.split("_")[1];
-                            const cmtContent = $('#modifyCmtContent').val().trim().replace(/\n/g, '<br/>');
+                            const cmtContent = $('#modifyCmtContent').val().trim();
                             updateComment(cmtContent, comNo)
                         });
 
