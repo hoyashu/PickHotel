@@ -1,0 +1,42 @@
+<html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<div class="board-page" id="postModify" layout:fragment="content">
+    <div class="row" id="page-title">
+        <h1 class="text-center">게시글 수정</h1>
+    </div>
+
+    <form method="POST" th:action="@{/post/update}">
+        <div class="mb-3">
+            <label for="subject">제목</label>
+            <input class="form-control" id="subject" name="subject" th:value="${post.subject}" type="text">
+        </div>
+        <div class="mb-3">
+            <label for="boardNo">게시판 선택</label>
+            <select id="boardNo" name="boardNo">
+                <div th:each="board : ${boardList}">
+					<span th:if="${board.key}==${post.boardNo}">
+						<option selected="${post.boardNo}" th:value="${board.key}"><span
+                                th:text="${board.value}"></span></option>
+					</span>
+                    <span th:unless="${board.key}==${post.boardNo}">
+						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
+					</span>
+                </div>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="content">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="5" th:text="${post.content}"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="tag">태그</label> <input class="form-control" id="tag" name="tag" th:value="${post.tag}"
+                                               type="text">
+        </div>
+        <div>
+            <button class="btn btn-sm btn-primary" id="modifyBtn" style="font-size: 12px;" type="submit">수정</button>
+            <a class="btn btn-sm btn-primary" th:href="@{/post/{no}(no=${post.postNo})}">취소</a>
+        </div>
+        <input name="postNo" th:value="${post.postNo}" type="hidden">
+    </form>
+</div>
