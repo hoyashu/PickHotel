@@ -156,7 +156,7 @@ public class BoardController {
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
         RoomVo room = new RoomVo();
-        if (review != null) {
+        if(review != null){
             room = this.roomService.retrieveRoom(review.getRoomNo());
         }
 

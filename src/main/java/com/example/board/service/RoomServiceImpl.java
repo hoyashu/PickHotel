@@ -1,51 +1,114 @@
 package com.example.board.service;
 
+import com.example.board.model.Link;
+import com.example.board.model.RoomResponse;
 import com.example.board.model.RoomVo;
-import com.example.board.persistent.RoomDaoImpl;
+import com.example.board.persistent.RoomDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
+    private final String URI_ROOMS = "http://localhost:15000/api/rooms";
+    private final String URI_ROOMS_ROOMNO = "http://localhost:15000/api/rooms/{roomNo}";
+    private final String URI_ROOM = "http://localhost:15000/api/room";
 
     @Autowired
-    private RoomDaoImpl roomDao;
+    private RestTemplate restTemplate;
 
-    //숙소 등록
-    public void registerRoom(RoomVo room) {
-        this.roomDao.insertRoom(room);
-    }
+    @Autowired
+    private RoomDao roomDao;
 
-    //숙소 목록 조회
-    public List<RoomVo> retrieveRoomList() {
+    public List<RoomVo> retrieveRoomList(){
         return this.roomDao.selectRoomList();
     }
 
-    //숙소 상세 조회
-    public RoomVo retrieveRoom(int id) {
-        return this.roomDao.selectRoom(id);
-    }
+    //방 목록 조회
+    public RoomResponse retrieveRooms() {
+        ResponseEntity<RoomResponse> responseEntity = restTemplate.getForEntity(URI_ROOMS, RoomResponse.class);
+        RoomResponse roomResponse = responseEntity.getBody();
 
-    //숙소 수정
-    public void modifyReview(RoomVo room) {
-        this.roomDao.updateRoom(room);
-    }
-
-    //숙소 삭제
-    public RoomVo removeRoom(int id) {
-
-        //숙제 존재여부 확인
-        RoomVo room = retrieveRoom(id);
-
-        //숙소가 존재할 경우
-        if (room != null) {
-            //숙소를 삭제한다.
-            this.roomDao.deleteRoom(id);
-            //삭제한 숙소 정보 리턴
-            return room;
+        List<Link> links = roomResponse.getLinks();
+        for (Link link : links) {
+            System.out.println("rel : " + link.getRel());
+            System.out.println("href : " + link.getHref());
         }
-        return null;
+
+        List<RoomVo> content = roomResponse.getContent();
+        for (RoomVo room : content) {
+            System.out.println("no : " + room.getNo());
+            System.out.println("roomName : " + room.getRoomName());
+            System.out.println("roomDeco : " + room.getRoomDeco());
+            System.out.println("roomAddress : " + room.getRoomAddress());
+            System.out.println("systemFileName : " + room.getSystemFileName());
+            System.out.println("originalFileName : " + room.getOriginalFileName());
+
+            List<Link> linkList = room.getLinks();
+            for (Link link : linkList) {
+                System.out.println("rel : " + link.getRel());
+                System.out.println("href : " + link.getHref());
+            }
+        }
+
+        return roomResponse;
+    }
+
+    //방 상세 조회
+    public RoomVo retrieveRoom(int roomNo){
+
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        params.put("roomNo",roomNo);
+
+        ResponseEntity<RoomVo> responseEntity = restTemplate.getForEntity(URI_ROOMS_ROOMNO, RoomVo.class, params);
+        RoomVo room = new RoomVo();
+
+        int statusCode = responseEntity.getStatusCodeValue();
+        if(statusCode == 200){
+            room = responseEntity.getBody();
+            System.out.println("no : " + room.getNo());
+            System.out.println("roomName : " + room.getRoomName());
+            System.out.println("roomDeco : " + room.getRoomDeco());
+            System.out.println("roomAddress : " + room.getRoomAddress());
+            System.out.println("systemFileName : " + room.getSystemFileName());
+            System.out.println("originalFileName : " + room.getOriginalFileName());
+            List<Link> linkList = room.getLinks();
+            if (linkList != null){
+                for (Link link : linkList){
+                    System.out.println("rel : " + link.getRel());
+                    System.out.println("href : " + link.getHref());
+                }
+            }
+        }
+        return room;
+    }
+
+    //방 생성
+    public String registerRoom(RoomVo room){
+
+        URI uri = restTemplate.postForLocation(URI_ROOM, room);
+        System.out.println("URI : " + uri);
+
+        return uri.toString();
+    }
+
+    //방 삭제
+    public void removeRoom(int roomNo){
+
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        params.put("roomNo", roomNo);
+
+        restTemplate.delete(URI_ROOMS_ROOMNO, params);
+    }
+
+    //방 업데이트
+    public void updateRoom(RoomVo room){
+        restTemplate.put(URI_ROOM, room, RoomVo.class);
     }
 }
