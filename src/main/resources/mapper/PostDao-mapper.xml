@@ -57,7 +57,7 @@
 		SELECT d.bo_group_name, c.bo_name, a.bo_no, a.post_no,
 			   a.po_subject, a.po_content, a.po_mb_no, b.mb_nick,
 		       DATE_FORMAT(a.po_datetime, '%Y/%m/%d %H:%i:%s') as writedate,
-		       a.po_tag, a.po_comment, a.po_isblind
+		       a.po_tag, a.po_views, a.po_comment, a.po_isblind
 		FROM post a INNER JOIN member b ON a.po_mb_no = b.mb_no
 					INNER JOIN board c ON a.bo_no = c.bo_no
 					INNER JOIN board_group d ON c.bo_group_no = d.bo_group_no
@@ -72,32 +72,46 @@
 		SELECT bo_name FROM board;
 	</select>
 
-	<!-- <resultMap type="PostVo" id="selectPostMap">
-		<result property="postNo" column="post_no" />
-		<result property="subject" column="po_subject" />
-		<result property="content" column="po_content" />
-		<result property="writerNo" column="po_mb_no" />
-		<result property="tag" column="po_tag" />
-		<result property="views" column="po_views" />
-		<result property="createDate" column="writedate" />
-		<result property="boardNo" column="bo_no" />
-		<result property="writerNick" column="mb_nick" />
-		<collection property="attachList" column="atta_no" javaType="ArrayList" ofType="AttachVo">
-			<result property=""></result>
-		</collection>
-		<association property="review"></association>
-	</resultMap>
+	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
+		SELECT post_no, po_mb_no, po_subject,
+		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick
+		FROM post JOIN member ON post.po_mb_no = member.mb_no
+		WHERE bo_no = #{boardNo} and po_isblind = 0
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("subject")'>
+			and po_subject like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("content")'>
+			and po_content like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
+			and mb_nick like concat('%',#{searchKeyword},'%')
+		</if>
+		ORDER BY writedate DESC
+		LIMIT
+		#{paginationInfo.firstRecordIndex}, #{recordsPerPage}
+	</select>
 
-	<select id="selectPost" parameterType="int" resultMap="selectPostMap">
-		SELECT p.post_no, p.po_subject, p.po_content, p.po_mb_no, p.po_tag, p.po_views,
-		date_format(p.po_datetime, '%Y/%m/%d %h:%i:%s') as writedate, p.bo_no ,
-		a.atta_realname, a.atta_sysname, a.atta_size, a.atta_no, m.mb_nick,
-		roo_no, re_rate_loc, re_rate_clean, re_rate_comu, re_rate_chip, re_vsdate, re_push_pl, re_push_npl
-		FROM post as p LEFT JOIN attach as a ON p.post_no = a.post_no
-		INNER JOIN member AS m ON m.mb_no = p.po_mb_no
-		LEFT JOIN review AS r ON p.post_no = r.post_no
-		WHERE p.post_no = #{postNo}
-	</select>-->
+	<select id="selectPostCount" parameterType="PostVo" resultType="int">
+		SELECT
+		COUNT(post_no)
+		FROM post JOIN member ON post.po_mb_no = member.mb_no
+		where bo_no = #{boardNo} and po_isblind = 0
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("subject")'>
+			and po_subject like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("content")'>
+			and po_content like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
+			and mb_nick like concat('%',#{searchKeyword},'%')
+		</if>
+	</select>
 
 	<!--게시글 수정-->
 	<parameterMap id="PostVoUpdateParameterMap" type="PostVo" >

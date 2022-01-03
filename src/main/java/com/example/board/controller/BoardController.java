@@ -106,15 +106,15 @@ public class BoardController {
 
     // 게시글 목록
     @GetMapping("/board/{boardNo}")
-    public String list(@PathVariable("boardNo") int boardNo, Model model) {
+    public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
+                       @ModelAttribute("params") PostVo params) {
 
         //게시판 ID로 해당 게시판 내 게시글 목록을 가져온다.
-        List<PostVo> posts = postService.retrieveAllPosts(boardNo);
+        List<PostVo> posts = this.postService.retrievePostList(params);
+        model.addAttribute("posts", posts);
 
         //게시판 ID로 해당 게시판 이름을 가져온다
         BoardVo board = boardService.selectBoard(boardNo);
-
-        model.addAttribute("posts", posts);
         model.addAttribute("board", board);
 
         return "page/post_list";
