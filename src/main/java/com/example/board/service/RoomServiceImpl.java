@@ -30,7 +30,7 @@ public class RoomServiceImpl implements RoomService {
         return this.roomDao.selectRoomList();
     }
 
-    //방 목록 조회
+    //숙소 목록 조회
     public RoomResponse retrieveRooms() {
         ResponseEntity<RoomResponse> responseEntity = restTemplate.getForEntity(URI_ROOMS, RoomResponse.class);
         RoomResponse roomResponse = responseEntity.getBody();
@@ -60,7 +60,7 @@ public class RoomServiceImpl implements RoomService {
         return roomResponse;
     }
 
-    //방 상세 조회
+    //숙소 상세 조회
     public RoomVo retrieveRoom(int roomNo){
 
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -89,7 +89,7 @@ public class RoomServiceImpl implements RoomService {
         return room;
     }
 
-    //방 생성
+    //숙소 생성
     public String registerRoom(RoomVo room){
 
         URI uri = restTemplate.postForLocation(URI_ROOM, room);
@@ -98,7 +98,7 @@ public class RoomServiceImpl implements RoomService {
         return uri.toString();
     }
 
-    //방 삭제
+    //숙소 삭제
     public void removeRoom(int roomNo){
 
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -107,7 +107,7 @@ public class RoomServiceImpl implements RoomService {
         restTemplate.delete(URI_ROOMS_ROOMNO, params);
     }
 
-    //방 업데이트
+    //숙소 업데이트
     public void updateRoom(RoomVo room){
         restTemplate.put(URI_ROOM, room, RoomVo.class);
     }
