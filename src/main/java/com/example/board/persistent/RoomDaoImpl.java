@@ -14,17 +14,17 @@ public class RoomDaoImpl implements RoomDao {
     private SqlSession sqlSession;
 
     //숙소 등록
-    public void insertRoom(RoomVo room) {
+    public void insertRoom(RoomVo room){
         this.sqlSession.insert("RoomDao.insertRoom", room);
     }
 
     //숙소 목록 조회
-    public List<RoomVo> selectRoomList() {
+    public List<RoomVo> selectRoomList(){
         return this.sqlSession.selectList("RoomDao.selectRoomList");
     }
 
     //숙소 상세 조회
-    public RoomVo selectRoom(int roomNo) {
+    public RoomVo selectRoom(int roomNo){
         return this.sqlSession.selectOne("RoomDao.selectRoom", roomNo);
     }
 
@@ -34,7 +34,7 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     //숙소 삭제
-    public void deleteRoom(int roomNo) {
+    public void deleteRoom(int roomNo){
         this.sqlSession.delete("RoomDao.deleteRoom", roomNo);
     }
 }

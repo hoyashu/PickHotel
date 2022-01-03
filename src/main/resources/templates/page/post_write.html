@@ -45,7 +45,7 @@
         <div class="room" th:if="${roomList} != null">
             <div>방 리스트</div>
             <div th:each="room : ${roomList}">
-                <input id="roomNo" name="roomNo" th:value="${room.roomNo}" type="radio"/>
+                <input id="no" name="no" th:value="${room.no}" type="radio"/>
                 <div th:text="${room.roomName}"></div>
                 <div th:text="${room.roomDeco}"></div>
                 <div th:text="${room.roomAddress}"></div>
