@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<!--댓글 추가-->
-	<insert id="insertComment" parameterType="CommentVo" parameterMap="CommentParameterMap" useGeneratedKeys="true" keyProperty="comNo">
+	<insert id="insertComment" parameterMap="CommentParameterMap" useGeneratedKeys="true" keyProperty="comNo">
 		INSERT INTO comment (co_no, post_no, co_mb_no, co_content, co_order, co_p_no, co_class, co_p_mb_no, co_datetime) 
 		VALUES (#{comNo}, #{postNo}, #{memNo}, #{content}, #{order}, #{parents}, #{comClass}, #{parentMemNo}, now()) 
 	</insert>

@@ -26,11 +26,13 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     private RoomDao roomDao;
 
-    public List<RoomVo> retrieveRoomList(){
+    @Override
+    public List<RoomVo> retrieveRoomList() {
         return this.roomDao.selectRoomList();
     }
 
     //방 목록 조회
+    @Override
     public RoomResponse retrieveRooms() {
         ResponseEntity<RoomResponse> responseEntity = restTemplate.getForEntity(URI_ROOMS, RoomResponse.class);
         RoomResponse roomResponse = responseEntity.getBody();
@@ -61,16 +63,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     //방 상세 조회
-    public RoomVo retrieveRoom(int roomNo){
+    @Override
+    public RoomVo retrieveRoom(int roomNo) {
 
         Map<String, Integer> params = new HashMap<String, Integer>();
-        params.put("roomNo",roomNo);
+        params.put("roomNo", roomNo);
 
         ResponseEntity<RoomVo> responseEntity = restTemplate.getForEntity(URI_ROOMS_ROOMNO, RoomVo.class, params);
         RoomVo room = new RoomVo();
 
         int statusCode = responseEntity.getStatusCodeValue();
-        if(statusCode == 200){
+        if (statusCode == 200) {
             room = responseEntity.getBody();
             System.out.println("no : " + room.getNo());
             System.out.println("roomName : " + room.getRoomName());
@@ -79,8 +82,8 @@ public class RoomServiceImpl implements RoomService {
             System.out.println("systemFileName : " + room.getSystemFileName());
             System.out.println("originalFileName : " + room.getOriginalFileName());
             List<Link> linkList = room.getLinks();
-            if (linkList != null){
-                for (Link link : linkList){
+            if (linkList != null) {
+                for (Link link : linkList) {
                     System.out.println("rel : " + link.getRel());
                     System.out.println("href : " + link.getHref());
                 }
@@ -90,7 +93,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     //방 생성
-    public String registerRoom(RoomVo room){
+    @Override
+    public String registerRoom(RoomVo room) {
 
         URI uri = restTemplate.postForLocation(URI_ROOM, room);
         System.out.println("URI : " + uri);
@@ -99,7 +103,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     //방 삭제
-    public void removeRoom(int roomNo){
+    @Override
+    public void removeRoom(int roomNo) {
 
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("roomNo", roomNo);
@@ -108,7 +113,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     //방 업데이트
-    public void updateRoom(RoomVo room){
+    @Override
+    public void updateRoom(RoomVo room) {
         restTemplate.put(URI_ROOM, room, RoomVo.class);
     }
 }

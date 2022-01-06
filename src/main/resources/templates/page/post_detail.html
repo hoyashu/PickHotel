@@ -114,10 +114,10 @@
                     </div>
                     <!-- 댓글 목록 -->
                     <ul class="list-group list-group-flush" id="ListComment">
-                        <li class="commont-noline" th:if="${comments} == null">첫번째 댓글을 남겨보세요✨</li>
+                        <li class="commont-noline" th:if="${comments==null or comments.isEmpty()}">첫번째 댓글을 남겨보세요✨</li>
                         <li th:class="'commont-line dept_'+${comment.comClass}" th:each="comment : ${comments}"
                             th:id="'comment_'+${comment.comNo}"
-                            th:if="${comments} != null">
+                            th:if="${comments!=null and !comments.isEmpty()}">
 
                             <!-- 댓글 내용 -->
                             <div class="info"><span class="memNick" th:text="${comment.memNick}"></span><span
@@ -127,8 +127,7 @@
                             <div class="cmtContent">
                                 <a class="comment-mention" th:href="@{'/member/'+${comment.memNo}}"
                                    th:if="${comment.parentMemNick != null}"
-                                   th:text="'@'+${comment.parentMemNick}"></a>
-                                <span th:text="${comment.content}"></span>
+                                   th:text="'@'+${comment.parentMemNick}"></a><span th:text="${comment.content}"></span>
                             </div>
 
                             <!-- 댓글 설정 메뉴 -->
@@ -144,7 +143,7 @@
                             </div>
                             <!-- 답글 -->
                             <i aria-hidden="true" class="fa fa-commenting"></i><a
-                                class="btn btn-link link-dark dept2CommentOpenBtn"
+                                class="btn link-dark dept2CommentOpenBtn"
                                 href="#">답글</a>
                             <div aria-expanded="true" class="dept2Comment" style="display:none">
                                 <div class="input-group">
@@ -184,7 +183,6 @@
                                 const con = confirm(_confirmLoginTxt)
                                 if (con == true) {
                                     location.href = _loginPage + "?redirectUrl=" + location.href;
-                                    ;
                                 }
                                 $(this).blur();
                             });
@@ -216,49 +214,53 @@
                             async function requestProcess(url, postNo) {
                                 try {
                                     rs = await getAjax(url, postNo);
+                                    const itemLen = Object.keys(rs).length;
+
                                     $('#ListComment').html("");
                                     let htmlStr = "";
 
                                     //댓글이 존재하지 않을 경우
-                                    if (rs.length == 0) {
+                                    if (itemLen == 0) {
                                         htmlStr += `<li class="commont-noline" >첫번째 댓글을 남겨보세요✨</li>`
+                                    } else {
+                                        //댓글이 존재하는 경우
+                                        for (let i = 0; i < rs.length; i++) {
+                                            htmlStr += `<li id="comment_${rs[i].comNo}" class="commont-line dept_${rs[i].comClass}">`
+                                            htmlStr += `<div class="info">`;
+                                            htmlStr += `<span class="memNick">${rs[i].memNick}</span>`;
+                                            htmlStr += `<span>${rs[i].writeday}</span>`;
+                                            htmlStr += `<input type="hidden" name="memNo" value="${rs[i].memNo}">`;
+                                            htmlStr += `</div>`;
+                                            htmlStr += `<div class="cmtContent">`;
+                                            if (rs[i].parentMemNick != null) {
+                                                htmlStr += `<a href="/member/${rs[i].memNo}" class="comment-mention">@${rs[i].parentMemNick}</a>`;
+                                            }
+                                            htmlStr += `<span>${rs[i].content}</span></div>`;
+                                            htmlStr += `<div class="comment-menu">`;
+                                            htmlStr += `<i class="fa fa-ellipsis-v comment-menu__btn" aria-hidden="true"></i>`;
+                                            htmlStr += `<ul style="display:none">`;
+                                            if (g_sUserMemNo && g_sUserMemNo == rs[i].memNo) {
+                                                htmlStr += `<li><a href="#" class="link-dark modifyFormBtn">수정</a></li>`;
+                                                htmlStr += `<li><a href="#" class="link-dark removeBtn">삭제</a></li>`;
+                                                htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
+                                            }
+                                            ;
+                                            htmlStr += `</ul>`;
+                                            htmlStr += `</div>`;
+                                            htmlStr += `<i class="fa fa-commenting" aria-hidden="true"></i><a href="#" class="btn link-dark dept2CommentOpenBtn">답글</a>`;
+                                            htmlStr += `<div class="dept2Comment" aria-expanded="true" style="display:none">`;
+                                            htmlStr += `<div class="input-group">`;
+                                            htmlStr += `<textarea class="form-control" placeholder="명예회손, 무단광고, 불법정보 유포 시 삭제될 수 있습니다."></textarea>`;
+                                            htmlStr += `<button class="btn btn-primary dept2CommentBtn">등록</button>`;
+                                            htmlStr += `</div>`;
+                                            htmlStr += `</div>`;
+                                            htmlStr += `<input type="hidden" name="parents" value="${rs[i].parents}">`;
+                                            htmlStr += `</li>`;
+                                        }
+                                        $('#ListComment').html(htmlStr);
                                     }
 
-                                    //댓글이 존재하는 경우
-                                    for (let i = 0; i < rs.length; i++) {
-                                        htmlStr += `<li id="comment_${rs[i].comNo}" class="commont-line dept_${rs[i].comClass}">`
-                                        htmlStr += `<div class="info">`;
-                                        htmlStr += `<span class="memNick">${rs[i].memNick}</span>`;
-                                        htmlStr += `<span>${rs[i].writeday}</span>`;
-                                        htmlStr += `<input type="hidden" name="memNo" value="${rs[i].memNo}">`;
-                                        htmlStr += `</div>`;
-                                        htmlStr += `<div class="cmtContent">`;
-                                        if (rs[i].parentMemNick != null) {
-                                            htmlStr += `<a href="/member/${rs[i].memNo}" class="comment-mention">@${rs[i].parentMemNick}</a>`;
-                                        }
-                                        htmlStr += `<span>${rs[i].content}</span></div>`;
-                                        htmlStr += `<div class="comment-menu">`;
-                                        htmlStr += `<i class="fa fa-ellipsis-v comment-menu__btn" aria-hidden="true"></i>`;
-                                        htmlStr += `<ul style="display:none">`;
-                                        if (g_sUserMemNo && g_sUserMemNo == rs[i].memNo) {
-                                            htmlStr += `<li><a href="#" class="link-dark modifyFormBtn">수정</a></li>`;
-                                            htmlStr += `<li><a href="#" class="link-dark removeBtn">삭제</a></li>`;
-                                            htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
-                                        }
-                                        ;
-                                        htmlStr += `</ul>`;
-                                        htmlStr += `</div>`;
-                                        htmlStr += `<i class="fa fa-commenting" aria-hidden="true"></i><a href="#" class="btn btn-link link-dark dept2CommentOpenBtn">답글</a>`;
-                                        htmlStr += `<div class="dept2Comment" aria-expanded="true" style="display:none">`;
-                                        htmlStr += `<div class="input-group">`;
-                                        htmlStr += `<textarea class="form-control" placeholder="명예회손, 무단광고, 불법정보 유포 시 삭제될 수 있습니다."></textarea>`;
-                                        htmlStr += `<button class="btn btn-primary dept2CommentBtn">등록</button>`;
-                                        htmlStr += `</div>`;
-                                        htmlStr += `</div>`;
-                                        htmlStr += `<input type="hidden" name="parents" value="${rs[i].parents}">`;
-                                        htmlStr += `</li>`;
-                                    }
-                                    $('#ListComment').html(htmlStr);
+
                                 } catch (error) {
                                     console.log("error : ", error);
                                 }
@@ -270,7 +272,6 @@
                         //*****댓글 등록 AJAX 시작*******//
                         function addComment(postNo, cmtContent, comClass, parents, parentMemNo) {
                             const getAjax = function (url, postNo, cmtContent, comClass, parents, parentMemNo) {
-                                console.log(postNo, cmtContent, comClass, parents, parentMemNo);
                                 return new Promise((resolve, reject) => {
                                     $.ajax({
                                         url    : url,
@@ -295,13 +296,17 @@
                             async function requestProcess(url, postNo, cmtContent, comClass, parents, parentMemNo) {
                                 try {
                                     rs = await getAjax(url, postNo, cmtContent, comClass, parents, parentMemNo);
-                                    if (rs == "OK") {
+                                    if (rs.result == "OK") {
+                                        //웹소켓 알림 발송
+                                        if (rs.isSend == "true") {
+                                            const str = JSON.stringify(rs);
+                                            websocket.send(str);
+                                        }
                                         init(postNo);
-                                    } else if (rs == "isNotMember") {
+                                    } else if (rs.result == "isNotMember") {
                                         const con = confirm(_confirmLoginTxt)
                                         if (con == true) {
                                             location.href = _loginPage + "?redirectUrl=" + location.href;
-                                            ;
                                         }
                                     } else {
                                         alert("등록에 실패했습니다.");
@@ -420,7 +425,7 @@
                             $(this).next("ul").show();
                         });
                         $(document).click(function (e) {
-                            if (!$('.comment-menu').has(e.target).length) $(".comment-menu ul").hide();
+                            blurClickHide(e, ".comment-menu", ".comment-menu ul");
                         });
                         //******댓글 설정 펼치기 끝*******//
 
@@ -522,6 +527,12 @@
                             ;
                         });
                         //******댓글AJAX작동 컨트롤 끝*******//
+
+                        const beforeStr = location.hash;
+                        const afterStr = beforeStr.split('?')[0].replace("#", "");
+                        if (beforeStr != "") {
+                            document.getElementById(afterStr).className += ' quick';
+                        }
                     });
                 </script>
             </div>
