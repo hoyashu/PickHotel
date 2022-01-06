@@ -72,6 +72,15 @@
 		SELECT bo_name FROM board;
 	</select>
 
+	<resultMap id="BoardVoResult" type="BoardVo">
+		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
+		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectAllBoards" resultType="BoardVo" resultMap="BoardVoResult">
+		SELECT bo_no, bo_name from board
+	</select>
+
 	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
 		SELECT post_no, po_mb_no, po_subject,
 		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick

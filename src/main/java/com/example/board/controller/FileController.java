@@ -1,13 +1,17 @@
 package com.example.board.controller;
 
+import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
 import com.example.board.service.FileUploadService;
+import com.example.board.service.MapServiceForApi;
 import com.example.board.service.PostService;
 import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
+import org.codehaus.groovy.transform.SourceURIASTTransformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Transactional
 @Controller
 public class FileController {
     @Autowired
@@ -28,6 +33,9 @@ public class FileController {
     @Autowired
     private FileUploadService fileUploadService;
 
+    @Autowired
+    private MapServiceForApi mapServiceForApi;
+
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
@@ -35,7 +43,18 @@ public class FileController {
                                 @RequestParam(value = "subject", required = false) String subject,
                                 @RequestParam(value = "content", required = false) String content,
                                 @RequestParam(value = "tag", required = false) String tag,
-                                @RequestParam(value = "roomNo", required = false, defaultValue = "-1") int roomNo,
+                                @RequestParam(value = "address_name", required = false) String address_name,
+                                @RequestParam(value = "category_group_code", required = false, defaultValue = "noValue") String category_group_code,
+                                @RequestParam(value = "category_group_name", required = false, defaultValue = "noValue") String category_group_name,
+                                @RequestParam(value = "category_name", required = false, defaultValue = "noValue") String category_name,
+                                @RequestParam(value = "distance", required = false, defaultValue = "noValue") String distance,
+                                @RequestParam(value = "id", required = false, defaultValue = "noValue") String id,
+                                @RequestParam(value = "phone", required = false, defaultValue = "noValue") String phone,
+                                @RequestParam(value = "place_name", required = false, defaultValue = "noValue") String place_name,
+                                @RequestParam(value = "place_url", required = false, defaultValue = "noValue") String place_url,
+                                @RequestParam(value = "road_address_name", required = false, defaultValue = "noValue") String road_address_name,
+                                @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
+                                @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
                                 @RequestParam(value = "rateLoc", required = false) int rateLoc,
                                 @RequestParam(value = "rateClean", required = false) int rateClean,
                                 @RequestParam(value = "rateComu", required = false) int rateComu,
@@ -52,6 +71,8 @@ public class FileController {
 
         }
 
+
+        // 게시글
         String newContent = convert(content);
         PostVo postVo = new PostVo();
         postVo.setWriterNo(writerNo);
@@ -63,9 +84,38 @@ public class FileController {
         int postNo = postService.registerPost(postVo);
         session.setAttribute("boardNo", boardNo);
 
-        if (roomNo != -1) {
+
+
+        // 숙소 정보, 리뷰 정보
+        if (address_name.trim().equals("")) {
+
+        } else{
+            MapVoForApi mapVoForApi = new MapVoForApi();
+            mapVoForApi.setAddress_name(address_name);
+            mapVoForApi.setCategory_group_code(category_group_code);
+            mapVoForApi.setCategory_group_name(category_group_name);
+            mapVoForApi.setCategory_name(category_name);
+            mapVoForApi.setDistance(distance);
+            mapVoForApi.setId(id);
+            mapVoForApi.setPhone(phone);
+            mapVoForApi.setPlace_name(place_name);
+            mapVoForApi.setPlace_url(place_url);
+            mapVoForApi.setRoad_address_name(road_address_name);
+            mapVoForApi.setX(x);
+            mapVoForApi.setY(y);
+
+            String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
+            String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/")+1);
+            int mapNo = Integer.parseInt(strMapNo);
+
             ReviewVo review = new ReviewVo();
-            review.setRoomNo(roomNo);
+
+            if(visitDate.trim().equals("")){
+                visitDate = null;
+            }
+
+            review.setPostNo(postNo);
+            review.setRoomNo(mapNo);
             review.setRateLoc(rateLoc);
             review.setRateClean(rateClean);
             review.setRateComu(rateComu);
@@ -76,6 +126,7 @@ public class FileController {
             this.reviewService.registerReview(review);
         }
 
+        // 파일
         if (images != null) {
             System.out.println("images");
 

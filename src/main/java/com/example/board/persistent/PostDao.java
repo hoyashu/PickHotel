@@ -1,5 +1,6 @@
 package com.example.board.persistent;
 
+import com.example.board.model.BoardVo;
 import com.example.board.model.PostUpdateCommentVo;
 import com.example.board.model.PostVo;
 import org.apache.ibatis.session.SqlSession;
@@ -49,6 +50,10 @@ public class PostDao {
     public List<String> selectBoardName() {
         List<String> list = this.sqlSession.selectList("PostDao.selectBoardName");
         return list;
+    }
+
+    public List<BoardVo> selectAllBoards() {
+        return this.sqlSession.selectList("PostDao.selectAllBoards");
     }
 
     //게시글 번호에 해당하는 게시글 상세정보를 조회

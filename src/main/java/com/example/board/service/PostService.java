@@ -1,5 +1,6 @@
 package com.example.board.service;
 
+import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
 import com.example.board.persistent.PostDao;
@@ -86,6 +87,11 @@ public class PostService {
     // 게시글 조회수 증가
     public void upHitcount(int postNo) {
         this.postDao.upHitcount(postNo);
+    }
+
+    // 모든 게시판 조회 번호와 이름만
+    public List<BoardVo> retrieveAllBoards(){
+       return this.postDao.selectAllBoards();
     }
 
 

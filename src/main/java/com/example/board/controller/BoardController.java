@@ -1,5 +1,7 @@
 package com.example.board.controller;
 
+import com.example.board.MapApi.MapVo;
+import com.example.board.MapApi.MetaVo;
 import com.example.board.model.*;
 import com.example.board.service.*;
 import com.example.common.exception.Constants;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +41,13 @@ public class BoardController {
     private AttachService attachService;
 
     @Autowired
-    private RoomService roomService;
-
-    @Autowired
     private ReviewService reviewService;
 
     @Autowired
     private CommentServiceImpl commentService;
+
+    @Autowired
+    private MapServiceForApi mapServiceForApi;
 
     // ########## 게시글 ########## //
     // 게시글 작성 폼
@@ -73,17 +76,13 @@ public class BoardController {
                 defaultListNo = boardNo;
             }
 
-            List<String> boardNames = this.postService.retrieveBoardName();
-            HashMap<Integer, String> boardList = new HashMap<Integer, String>();
-            int i = 1;
-            for (String string : boardNames) {
-                boardList.put(i, string);
-                i++;
+            List<BoardVo> boards = this.postService.retrieveAllBoards();
+            Map<Integer, String> boardList = new HashMap<Integer, String>();
+
+            for (BoardVo board : boards) {
+                boardList.put(board.getBoardNo(), board.getTitle());
             }
 
-            List<RoomVo> roomList = this.roomService.retrieveRoomList();
-
-            model.addAttribute("roomList", roomList);
             // request 영역에 디폴트 게시판 정보를 저장한다.
             model.addAttribute("defaultListNo", defaultListNo);
             // request 영역에 게시판 리스트 정보를 저장한다.
@@ -155,15 +154,23 @@ public class BoardController {
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
-        RoomVo room = new RoomVo();
-        if(review != null){
-            room = this.roomService.retrieveRoom(review.getRoomNo());
+        MapVoForApi mapVoForApi = new MapVoForApi();
+        try {
+            mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
+            model.addAttribute("mapVoForApi", mapVoForApi);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(mapVoForApi == null){
+            model.addAttribute("mapVoForApi", mapVoForApi);
         }
 
         model.addAttribute("post", post);
         model.addAttribute("attachList", attachVoList);
         model.addAttribute("review", review);
-        model.addAttribute("room", room);
+
+
         // ######### 게시글 상세정보 시작 ######### //
 
         // ######### 게시글 조회수 증가 시작 ######### //
@@ -217,6 +224,34 @@ public class BoardController {
         // ######### 댓글 목록 조회 끝 ######### //
 
         return "page/post_detail";
+    }
+
+    @ResponseBody
+    @GetMapping("/findMapInfo")
+    public Map giveMapinfo(@RequestParam(value = "postNo") int postNo){
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        PostVo post = this.postService.retrieveDetailBoard(postNo);
+        if (post == null) {
+            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+        }
+        ReviewVo review = this.reviewService.retrieveReview(postNo);
+        MapVoForApi mapVoForApi = new MapVoForApi();
+        try {
+            mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        List<MapVoForApi> documents = new ArrayList<MapVoForApi>();
+        documents.add(mapVoForApi);
+
+        MetaVo meta = new MetaVo();
+        meta.setTotal_count(1);
+
+        map.put("documents", documents);
+        map.put("meta", meta);
+
+        return map;
     }
 
 

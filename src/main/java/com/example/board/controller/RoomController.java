@@ -1,8 +1,10 @@
 package com.example.board.controller;
 
 import com.example.board.model.Link;
+import com.example.board.model.MapVoForApi;
 import com.example.board.model.RoomResponse;
 import com.example.board.model.RoomVo;
+import com.example.board.service.MapServiceForApi;
 import com.example.board.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,9 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private MapServiceForApi mapServiceForApi;
 
     //방 쓰기 폼
     @GetMapping("/room/write")
@@ -95,6 +100,7 @@ public class RoomController {
                 System.out.println("href : " + link.getHref());
             }
         }
+
 
         mv.addObject("roomResponse", roomResponse);
         mv.setViewName("/page/room_list");
