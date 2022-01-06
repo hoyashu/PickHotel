@@ -67,40 +67,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			jdbcType="INTEGER" />
 	</parameterMap>
 
-	<!-- Security -->
-	<select id="findByEmail" parameterType="java.lang.String" resultType="MemberResultMap">
-		SELECT mb_no as memNo, mb_name as name , mb_id as id, mb_pwd as pwd
-		FROM member
-		WHERE mb_id = #{id}
-	</select>
-
-	<select id="findByMemberRole" parameterType="int" resultType="MemberRoleVo">
-		select mr.member_role_id as memberRoleId, mr.mb_no as memNo, r.role_name as roleName, r.role_desc as roleDesc,
-			   s.resource_name as resourceName, s.resource_desc as resourceDesc
-		from member_role mr inner join role_resources rr inner join role r inner join resources s
-																					  on mr.role_id = rr.role_id and rr.role_id = r.role_id and rr.resource_id = s.resource_id
-		where mr.mb_no = {memNo}
-	</select>
-
-
 	<!-- 회원ID와 PW로 조회 -->
-	<select id="Selectlogin" parameterMap="MemberParamerterMap"
-		resultMap="MemberResultMap">
-		(select NULL AS mb_no, NULL AS mb_id, NULL AS mb_nick, NULL
-		AS mb_grade, NULL AS mb_state
-		FROM member
-		WHERE NOT EXISTS(
-		select mb_no,
-		mb_id, mb_nick, mb_grade, mb_state
-		from member
-		where mb_id = #{id} and
-		mb_pwd = #{pwd}))
-		UNION
-		(select mb_no, mb_id,
-		mb_nick, mb_grade, mb_state
-		from member
-		where mb_id = #{id} and mb_pwd = #{pwd})
-	</select>
+<!--	<select id="Selectlogin" parameterMap="MemberParamerterMap"-->
+<!--		resultMap="MemberResultMap">-->
+<!--		(select NULL AS mb_no, NULL AS mb_id, NULL AS mb_nick, NULL-->
+<!--		AS mb_grade, NULL AS mb_state-->
+<!--		FROM member-->
+<!--		WHERE NOT EXISTS(-->
+<!--		select mb_no,-->
+<!--		mb_id, mb_nick, mb_grade, mb_state-->
+<!--		from member-->
+<!--		where mb_id = #{id} and-->
+<!--		mb_pwd = #{pwd}))-->
+<!--		UNION-->
+<!--		(select mb_no, mb_id,-->
+<!--		mb_nick, mb_grade, mb_state-->
+<!--		from member-->
+<!--		where mb_id = #{id} and mb_pwd = #{pwd})-->
+<!--	</select>-->
 
 	<!-- 회원이름과 생년월일로 조회 -->
 	<select id="SelectNBMemberList"

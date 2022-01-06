@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RoleResourceDao">
+
+<!--    <resultMap id="RoleResourcesMap" type="RoleResourcesVo">-->
+<!--        <result property="id" javaType="int" column="id" jdbcType="INTEGER" />-->
+<!--        <result property="resourceName" javaType="string" column="resourceName" jdbcType="VARCHAR" />-->
+<!--        <result property="resourceType" javaType="string" column="resourceType" jdbcType="VARCHAR" />-->
+<!--        <result property="roleName" javaType="string" column="roleName" jdbcType="VARCHAR" />-->
+<!--        <result property="roleDesc" javaType="int" column="roleDesc" jdbcType="INTEGER" />-->
+<!--    </resultMap>-->
+
+    <select id="findRolesById" parameterType="string" resultType="MemberRoleVo">
+        select m.mb_id as id, r.role_desc as roleDesc, r.role_name as roleName, res.resource_name as resourceName
+        from member m inner join member_role mr inner join role r inner join role_resources rr inner join resources res
+            ON m.mb_no = mr.mb_no AND mr.role_id = r.role_id and r.role_id = rr.role_id and rr.resource_id = res.resource_id
+        WHERE m.mb_id = #{id}
+    </select>
+
+    <select id="findUserById" parameterType="string" resultType="MemberVo">
+        SELECT mb_no as memNo, mb_name as name, mb_id as id, mb_pwd as pwd, mb_nick as nick, mb_grade as grade, mb_state as state
+        FROM member
+        WHERE mb_id = #{id}
+    </select>
+
+    <select id="findRoleResources"  resultType="RoleResourcesVo">
+        select rr.resource_id as id, res.resource_name as resourceName, res.resource_type as resourceType,
+               r.role_name as roleName, r.role_desc as roleDesc
+        from role_resources rr inner join role r inner join resources res
+            on rr.role_id = r.role_id and  rr.resource_id = res.resource_id
+    </select>
+
+    <select id="findResources"  resultType="ResourcesVo">
+        select resource_id as id, resource_name as resourceName, resource_type as resoruceType
+        from resources
+    </select>
+
+
+<!--    <resultMap type="RoleVo" id="RoleVo">-->
+<!--        <result column="role_id" property="id"/>-->
+<!--        <result column="role_name" property="roleName"/>-->
+<!--    </resultMap>-->
+
+<!--    <resultMap type="RoleResourcesVo" id="RoleResourcesVo">-->
+<!--        <result column="resource_id" property="resourceId"/>-->
+<!--        <collection property="RoleVo" resultMap="RoleVo"/>-->
+<!--    </resultMap>-->
+
+</mapper>

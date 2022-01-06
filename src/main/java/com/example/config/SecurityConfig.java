@@ -1,44 +1,126 @@
-//package com.example.config;
-//
-//import com.example.member.MemberService;
-//import lombok.extern.java.Log;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-//import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-//
-//@Log
-//@EnableWebSecurity
-//public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//
-//	@Autowired
-//	private MemberService memberService;
-//
-//	@Override
-//	protected void configure(HttpSecurity http) throws Exception {
-//
-//		http.authorizeRequests().antMatchers("/").permitAll();
-//		http.authorizeRequests().antMatchers("/member/**").authenticated();
-//		http.authorizeRequests().antMatchers("/intranet/**").hasRole("ADMIN");
-//
-//		//특정 주소 권한 해제
-//		http.csrf().ignoringAntMatchers("/intranet/member/block_cancel")
-//		.ignoringAntMatchers("/intranet/member/grade_modify")
-//		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//
-//		http.formLogin().loginPage("/login").defaultSuccessUrl("/", true);
-//		http.exceptionHandling().accessDeniedPage("/denine");
-//		http.logout().logoutUrl("/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
-//
-//	}
-//
-////	@Override
-////	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-////		log.info("build Auth global...");
-////		auth.inMemoryAuthentication().withUser("manager").password("{noop}12345678").roles("MANAGER");
-////		auth.inMemoryAuthentication().withUser("admin").password("{noop}12345678").roles("ADMIN");
-////	}
-//
-//}
+package com.example.config;
+
+import com.example.security.DomainFailureHandler;
+import com.example.security.DomainSuccessHandler;
+import com.example.security.UrlFilterInvocationSecurityMetadataSource;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Arrays;
+
+@Slf4j
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private DomainFailureHandler domainFailureHandler;
+
+    @Autowired
+    private DomainSuccessHandler domainSuccessHandler;
+
+
+    @Bean("passwordEncoder")
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //중요
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        //WebSecurity : Security filter chain을 적용할 필요가 전혀 없는 요청인 경우
+        //정적 컨텐츠의 액세스는 인증을 걸지 않는다.
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        log.info("call SecurityConfig configure");
+
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/loginform")
+                .loginProcessingUrl("/login")                  //UsernamePasswordAuthenticationFilter 수행한다. 디폴트(/login)
+                .successHandler(domainSuccessHandler)
+                .failureHandler(domainFailureHandler)
+                .usernameParameter("id")                    //디폴트 : username
+                .passwordParameter("pwd")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .deleteCookies("SESSION", "JSESSIONID")
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .permitAll()
+                .and()
+                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
+
+    }
+
+    @Bean
+    public FilterSecurityInterceptor customFilterSecurityInterceptor() throws Exception {
+        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+        filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
+        filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
+        filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+        return filterSecurityInterceptor;
+    }
+
+    private AccessDecisionManager affirmativeBased() {
+        AffirmativeBased affirmativeBased = new AffirmativeBased(getAccessDecisionVoters());
+        return affirmativeBased;
+    }
+
+    private java.util.List<AccessDecisionVoter<? extends Object>> getAccessDecisionVoters() {
+        return Arrays.asList(new RoleVoter());
+    }
+
+    @Bean
+    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() throws Exception {
+        //return new UrlFilterInvocationSecurityMetadataSource1(urlResourcesMapFactoryBean().getObject());
+        return new UrlFilterInvocationSecurityMetadataSource();
+    }
+
+    // 인증 매니저
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+}
 

@@ -13,13 +13,10 @@ import java.util.Map;
 
 @Service("cityService")
 public class MemberService {
+    
     @Autowired
     private MemberDao memberDao;
 
-    // 로그인
-    public MemberVo loginMember(Map map) {
-        return this.memberDao.Selectlogin(map);
-    }
 
     // 방문횟수 카운트
     public void visitCount(String id) {
