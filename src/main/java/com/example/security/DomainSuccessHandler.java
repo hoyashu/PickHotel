@@ -40,10 +40,10 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("call failureHandler");
 
-//        WebAuthenticationDetails web = (WebAuthenticationDetails) authentication.getDetails();
-//        MemberVo member = resourceDao.getUserById(authentication.getName());
-//        HttpSession session = request.getSession();
-//        session.setAttribute("member",member);
+        WebAuthenticationDetails web = (WebAuthenticationDetails) authentication.getDetails();
+        MemberVo member = resourceDao.getUserById(authentication.getName());
+        HttpSession session = request.getSession();
+        session.setAttribute("member",member);
 
         response.sendRedirect("index");
     }
