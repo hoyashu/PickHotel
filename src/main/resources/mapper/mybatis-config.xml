@@ -29,5 +29,8 @@
 
 		<!-- 사이트 등급 -->
 		<typeAlias type="com.example.grade.model.SiteGradeVo" alias="SiteGradeVo" />
+
+		<!-- 알림 -->
+		<typeAlias type="com.example.alarm.model.AlarmVo" alias="AlarmVo" />
 	</typeAliases>
 </configuration>

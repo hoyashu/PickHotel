@@ -1,12 +1,9 @@
 package com.example.board.service;
 
 import com.example.board.model.BoardVo;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
-@Service
 public interface BoardService {
 
     //게시판 등록
@@ -26,6 +23,4 @@ public interface BoardService {
 
     //게시판 전체조회
     public List<BoardVo> retrieveBoardList();
-
-
 }

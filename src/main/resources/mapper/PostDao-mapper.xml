@@ -57,7 +57,7 @@
 		SELECT d.bo_group_name, c.bo_name, a.bo_no, a.post_no,
 			   a.po_subject, a.po_content, a.po_mb_no, b.mb_nick,
 		       DATE_FORMAT(a.po_datetime, '%Y/%m/%d %H:%i:%s') as writedate,
-		       a.po_tag, a.po_comment, a.po_isblind
+		       a.po_tag, a.po_views, a.po_comment, a.po_isblind
 		FROM post a INNER JOIN member b ON a.po_mb_no = b.mb_no
 					INNER JOIN board c ON a.bo_no = c.bo_no
 					INNER JOIN board_group d ON c.bo_group_no = d.bo_group_no
