@@ -5,6 +5,18 @@
 내용 : 사용자 CSS
 */
 
+.container table thead th {
+    text-align: center;
+}
+
+.container table td {
+    text-align: center;
+}
+
+.container table td.text-left {
+    text-align: left;
+}
+
 footer {
     clear: both;
 }
@@ -171,7 +183,14 @@ li[class^=pw-condition] i {
     height: auto;
 }
 
-/* 게시글 상세보기*/
+/* 게시글 목록 */
+.post-list-table span.post-comment {
+    font-size: 13px;
+    margin-left: 3px;
+    color: red;
+}
+
+/* 게시글 상세보기 */
 #postDetail .post-subject {
     font-size: 24px;
     line-height: 32px;
@@ -191,7 +210,7 @@ li[class^=pw-condition] i {
 
 /* 게시글 상세보기 > 댓글 목록*/
 #ListComment {
-    padding: 15px 0px;
+    /* padding: 15px 0px; */
 }
 
 #ListComment .commont-noline {
@@ -199,13 +218,25 @@ li[class^=pw-condition] i {
 }
 
 #ListComment .commont-line {
+}
+
+#ListComment .commont-noline, #ListComment .commont-line > div {
     padding: 32px 60px;
     -webkit-box-shadow: inset 0 -1px 0 0 #eeeff3;
     box-shadow: inset 0 -1px 0 0 #eeeff3;
     position: relative;
 }
 
-#ListComment .commont-line:before {
+
+#ListComment > li.dept_1 .comment-inner {
+    padding-left: 100px;
+}
+
+#ListComment .commont-line > div.delected-comment {
+    padding: 20px 60px;
+}
+
+#ListComment .commont-line .comment-inner:before {
     position: absolute;
     top: 40px;
     left: 60px;
@@ -252,7 +283,6 @@ li[class^=pw-condition] i {
 }
 
 #ListComment > li.dept_1 {
-    padding-left: 100px;
 }
 
 #ListComment > li.dept_2 {
@@ -294,6 +324,11 @@ li[class^=pw-condition] i {
 
 #ListComment .cmtContent {
     margin-bottom: 20px;
+}
+
+
+#ListComment .delected-comment .cmtContent {
+    margin: 0;
 }
 
 #ListComment .cmtContent span {

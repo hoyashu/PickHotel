@@ -91,8 +91,10 @@
                     <div id="tag" th:text="*{tag}"></div>
                 </div>
                 <div class="mb-3 panel-heading text-end">
-                    <a class="btn btn-secondary" onClick="editPost()">수정</a>
-                    <a class="btn btn-danger" onClick="removePost()">삭제</a>
+                    <a class="btn btn-secondary" onClick="editPost()"
+                       th:if="${session.member != null && writerNo == session.member.memNo}">수정</a>
+                    <a class="btn btn-danger" onClick="removePost()"
+                       th:if="${session.member != null && writerNo == session.member.memNo}">삭제</a>
                     <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>
                     <a class="btn btn-secondary" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
                 </div>
@@ -120,39 +122,52 @@
                             th:if="${comments!=null and !comments.isEmpty()}">
 
                             <!-- 댓글 내용 -->
-                            <div class="info"><span class="memNick" th:text="${comment.memNick}"></span><span
-                                    th:text="${comment.writeday}"></span><input name="memNo" th:value="${comment.memNo}"
-                                                                                type="hidden"></div>
-
-                            <div class="cmtContent">
-                                <a class="comment-mention" th:href="@{'/member/'+${comment.memNo}}"
-                                   th:if="${comment.parentMemNick != null}"
-                                   th:text="'@'+${comment.parentMemNick}"></a><span th:text="${comment.content}"></span>
-                            </div>
-
-                            <!-- 댓글 설정 메뉴 -->
-                            <div class="comment-menu">
-                                <i aria-hidden="true" class="fa fa-ellipsis-v comment-menu__btn"></i>
-                                <ul style="display:none">
-                                    <li th:if="${session.member != null && comment.memNo == session.member.memNo}"><a
-                                            class="link-dark modifyFormBtn" href="#">수정</a></li>
-                                    <li th:if="${session.member != null && comment.memNo == session.member.memNo}"><a
-                                            class="link-dark removeBtn" href="#">삭제</a></li>
-                                    <li><a class="link-dark commentBlcokBtn" href="#">신고</a></li>
-                                </ul>
-                            </div>
-                            <!-- 답글 -->
-                            <i aria-hidden="true" class="fa fa-commenting"></i><a
-                                class="btn link-dark dept2CommentOpenBtn"
-                                href="#">답글</a>
-                            <div aria-expanded="true" class="dept2Comment" style="display:none">
-                                <div class="input-group">
-                                    <textarea class="form-control"
-                                              placeholder="명예회손, 무단광고, 불법정보 유포 시 삭제될 수 있습니다."></textarea>
-                                    <button class="btn btn-primary dept2CommentBtn">등록</button>
+                            <div class="delected-comment" th:if="${comment.isDelect == 1}">
+                                <div class="cmtContent">
+                                    작성자가 삭제한 댓글입니다.
                                 </div>
                             </div>
-                            <input name="parents" th:value="${comment.parents}" type="hidden">
+                            <div class="comment-inner">
+                                <div class="info">
+                                    <span class="memNick" th:text="${comment.memNick}"></span><span
+                                        th:text="${comment.writeday}"></span><input name="memNo"
+                                                                                    th:value="${comment.memNo}"
+                                                                                    type="hidden">
+                                </div>
+
+                                <div class="cmtContent">
+                                    <a class="comment-mention" th:href="@{'/member/'+${comment.memNo}}"
+                                       th:if="${comment.parentMemNick != null}"
+                                       th:text="'@'+${comment.parentMemNick}"></a><span
+                                        th:text="${comment.content}"></span>
+                                </div>
+
+                                <!-- 댓글 설정 메뉴 -->
+                                <div class="comment-menu">
+                                    <i aria-hidden="true" class="fa fa-ellipsis-v comment-menu__btn"></i>
+                                    <ul style="display:none">
+                                        <li th:if="${session.member != null && comment.memNo == session.member.memNo}">
+                                            <a
+                                                    class="link-dark modifyFormBtn" href="#">수정</a></li>
+                                        <li th:if="${session.member != null && comment.memNo == session.member.memNo}">
+                                            <a
+                                                    class="link-dark removeBtn" href="#">삭제</a></li>
+                                        <li><a class="link-dark commentBlcokBtn" href="#">신고</a></li>
+                                    </ul>
+                                </div>
+                                <!-- 답글 -->
+                                <i aria-hidden="true" class="fa fa-commenting"></i><a
+                                    class="btn link-dark dept2CommentOpenBtn"
+                                    href="#">답글</a>
+                                <div aria-expanded="true" class="dept2Comment" style="display:none">
+                                    <div class="input-group">
+                                    <textarea class="form-control"
+                                              placeholder="명예회손, 무단광고, 불법정보 유포 시 삭제될 수 있습니다."></textarea>
+                                        <button class="btn btn-primary dept2CommentBtn">등록</button>
+                                    </div>
+                                </div>
+                                <input name="parents" th:value="${comment.parents}" type="hidden">
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -226,7 +241,10 @@
                                         //댓글이 존재하는 경우
                                         for (let i = 0; i < rs.length; i++) {
                                             htmlStr += `<li id="comment_${rs[i].comNo}" class="commont-line dept_${rs[i].comClass}">`
-                                            htmlStr += `<div class="info">`;
+                                            if (rs[i].isDelect == 1) { //삭제된 댓글임
+                                                htmlStr += `<div class="delected-comment"><div class="cmtContent">작성자가 삭제한 댓글입니다.</div></div>`;
+                                            }
+                                            htmlStr += `<div class="comment-inner"><div class="info">`;
                                             htmlStr += `<span class="memNick">${rs[i].memNick}</span>`;
                                             htmlStr += `<span>${rs[i].writeday}</span>`;
                                             htmlStr += `<input type="hidden" name="memNo" value="${rs[i].memNo}">`;
@@ -242,9 +260,8 @@
                                             if (g_sUserMemNo && g_sUserMemNo == rs[i].memNo) {
                                                 htmlStr += `<li><a href="#" class="link-dark modifyFormBtn">수정</a></li>`;
                                                 htmlStr += `<li><a href="#" class="link-dark removeBtn">삭제</a></li>`;
-                                                htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
                                             }
-                                            ;
+                                            htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
                                             htmlStr += `</ul>`;
                                             htmlStr += `</div>`;
                                             htmlStr += `<i class="fa fa-commenting" aria-hidden="true"></i><a href="#" class="btn link-dark dept2CommentOpenBtn">답글</a>`;
@@ -255,7 +272,7 @@
                                             htmlStr += `</div>`;
                                             htmlStr += `</div>`;
                                             htmlStr += `<input type="hidden" name="parents" value="${rs[i].parents}">`;
-                                            htmlStr += `</li>`;
+                                            htmlStr += `</div></li>`;
                                         }
                                         $('#ListComment').html(htmlStr);
                                     }
@@ -441,9 +458,8 @@
                         //******답글 폼 펼치기 시작*******//
                         $(document).on("click", '.dept2CommentOpenBtn', function (e) {
                             e.preventDefault();
-                            const deptForm = $(this).parents("li").children('.dept2Comment');
-                            //const parentMemNo = $(this).parents("li").siblings(".info").children("input[name=memNo]").val()
-                            //const parentMemName = $(this).parents("li").siblings(".info").children(".memNick").text()
+                            const deptForm = $(this).parents("div").children('.dept2Comment');
+                            $(".dept2Comment").hide();
                             deptForm.toggle();
                         });
                         //******댓글 설정 펼치기 끝*******//
@@ -453,12 +469,9 @@
                             e.preventDefault();
 
                             const cmtContent = $(this).siblings('textarea').val().trim();
-
                             const comClass = $(this).parents("li").attr('class').split("dept_")[1] * 1;
-                            const comNo = $(this).parents("li").attr('id').split("_")[1] * 1;
                             const parent = $(this).parents(".dept2Comment").next("input[name=parents]").val();
-
-                            const parentMemNo = $(this).parents("li").children(".info").children("input[name=memNo]").val();
+                            const parentMemNo = $(this).parents("li").children(".comment-inner").children(".info").children("input[name=memNo]").val();
 
                             //댓글의 답글인 경우
                             if (comClass == 0) {
@@ -497,7 +510,7 @@
                             modifyHtml += `</div>`;
 
                             //수정 폼을 수정하려는 댓글 하단에 추가
-                            $("#" + getComNo).append(modifyHtml);
+                            $("#" + getComNo).children(".comment-inner").append(modifyHtml);
                         });
 
                         //댓글 수정
