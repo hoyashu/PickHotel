@@ -31,6 +31,7 @@ public class RoomServiceImpl implements RoomService {
         return this.roomDao.selectRoomList();
     }
 
+
     //방 목록 조회
     @Override
     public RoomResponse retrieveRooms() {
@@ -62,9 +63,9 @@ public class RoomServiceImpl implements RoomService {
         return roomResponse;
     }
 
-    //방 상세 조회
     @Override
     public RoomVo retrieveRoom(int roomNo) {
+
 
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("roomNo", roomNo);
@@ -102,9 +103,11 @@ public class RoomServiceImpl implements RoomService {
         return uri.toString();
     }
 
+
     //방 삭제
     @Override
     public void removeRoom(int roomNo) {
+
 
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("roomNo", roomNo);
@@ -115,6 +118,7 @@ public class RoomServiceImpl implements RoomService {
     //방 업데이트
     @Override
     public void updateRoom(RoomVo room) {
+
         restTemplate.put(URI_ROOM, room, RoomVo.class);
     }
 }
