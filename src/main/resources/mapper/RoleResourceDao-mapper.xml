@@ -5,18 +5,10 @@
 
 <mapper namespace="RoleResourceDao">
 
-<!--    <resultMap id="RoleResourcesMap" type="RoleResourcesVo">-->
-<!--        <result property="id" javaType="int" column="id" jdbcType="INTEGER" />-->
-<!--        <result property="resourceName" javaType="string" column="resourceName" jdbcType="VARCHAR" />-->
-<!--        <result property="resourceType" javaType="string" column="resourceType" jdbcType="VARCHAR" />-->
-<!--        <result property="roleName" javaType="string" column="roleName" jdbcType="VARCHAR" />-->
-<!--        <result property="roleDesc" javaType="int" column="roleDesc" jdbcType="INTEGER" />-->
-<!--    </resultMap>-->
-
     <select id="findRolesById" parameterType="string" resultType="MemberRoleVo">
-        select m.mb_id as id, r.role_desc as roleDesc, r.role_name as roleName, res.resource_name as resourceName
+        select mr.member_role_id as memberRoleId, r.role_desc as roleDesc, r.role_name as roleName, res.resource_name as resourceName
         from member m inner join member_role mr inner join role r inner join role_resources rr inner join resources res
-            ON m.mb_no = mr.mb_no AND mr.role_id = r.role_id and r.role_id = rr.role_id and rr.resource_id = res.resource_id
+            ON m.mb_id = mr.mb_id AND mr.role_name = r.role_name and r.role_name = rr.role_name and rr.resource_name = res.resource_name
         WHERE m.mb_id = #{id}
     </select>
 
@@ -27,26 +19,21 @@
     </select>
 
     <select id="findRoleResources"  resultType="RoleResourcesVo">
-        select rr.resource_id as id, res.resource_name as resourceName, res.resource_type as resourceType,
+        select rr.role_resource_id as roleResourceId, res.resource_name as resourceName, res.resource_type as resourceType,
                r.role_name as roleName, r.role_desc as roleDesc
         from role_resources rr inner join role r inner join resources res
-            on rr.role_id = r.role_id and  rr.resource_id = res.resource_id
+            on rr.role_name = r.role_name and  rr.resource_name = res.resource_name
     </select>
 
     <select id="findResources"  resultType="ResourcesVo">
-        select resource_id as id, resource_name as resourceName, resource_type as resoruceType
+        select resource_id as resourceId, resource_name as resourceName, resource_type as resoruceType
         from resources
     </select>
 
-
-<!--    <resultMap type="RoleVo" id="RoleVo">-->
-<!--        <result column="role_id" property="id"/>-->
-<!--        <result column="role_name" property="roleName"/>-->
-<!--    </resultMap>-->
-
-<!--    <resultMap type="RoleResourcesVo" id="RoleResourcesVo">-->
-<!--        <result column="resource_id" property="resourceId"/>-->
-<!--        <collection property="RoleVo" resultMap="RoleVo"/>-->
-<!--    </resultMap>-->
+    <select id="findRoleAll"  resultType="RoleVo">
+        SELECT role_id as roleId, role_desc as roleDesc, role_name as roleName
+        FROM role
+        ORDER BY role_desc asc
+    </select>
 
 </mapper>

@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RoleResourcesVo{
 
-    private Integer id;
+    private Integer roleResourceId;
     private String resourceName;
     private String resourceType;
     private String roleName;

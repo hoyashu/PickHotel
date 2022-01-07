@@ -1,9 +1,6 @@
 package com.example.member.persistent;
 
-import com.example.member.model.MemberRoleVo;
-import com.example.member.model.MemberVo;
-import com.example.member.model.ResourcesVo;
-import com.example.member.model.RoleResourcesVo;
+import com.example.member.model.*;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -35,6 +32,10 @@ public class RoleResourceDao {
     // 인가 URL 조회(시큐리티)
     public List<ResourcesVo> getResources(){
         return this.sqlSessionTemplate.selectList("RoleResourceDao.findResources");
+    }
+
+    public List<RoleVo> findRoleAll() {
+        return this.sqlSessionTemplate.selectList("RoleResourceDao.findRoleAll");
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.security;
 
 import com.example.member.model.RoleResourcesVo;
-import com.example.member.persistent.MemberDao;
 
 import com.example.member.persistent.RoleResourceDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +13,28 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
     private RoleResourceDao roleResourceDao;
 
-    private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
-
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
 
         HttpServletRequest request = ((FilterInvocation) object).getRequest();
-
         List<RoleResourcesVo> roleResources = roleResourceDao.getRoleResources();
 
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
+
         for (RoleResourcesVo roleResource : roleResources) {
-            requestMap.put(new AntPathRequestMatcher(roleResource.getResourceName()),
-                                    Arrays.asList(new SecurityConfig(roleResource.getRoleName())));
+            if (requestMap.containsKey(new AntPathRequestMatcher(roleResource.getResourceName()))) {
+                requestMap.get(new AntPathRequestMatcher(roleResource.getResourceName())).add(new SecurityConfig(roleResource.getRoleName()));
+            } else {
+                List<ConfigAttribute> arr = new ArrayList<>();
+                arr.add(new SecurityConfig(roleResource.getRoleName()));
+                requestMap.put(new AntPathRequestMatcher(roleResource.getResourceName()), arr);
+            }
         }
 
         System.out.println("request : " + request.getRequestURI());
@@ -55,9 +56,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     // 모든 권한 목록을 가져온다
     public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return requestMap.values().stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+        return null;
     }
 
     @Override

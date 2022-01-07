@@ -52,8 +52,7 @@
                              width="32"><span class="user-name" th:text="${session.member.nick}"></span>
                     </a>
                     <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/intranet}"
-                               th:if="${session.member.grade} == 5">관리자 페이지</a></li>
+                        <li><a class="dropdown-item"  th:href="@{/intranet}" th:if="${session.member.grade} == 5">관리자 페이지</a></li>
                         <!-- <li><a class="dropdown-item" th:href="@{/member/room?type=review}">나의 숙소 리뷰</a></li> -->
                         <li><a class="dropdown-item" th:href="@{/member/room?type=basic}">내가 쓴 게시글</a></li>
                         <li><a class="dropdown-item" th:href="@{/member/gradeup_list}">등업신청</a></li>

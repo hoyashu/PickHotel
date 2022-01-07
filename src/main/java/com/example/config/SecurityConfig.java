@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.member.service.RoleHierarchyService;
 import com.example.security.DomainFailureHandler;
 import com.example.security.DomainSuccessHandler;
 import com.example.security.UrlFilterInvocationSecurityMetadataSource;
@@ -11,7 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -42,6 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DomainSuccessHandler domainSuccessHandler;
 
+    @Autowired
+    private RoleHierarchyService roleHierarchyService;
+
 
     @Bean("passwordEncoder")
     public PasswordEncoder passwordEncoder() {
@@ -60,6 +66,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //WebSecurity : Security filter chain을 적용할 필요가 전혀 없는 요청인 경우
         //정적 컨텐츠의 액세스는 인증을 걸지 않는다.
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+//        web.ignoring().antMatchers("/webjars/**", "/static/**");
+
     }
 
     @Override
@@ -69,6 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/img/**", "/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -86,9 +95,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
-                .permitAll()
-                .and()
-                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
+                .permitAll();
+//                .and()
+//                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
 
     }
 
@@ -120,6 +129,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    /*
+    ----------------------------------------------------------------------------
+             Role Hierarchy
+    ----------------------------------------------------------------------------
+    */
+
+    @Bean
+    public RoleHierarchyImpl roleHierarchy(){
+        String allHierarchy = roleHierarchyService.findAllHierarchy();
+        System.out.println("allHierarchy : " + allHierarchy + "allHierarchy");
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy(allHierarchy);
+        return roleHierarchy;
+    }
+
+    @Bean
+    public AccessDecisionVoter<? extends Object> roleVoter(){
+        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
+        return roleHierarchyVoter;
     }
 
 }

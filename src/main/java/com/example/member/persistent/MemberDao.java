@@ -40,6 +40,9 @@ public class MemberDao {
         this.sqlSessionTemplate.insert("MemberDao.InsertMember", map);
     }
 
+    // 회원가입 룰 추가
+    public void insertRole(String id) { this.sqlSessionTemplate.insert("MemberDao.InsertRole", id);}
+
     // 아이디 중복체크
     public String selectIdCheck(String id) {
         return this.sqlSessionTemplate.selectOne("MemberDao.selectIdCheck", id);

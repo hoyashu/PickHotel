@@ -43,6 +43,9 @@ public class MemberService {
         this.memberDao.insertMember(map);
     }
 
+    // 회원가입 Role 추가
+    public void registerRole(String id) { this.memberDao.insertRole(id); }
+
     // 아이디 중복체크
     public String retrieveIdCheck(String id) {
         return this.memberDao.selectIdCheck(id);

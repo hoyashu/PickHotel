@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class ResourcesVo {
 
-    private Integer id;
+    private Integer resourceId;
     private String resourceName;
     private String resourceType;
 

@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MemberRoleVo {
 
-    private String id;
+    private String memberRoleId;
     private Integer roleDesc;
     private String roleName;
     private String resourceName;
