@@ -94,6 +94,10 @@ public class PostService {
        return this.postDao.selectAllBoards();
     }
 
+    public BoardVo retrieveBoardForUseCheck(int boardNo) {
+        return this.postDao.selectBoardForUseCheck(boardNo);
+    }
+
 
     //게시글 정보를 변경하다.
     public void modifyPost(PostVo post) {

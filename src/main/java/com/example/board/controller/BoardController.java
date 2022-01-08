@@ -226,6 +226,7 @@ public class BoardController {
         return "page/post_detail";
     }
 
+    // 카카오 맵에 정보 전달
     @ResponseBody
     @GetMapping("/findMapInfo")
     public Map giveMapinfo(@RequestParam(value = "postNo") int postNo){
@@ -240,7 +241,7 @@ public class BoardController {
         try {
             mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
         } catch (Exception e){
-            e.printStackTrace();
+
         }
         List<MapVoForApi> documents = new ArrayList<MapVoForApi>();
         documents.add(mapVoForApi);
@@ -286,27 +287,34 @@ public class BoardController {
                 // 작성자 본인인 경우
                 // 게시글 정보 가져오기
                 PostVo post = this.postService.retrieveDetailBoard(postNo);
+                BoardVo board = this.postService.retrieveBoardForUseCheck(post.getBoardNo());
+                ReviewVo review = this.reviewService.retrieveReview(postNo);
+                List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
+                MapVoForApi mapVoForApi = new MapVoForApi();
+                try {
+                    model.addAttribute("mapNo", review.getRoomNo());
+                    mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
+                    model.addAttribute("mapVoForApi", mapVoForApi);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                if(mapVoForApi == null){
+                    model.addAttribute("mapVoForApi", mapVoForApi);
+                }
 
                 //현존하지 않은 게시글인 경우
                 if (post == null) {
                     throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
                 }
 
-                //게시판 목록 정보 가져오기
-                List<String> boardNames = this.postService.retrieveBoardName();
 
-                //HashMap 데이터 형에 게시판 목록 담기
-                HashMap<Integer, String> boardList = new HashMap<Integer, String>();
-                int i = 1;
-                for (String string : boardNames) {
-                    boardList.put(i, string);
-                    i++;
-                }
-                //게시판 목록 model셋팅
-                model.addAttribute("boardList", boardList);
 
                 //게시글 정보 model셋팅
                 model.addAttribute("post", post);
+                model.addAttribute("board", board);
+                model.addAttribute("review", review);
+                model.addAttribute("attachList", attachVoList);
 
                 return "page/post_modify";
             }
@@ -356,6 +364,22 @@ public class BoardController {
                 return "redirect:/post/" + post.getPostNo();
             }
         }
+    }
+
+    // 선택한 파일 삭제
+    @ResponseBody
+    @GetMapping("/attach/delete/{attachNo}")
+    public Map deleteFile(@PathVariable("attachNo") int attachNo){
+        Map<String, String> map = new HashMap<String, String>();
+        String success = "fail";
+        try {
+            this.attachService.removePostAttach(attachNo);
+            success = "success";
+        } catch (Exception e){
+
+        }
+        map.put("success", success);
+        return map;
     }
 
     // 게시글 삭제

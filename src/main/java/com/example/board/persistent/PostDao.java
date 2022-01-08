@@ -56,6 +56,10 @@ public class PostDao {
         return this.sqlSession.selectList("PostDao.selectAllBoards");
     }
 
+    public BoardVo selectBoardForUseCheck(int boardNo){
+        return this.sqlSession.selectOne("PostDao.selectBoardForUseCheck", boardNo);
+    }
+
     //게시글 번호에 해당하는 게시글 상세정보를 조회
     public PostVo selectDetailPost(int postNo) {
         return this.sqlSession.selectOne("PostDao.selectDetailPost", postNo);

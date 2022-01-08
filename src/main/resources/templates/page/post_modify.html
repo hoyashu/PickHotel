@@ -1,42 +1,740 @@
 <html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
-<div class="board-page" id="postModify" layout:fragment="content">
+<div class="board-page" id="postWrite" layout:fragment="content">
+    <style>
+        .map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
+        .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
+        .map_wrap {position:relative;width:100%;height:500px;}
+        #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
+        .bg_white {background:#fff;}
+        #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
+        #menu_wrap .option{text-align: center;}
+        #menu_wrap .option p {margin:10px 0;}
+        #menu_wrap .option button {margin-left:5px;}
+        #placesList li {list-style: none;}
+        #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;}
+        #placesList .item span {display: block;margin-top:4px;}
+        #placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+        #placesList .item .info{padding:10px 0 10px 55px;}
+        #placesList .info .gray {color:#8a8a8a;}
+        #placesList .info .jibun {padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
+        #placesList .info .tel {color:#009900;}
+        #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:10px 0 0 10px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
+        #placesList .item .marker_1 {background-position: 0 -10px;}
+        #placesList .item .marker_2 {background-position: 0 -56px;}
+        #placesList .item .marker_3 {background-position: 0 -102px}
+        #placesList .item .marker_4 {background-position: 0 -148px;}
+        #placesList .item .marker_5 {background-position: 0 -194px;}
+        #placesList .item .marker_6 {background-position: 0 -240px;}
+        #placesList .item .marker_7 {background-position: 0 -286px;}
+        #placesList .item .marker_8 {background-position: 0 -332px;}
+        #placesList .item .marker_9 {background-position: 0 -378px;}
+        #placesList .item .marker_10 {background-position: 0 -423px;}
+        #placesList .item .marker_11 {background-position: 0 -470px;}
+        #placesList .item .marker_12 {background-position: 0 -516px;}
+        #placesList .item .marker_13 {background-position: 0 -562px;}
+        #placesList .item .marker_14 {background-position: 0 -608px;}
+        #placesList .item .marker_15 {background-position: 0 -654px;}
+        #pagination {margin:10px auto;text-align: center;}
+        #pagination a {display:inline-block;margin-right:10px;}
+        #pagination .on {font-weight: bold; cursor: default;color:#777;}
+
+        .videos  video {
+            height: 200px;
+            width: auto;
+        }
+
+        .photos  img {
+            height: 200px;
+            width: auto;
+        }
+
+    </style>
+
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 수정</h1>
     </div>
+    <div th:if="${mapVoForApi != null}">
+        <div class="map_wrap">
+            <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
 
-    <form method="POST" th:action="@{/post/update}">
+            <div id="menu_wrap" class="bg_white">
+                <div class="option">
+                    <div>
+                        <form onsubmit="searchPlaces(); return false;">
+                            키워드 : <input type="text" id="keyword" size="15">
+                            <button type="submit">검색하기</button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <ul id="placesList"></ul>
+                <div id="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <form id="saveAll" accept-charset="UTF-8" enctype="multipart/form-data" method="POST" th:action="@{/uploadFileForModify}">
+        <div th:if="${mapVoForApi != null}">
+            <div class="mapInfo">
+                숙소 이름 : <input type="text" id="place_name" name="place_name" readonly>
+                숙소 주소 : <input type="text" id="road_address_name" name="road_address_name" readonly>
+                <input type="hidden" id="address_name" name="address_name">
+                <input type="hidden" id="category_group_code" name="category_group_code">
+                <input type="hidden" id="category_group_name" name="category_group_name">
+                <input type="hidden" id="category_name" name="category_name">
+                <input type="hidden" id="distance" name="distance">
+                <input type="hidden" id="id" name="id">
+                <input type="hidden" id="phone" name="phone">
+                <input type="hidden" id="place_url" name="place_url">
+                <input type="hidden" id="x" name="x">
+                <input type="hidden" id="y" name="y">
+
+            </div>
+
+        </div>
+        <span th:if="${mapNo != null}"><input type="hidden" id="map_no" name="map_no" th:value="${mapNo}"></span>
+
+
         <div class="mb-3">
             <label for="subject">제목</label>
-            <input class="form-control" id="subject" name="subject" th:value="${post.subject}" type="text">
-        </div>
-        <div class="mb-3">
-            <label for="boardNo">게시판 선택</label>
-            <select id="boardNo" name="boardNo">
-                <div th:each="board : ${boardList}">
-					<span th:if="${board.key}==${post.boardNo}">
-						<option selected="${post.boardNo}" th:value="${board.key}"><span
-                                th:text="${board.value}"></span></option>
-					</span>
-                    <span th:unless="${board.key}==${post.boardNo}">
-						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
-					</span>
-                </div>
-            </select>
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text" th:value="${post.subject}" required>
         </div>
 
         <div class="mb-3">
             <label for="content">내용</label>
-            <textarea class="form-control" id="content" name="content" rows="5" th:text="${post.content}"></textarea>
+            <textarea class="form-control" id="content" name="content" placeholder="내용을 입력해 주세요" rows="5" th:utext="${post.content}" required></textarea>
+        </div>
+        <div class="photos">
+            <label for="images">사진 추가하기(3MB 이하)</label>
+            <input accept="image/*" id="images" multiple name="images" type="file"/>
+            <div class="photogallery"></div>
+        </div>
+
+        <div class="videos">
+            <label for="videos">동영상 추가하기(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
+            <input id="videos" multiple name="videos" type="file"/>
+            <div class="videogallery"></div>
+        </div>
+
+        <div th:if="${attachList != null}">
+            <div>등록된 사진</div>
+            <div class="photos">
+                <div class="mb-3">
+                    <div id="showImages" th:each="attach : ${attachList}">
+                                <span th:if="${attach.fileType == 1}" th:class="${attach.no}">
+                                    <img th:src="'/upload/' + ${attach.systemFileName}"/>
+                                    <button type="button" th:id="${attach.no}" onclick="removeFile(this)">삭제</button>
+                                </span>
+                    </div>
+                </div>
+            </div>
+
+            <div>등록된 비디오</div>
+            <div class="videos">
+                <div class="mb-3">
+                    <div id="showVideos" th:each="attach : ${attachList}">
+                                <span th:if="${attach.fileType == 2}" th:class="${attach.no}">
+                                    <video controls>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4"/>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/webm"/>
+                                        <source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg"/>
+                                    </video>
+                                    <button type="button" th:id="${attach.no}" onclick="removeFile(this)">삭제</button>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="review" th:if="${review != null}">
+
+            <div class="review">
+                <label for="rateLoc">위치</label>
+                <select id="rateLoc" name="rateLoc">
+                    <option th:selected="${review.rateLoc == 1}" value="1">1</option>
+                    <option th:selected="${review.rateLoc == 2}" value="2">2</option>
+                    <option th:selected="${review.rateLoc == 3}" value="3">3</option>
+                    <option th:selected="${review.rateLoc == 4}" value="4">4</option>
+                    <option th:selected="${review.rateLoc == 5}" value="5">5</option>
+                </select>
+                <label for="rateClean">위생</label>
+                <select id="rateClean" name="rateClean" th:selected="${review.rateClean}">
+                    <option th:selected="${review.rateClean == 1}" value="1">1</option>
+                    <option th:selected="${review.rateClean == 2}" value="2">2</option>
+                    <option th:selected="${review.rateClean == 3}" value="3">3</option>
+                    <option th:selected="${review.rateClean == 4}" value="4">4</option>
+                    <option th:selected="${review.rateClean == 5}" value="5">5</option>
+                </select>
+                <label for="rateComu">의사소통</label>
+                <select id="rateComu" name="rateComu" th:selected="${review.rateComu}">
+                    <option th:selected="${review.rateComu == 1}" value="1">1</option>
+                    <option th:selected="${review.rateComu == 2}" value="2">2</option>
+                    <option th:selected="${review.rateComu == 3}" value="3">3</option>
+                    <option th:selected="${review.rateComu == 4}" value="4">4</option>
+                    <option th:selected="${review.rateComu == 5}" value="5">5</option>
+                </select>
+                <label for="rateChip">가성비</label>
+                <select id="rateChip" name="rateChip" th:selected="${review.rateChip}">
+                    <option th:selected="${review.rateChip == 1}" value="1">1</option>
+                    <option th:selected="${review.rateChip == 2}" value="2">2</option>
+                    <option th:selected="${review.rateChip == 3}" value="3">3</option>
+                    <option th:selected="${review.rateChip == 4}" value="4">4</option>
+                    <option th:selected="${review.rateChip == 5}" value="5">5</option>
+                </select>
+
+                <div class="mb-3">
+                    <label for="visitDate">방문 날짜를 선택하세요</label>
+                    <input id="visitDate" name="visitDate" type="date" th:value="${review.visitDate}"/>
+                </div>
+                <div class="mb-3">
+                    <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
+                    <input class="form-control" id="recommendPlace" name="recommendPlace" type="text" th:value="${review.recommendPlace}">
+                </div>
+                <div class="mb-3">
+                    <label for="notRecommendPerson">이런분들께는 비추에요</label>
+                    <input class="form-control" id="notRecommendPerson" name="notRecommendPerson" type="text" th:value="${review.notRecommendPerson}">
+                </div>
+            </div>
         </div>
         <div class="mb-3">
-            <label for="tag">태그</label> <input class="form-control" id="tag" name="tag" th:value="${post.tag}"
-                                               type="text">
+            <label for="tag">태그</label>
+            <input class="form-control" id="tag" name="tag" placeholder="#태그입력" type="text" th:value="${post.tag}">
         </div>
+        <input type="hidden" id="postNo" name="postNo" th:value="${post.postNo}">
+        <input type="hidden" id="bordNo" name="bordNo" th:value="${post.boardNo}">
         <div>
-            <button class="btn btn-sm btn-primary" id="modifyBtn" style="font-size: 12px;" type="submit">수정</button>
-            <a class="btn btn-sm btn-primary" th:href="@{/post/{no}(no=${post.postNo})}">취소</a>
+            <button class="btn btn-sm btn-primary" id="saveBtn" type="button" onclick="submitCheck();">글 수정</button>
         </div>
-        <input name="postNo" th:value="${post.postNo}" type="hidden">
     </form>
+
+
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"></script>
+    <script type="text/javascript">
+
+        //페이지 로딩시 사용성 체크 사용
+
+        var postNo = document.getElementById("postNo").value;
+
+        // 페이지 로드 후 카카오 지도에 등록된 정보를 넣어준다.
+        window.onload = function(){
+            OnChange();
+
+            $.ajax({
+                type : "GET",
+                url : "/findMapInfo?postNo=" + postNo,
+                success : function(data){
+                    if(data != null){
+                        var documentsList = data.documents;
+                        var meta = data.meta;
+
+                        document.getElementById("address_name").value = documentsList[0].address_name;
+                        document.getElementById("category_group_code").value = documentsList[0].category_group_code;
+                        document.getElementById("category_group_name").value = documentsList[0].category_group_name;
+                        document.getElementById("category_name").value = documentsList[0].category_name;
+                        document.getElementById("distance").value = documentsList[0].distance;
+                        document.getElementById("id").value = documentsList[0].id;
+                        document.getElementById("phone").value = documentsList[0].phone;
+                        document.getElementById("place_name").value = documentsList[0].place_name;
+                        document.getElementById("place_url").value = documentsList[0].place_url;
+                        document.getElementById("road_address_name").value = documentsList[0].road_address_name;
+                        document.getElementById("x").value = documentsList[0].x;
+                        document.getElementById("y").value = documentsList[0].y;
+                        placesSearchCB(documentsList, meta);
+                    }
+
+                },
+                error : function(){
+                    alert("정보 가져오기 실패");
+                }
+            });
+        };
+
+        // 사용성 체크
+        function OnChange() {
+            var bordNoSelect = document.getElementById("bordNo").value;
+            $.ajax({
+                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                type   : 'GET',
+                success: function (data) {
+                    const result = data;
+                    if (result.board.usePhoto == 1) {
+                        $('.photos').show();
+                    } else {
+                        $('.photos').hide();
+                    }
+
+                    if (result.board.useVideo == 1) {
+                        $('.videos').show();
+                    } else {
+                        $('.videos').hide();
+                    }
+
+                    if (result.board.type == "review") {
+                        $('.review').show();
+                        $('.mapInfo').show();
+                        $('.map_wrap').show();
+                    } else {
+                        $('.review').hide();
+                        $('.mapInfo').hide();
+                        $('.map_wrap').hide();
+                    }
+                },
+                error  : function () {
+                    console.log("failed");
+                }
+            });
+        }
+
+        function submitCheck(){
+            var bordNoSelect = document.getElementById("bordNo").value;
+            var place_name;
+            var subject = document.getElementById('subject').value;
+            var content = document.getElementById('content').value;
+
+            $.ajax({
+                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                type   : 'GET',
+                success: function (data) {
+                    var result = data;
+                    if (result.board.type == "review" ) {
+                        if(document.getElementById('place_name') != null){
+                            place_name = document.getElementById('place_name').value;
+                            if (!place_name.replace(/^\s+|\s+$/g, '')) {
+                                alert('장소를 입력해주세요!');
+                                return false;
+                            }
+
+                        }
+
+                    }
+                    if(!subject.replace(/^\s+|\s+$/g, '')){
+                        alert("제목을 입력해주세요");
+                        return false;
+                    }
+
+                    if(!content.replace(/^\s+|\s+$/g, '')){
+                        alert("내용을 입력해주세요");
+                        return false;
+                    }
+                    document.getElementById('saveAll').submit();
+                },
+                error  : function () {
+                    console.log("failed");
+                }
+            });
+        }
+
+        // 이미지 유효성 검사
+        var sel_files = [];
+
+        $(document).ready(function () {
+            $("#images").on("change", handleImgsFilesSelect);
+        });
+
+        function handleImgsFilesSelect(e) {
+
+            sel_files = [];
+            $(".photogallery").empty();
+
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var sizeCheck = true;
+
+            filesArr.forEach(function (f) {
+                video_files.push(f);
+            });
+
+            filesArr.forEach(function (file) {
+                var fileSize = file.size;
+                var maxSize = 3 * 1024 * 1024;
+
+                if (fileSize > maxSize) {
+                    alert("이미지 사이즈는 3MB 이내로 등록 가능합니다.");
+                    sizeCheck = false;
+
+                    $("#images").val("");
+                    sel_files = [];
+                    $(".photogallery").empty();
+                    return;
+                }
+            });
+
+            if (sizeCheck == true) {
+                filesArr.forEach(function (f) {
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var img_html = "<img src=\"" + e.target.result + "\" />&nbsp;&nbsp;";
+                        $(".photogallery").append(img_html);
+                    }
+                    reader.readAsDataURL(f);
+                });
+            }
+
+        }
+
+        //비디오 유효성 검사
+        var video_files = [];
+
+        $(document).ready(function () {
+            $("#videos").on("change", handleVideosFilesSelect);
+        });
+
+        function handleVideosFilesSelect(e) {
+
+            video_files = [];
+            $(".videogallery").empty();
+
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var fileExtensionCheck = true;
+            var fileSizeCheck = true;
+
+            filesArr.forEach(function (f) {
+                video_files.push(f);
+            });
+
+            video_files.forEach(function (file) {
+                var abc = file.name.lastIndexOf(".");
+                var fileNameLength = file.name.length;
+                var fileExtension = file.name.substring(abc + 1, fileNameLength);
+
+                if (fileExtension == "mov" || fileExtension == "ogg" || fileExtension == "webm" || fileExtension == "mp4") {
+
+                } else {
+                    alert("사용할 수 없는 확장자가 포함되어 있습니다.");
+                    fileExtensionCheck = false;
+
+                    $("#videos").val("");
+                    video_files = [];
+                    $(".videogallery").empty();
+                    return;
+                }
+            });
+
+            video_files.forEach(function (file) {
+                var fileSize = file.size;
+                var maxSize = 30 * 1024 * 1024;
+                if (fileExtensionCheck == true) {
+                    if (file.size > maxSize) {
+                        alert("동영상은 30MB 이내로 등록 가능합니다.");
+                        fileSizeCheck = false;
+
+                        $("#videos").val("");
+                        video_files = [];
+                        $(".videogallery").empty();
+                        return;
+                    }
+                }
+            });
+
+            if (fileExtensionCheck == true && fileSizeCheck == true) {
+                filesArr.forEach(function (f) {
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var video_html = "<video controls>";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/mp4\" />";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/webm\" />";
+                        video_html += "<source src=\"" + e.target.result + "\" type=\"video/ogg\" />";
+                        video_html += "이 동영상은 지원하지 않습니다.</video>&nbsp;&nbsp;"
+                        $(".videogallery").append(video_html);
+                    }
+                    reader.readAsDataURL(f);
+
+                });
+            }
+        }
+
+        // 파일 삭제
+        function removeFile(target) {
+            var attachNo = document.getElementById(target.getAttribute('id')).getAttribute('id');
+            var attachNoClass = document.getElementsByClassName(attachNo);
+
+
+            $.ajax({
+               type : 'GET',
+               url :  '/attach/delete/' + attachNo,
+               success : function(data) {
+                   if(data.success == 'success'){
+                       console.log("삭제 성공");
+                       attachNoClass[0].innerHTML="";
+                   } else{
+                       console.log("삭제 실패");
+                   }
+               } ,
+               error : function(){
+                   alert("심각한 오류!");
+               }
+
+            });
+        }
+
+
+        //카카오 스크립트
+
+        // 마커를 담을 배열
+        var markers = [];
+
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+            mapOption = {
+                center : new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level : 3 // 지도의 확대 레벨
+            }
+
+        // 지도 생성
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // HTML의 geolocation 사용가능이면 사용자 위치로 중심 이동
+        if (navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(function(position){
+                var lat = position.coords.latitude, // 위도
+                    lon = position.coords.longitude; // 경도
+
+                var locPosition = new kakao.maps.LatLng(lat, lon);
+                map.setCenter(locPosition);
+            });
+
+        }
+
+        // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+        // 키워드 검색을 요청하는 함수입니다
+        function searchPlaces() {
+
+            var keyword = document.getElementById('keyword').value;
+
+            if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                alert('키워드를 입력해주세요!');
+                return false;
+            }
+
+            // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다 -> 키워드를 직접 받아 처리를 해줘야함 정보가 없을경우 없다고 알림
+            $.ajax({
+                type : "GET",
+                url : "/map/search?query=" + keyword,
+                success : function(data){
+                    var documentsList = data.mapResponse.documents;
+                    var meta = data.mapResponse.meta;
+                    placesSearchCB(documentsList, meta);
+
+                },
+                error : function(){
+                    alert("데이터 가져오기 실패");
+                }
+            });
+        }
+
+        // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+        function placesSearchCB(documentsList, meta) {
+            if(meta.total_count == 0){
+                alert("검색 정보가 없습니다.");
+                return false;
+            }
+
+            // 검색 목록과 마커를 표출합니다
+            displayPlaces(documentsList);
+
+            // 페이지 번호를 표출합니다
+            // displayPagination(meta);
+        }
+
+        // 검색 결과 목록과 마커를 표출하는 함수입니다
+        function displayPlaces(documentsList) {
+
+            var listEl = document.getElementById('placesList'),
+                menuEl = document.getElementById('menu_wrap'),
+                fragment = document.createDocumentFragment(),
+                bounds = new kakao.maps.LatLngBounds(),
+                listStr = '';
+
+            // 검색 결과 목록에 추가된 항목들을 제거합니다
+            removeAllChildNods(listEl);
+
+            // 지도에 표시되고 있는 마커를 제거합니다
+            removeMarker();
+
+            for ( var i=0; i<documentsList.length; i++ ) {
+
+                // 마커를 생성하고 지도에 표시합니다
+                var placePosition = new kakao.maps.LatLng(documentsList[i].y, documentsList[i].x),
+                    marker = addMarker(placePosition, i),
+                    itemEl = getListItem(i, documentsList[i]); // 검색 결과 항목 Element를 생성합니다
+
+                // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+                // LatLngBounds 객체에 좌표를 추가합니다
+                bounds.extend(placePosition);
+
+                // 마커와 검색결과 항목에 mouseover 했을때
+                // 해당 장소에 인포윈도우에 장소명을 표시합니다
+                // mouseout 했을 때는 인포윈도우를 닫습니다
+                (function(marker, title) {
+                    kakao.maps.event.addListener(marker, 'mouseover', function() {
+                        displayInfowindow(marker, title);
+                    });
+
+                    kakao.maps.event.addListener(marker, 'mouseout', function() {
+                        infowindow.close();
+                    });
+
+                    itemEl.onmouseover =  function () {
+                        displayInfowindow(marker, title);
+                    };
+
+                    itemEl.onmouseout =  function () {
+                        infowindow.close();
+                    };
+                })(marker, documentsList[i].place_name);
+
+                fragment.appendChild(itemEl);
+            }
+
+            // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
+            listEl.appendChild(fragment);
+            menuEl.scrollTop = 0;
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            map.setBounds(bounds);
+        }
+
+        // 검색결과 항목을 Element로 반환하는 함수입니다
+        function getListItem(index, places) {
+
+            var el = document.createElement('li'),
+                itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                    '<div id="infoNumber' + (index+1) + '"><div class="info">' +
+                    '   <h5>' + places.place_name + '</h5>';
+
+            if (places.road_address_name) {
+                itemStr += '    <span>' + places.road_address_name + '</span>' +
+                    '   <span class="jibun gray">' +  places.address_name  + '</span>';
+            } else {
+                itemStr += '    <span>' +  places.address_name  + '</span>';
+            }
+
+            itemStr += '  <span class="tel">' + places.phone  + '</span>';
+            itemStr += '<input type="hidden" name="address_name" value="' + places.address_name +'">';
+            itemStr += '<input type="hidden" name="category_group_code" value="' + places.category_group_code +'">';
+            itemStr += '<input type="hidden" name="category_group_name" value="' + places.category_group_name +'">';
+            itemStr += '<input type="hidden" name="category_name" value="' + places.category_name +'">';
+            itemStr += '<input type="hidden" name="distance" value="' + places.distance +'">';
+            itemStr += '<input type="hidden" name="id" value="' + places.id +'">';
+            itemStr += '<input type="hidden" name="phone" value="' + places.phone +'">';
+            itemStr += '<input type="hidden" name="place_name" value="' + places.place_name +'">';
+            itemStr += '<input type="hidden" name="place_url" value="' + places.place_url +'">';
+            itemStr += '<input type="hidden" name="road_address_name" value="' + places.road_address_name +'">';
+            itemStr += '<input type="hidden" name="x" value="' + places.x +'">';
+            itemStr += '<input type="hidden" name="y" value="' + places.y +'">' + '</div></div>';
+            itemStr += '<a href="' + places.place_url + '" target="_blank"><button>상세보기</a></button>';
+            itemStr += '<button id="'+ index +'" onclick="GetMapInfo(this)">숙소선택</button>';
+
+            el.innerHTML = itemStr;
+            el.className = 'item';
+
+            return el;
+        }
+
+
+        // 숙소를 선택했을 때 정보를 가져옴
+        function GetMapInfo(target){
+            $('#address_name').val('');
+            $('#category_group_code').val('');
+            $('#category_group_name').val('');
+            $('#category_name').val('');
+            $('#distance').val('');
+            $('#id').val('');
+            $('#phone').val('');
+            $('#place_name').val('');
+            $('#place_url').val('');
+            $('#road_address_name').val('');
+            $('#x').val('');
+            $('#y').val('');
+
+            var infoNum = document.getElementById(target.getAttribute('id')).getAttribute('id');
+            var infoNumberId = 'infoNumber' + infoNum;
+
+            var info = document.getElementsByClassName('info');
+            var realInfo = info[infoNum];
+
+            var mapInfo = [];
+            mapInfo = $(realInfo).children();
+
+            var address_name = mapInfo[4].value;
+            var category_group_code = mapInfo[5].value;
+            var category_group_name = mapInfo[6].value;
+            var category_name = mapInfo[7].value;
+            var distance = mapInfo[8].value;
+            var id = mapInfo[9].value;
+            var phone = mapInfo[10].value;
+            var place_name = mapInfo[11].value;
+            var place_url = mapInfo[12].value;
+            var road_address_name = mapInfo[13].value;
+            var x = mapInfo[14].value;
+            var y = mapInfo[15].value;
+
+            document.getElementById("address_name").value = address_name;
+            document.getElementById("category_group_code").value = category_group_code;
+            document.getElementById("category_group_name").value = category_group_name;
+            document.getElementById("category_name").value = category_name;
+            document.getElementById("distance").value = distance;
+            document.getElementById("id").value = id;
+            document.getElementById("phone").value = phone;
+            document.getElementById("place_name").value = place_name;
+            document.getElementById("place_url").value = place_url;
+            document.getElementById("road_address_name").value = road_address_name;
+            document.getElementById("x").value = x;
+            document.getElementById("y").value = y;
+
+        }
+
+        // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+        function addMarker(position, idx, title) {
+            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+                imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+                imgOptions =  {
+                    spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                    spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                },
+                markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+                marker = new kakao.maps.Marker({
+                    position: position, // 마커의 위치
+                    image: markerImage
+                });
+
+            marker.setMap(map); // 지도 위에 마커를 표출합니다
+            markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+            return marker;
+        }
+
+        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+        function removeMarker() {
+            for ( var i = 0; i < markers.length; i++ ) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
+
+        function displayInfowindow(marker, title) {
+            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+
+        // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+        function removeAllChildNods(el) {
+            while (el.hasChildNodes()) {
+                el.removeChild (el.lastChild);
+            }
+        }
+
+
+    </script>
 </div>
+

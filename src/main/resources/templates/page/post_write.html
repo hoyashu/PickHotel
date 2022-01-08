@@ -38,6 +38,17 @@
         #pagination {margin:10px auto;text-align: center;}
         #pagination a {display:inline-block;margin-right:10px;}
         #pagination .on {font-weight: bold; cursor: default;color:#777;}
+
+        .videos  video {
+            height: 200px;
+            width: auto;
+        }
+
+        .photos  img {
+            height: 200px;
+            width: auto;
+        }
+
     </style>
 
     <div class="row" id="page-title">
@@ -62,7 +73,7 @@
         </div>
     </div>
 
-    <form accept-charset="UTF-8" enctype="multipart/form-data" method="POST" th:action="@{/uploadFile}">
+    <form id="saveAll" accept-charset="UTF-8" enctype="multipart/form-data" method="POST" th:action="@{/uploadFile}">
         <div class="mapInfo">
             숙소 이름 : <input type="text" id="place_name" name="place_name" readonly>
             숙소 주소 : <input type="text" id="road_address_name" name="road_address_name" readonly>
@@ -80,15 +91,14 @@
 
         <div class="mb-3">
             <label for="subject">제목</label>
-            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text">
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text" required>
         </div>
         <div class="mb-3">
             <label for="bordNo">게시판 선택</label>
             <select id="bordNo" name="bordNo" onchange="OnChange();">
                 <div th:each="board : ${boardList}">
 					<span th:if="${board.key}==${defaultListNo}">
-						<option selected="${defaultListNo}" th:value="${board.key}"><span
-                                th:text="${board.value}"></span></option>
+						<option selected="${defaultListNo}" th:value="${board.key}"><span th:text="${board.value}"></span></option>
 					</span>
                     <span th:unless="${board.key}==${defaultListNo}">
 						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
@@ -100,7 +110,7 @@
 
         <div class="mb-3">
             <label for="content">내용</label>
-            <textarea class="form-control" id="content" name="content" placeholder="내용을 입력해 주세요" rows="5"></textarea>
+            <textarea class="form-control" id="content" name="content" placeholder="내용을 입력해 주세요" rows="5" required></textarea>
         </div>
         <div class="photos">
             <label for="images">사진(3MB 이하)</label>
@@ -168,7 +178,7 @@
             <input class="form-control" id="tag" name="tag" placeholder="#태그입력" type="text">
         </div>
         <div>
-            <button class="btn btn-sm btn-primary" id="saveBtn" type="submit">글등록</button>
+            <button class="btn btn-sm btn-primary" id="saveBtn" type="button" onclick="submitCheck()">글등록</button>
         </div>
     </form>
 
@@ -183,6 +193,7 @@
         // 사용성 체크
         function OnChange() {
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+            var keyword = document.getElementById('keyword').value;
             $.ajax({
                 url    : '/post/checkUse?boardNo=' + bordNoSelect,
                 type   : 'GET',
@@ -204,11 +215,47 @@
                         $('.review').show();
                         $('.mapInfo').show();
                         $('.map_wrap').show();
+
                     } else {
                         $('.review').hide();
                         $('.mapInfo').hide();
                         $('.map_wrap').hide();
                     }
+                },
+                error  : function () {
+                    console.log("failed");
+                }
+            });
+        }
+
+        function submitCheck(){
+            var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+            var place_name = document.getElementById('place_name').value;
+            var subject = document.getElementById('subject').value;
+            var content = document.getElementById('content').value;
+
+            $.ajax({
+                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                type   : 'GET',
+                success: function (data) {
+                    var result = data;
+                    if (result.board.type == "review") {
+                        if (!place_name.replace(/^\s+|\s+$/g, '')) {
+                            alert('장소를 입력해주세요!');
+                            return false;
+                        }
+
+                    }
+                    if(!subject.replace(/^\s+|\s+$/g, '')){
+                        alert("제목을 입력해주세요");
+                        return false;
+                    }
+
+                    if(!content.replace(/^\s+|\s+$/g, '')){
+                        alert("내용을 입력해주세요");
+                        return false;
+                    }
+                    document.getElementById('saveAll').submit();
                 },
                 error  : function () {
                     console.log("failed");

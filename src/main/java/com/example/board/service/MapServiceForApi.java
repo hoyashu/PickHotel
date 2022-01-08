@@ -30,7 +30,7 @@ public class MapServiceForApi {
     }
 
     // 숙소 1개 조회
-    public MapVoForApi retrieveMap(int map_no){
+    public MapVoForApi retrieveMap(int map_no) {
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("map_no", map_no);
 
@@ -56,7 +56,7 @@ public class MapServiceForApi {
     }
 
     //숙소 업데이트
-    public void updateMap(MapVoForApi mapVoForApi) {
+    public void modifyMap(MapVoForApi mapVoForApi) {
         restTemplate.put(URI_MAP,mapVoForApi, MapVoForApi.class);
     }
 

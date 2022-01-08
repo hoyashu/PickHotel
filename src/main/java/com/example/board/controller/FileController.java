@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.model.BoardVo;
 import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
@@ -86,71 +87,84 @@ public class FileController {
 
 
 
-        // 숙소 정보, 리뷰 정보
-        if (address_name.trim().equals("")) {
+        BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
+        if(boardForUseCheck.getType().equals("basic")){
 
-        } else{
-            MapVoForApi mapVoForApi = new MapVoForApi();
-            mapVoForApi.setAddress_name(address_name);
-            mapVoForApi.setCategory_group_code(category_group_code);
-            mapVoForApi.setCategory_group_name(category_group_name);
-            mapVoForApi.setCategory_name(category_name);
-            mapVoForApi.setDistance(distance);
-            mapVoForApi.setId(id);
-            mapVoForApi.setPhone(phone);
-            mapVoForApi.setPlace_name(place_name);
-            mapVoForApi.setPlace_url(place_url);
-            mapVoForApi.setRoad_address_name(road_address_name);
-            mapVoForApi.setX(x);
-            mapVoForApi.setY(y);
+        } else {
+            // 숙소 정보, 리뷰 정보
+            if (address_name.trim().equals("")) {
 
-            String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
-            String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/")+1);
-            int mapNo = Integer.parseInt(strMapNo);
+            } else{
+                MapVoForApi mapVoForApi = new MapVoForApi();
+                mapVoForApi.setAddress_name(address_name);
+                mapVoForApi.setCategory_group_code(category_group_code);
+                mapVoForApi.setCategory_group_name(category_group_name);
+                mapVoForApi.setCategory_name(category_name);
+                mapVoForApi.setDistance(distance);
+                mapVoForApi.setId(id);
+                mapVoForApi.setPhone(phone);
+                mapVoForApi.setPlace_name(place_name);
+                mapVoForApi.setPlace_url(place_url);
+                mapVoForApi.setRoad_address_name(road_address_name);
+                mapVoForApi.setX(x);
+                mapVoForApi.setY(y);
 
-            ReviewVo review = new ReviewVo();
+                String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
+                String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/")+1);
+                int mapNo = Integer.parseInt(strMapNo);
 
-            if(visitDate.trim().equals("")){
-                visitDate = null;
-            }
+                ReviewVo review = new ReviewVo();
 
-            review.setPostNo(postNo);
-            review.setRoomNo(mapNo);
-            review.setRateLoc(rateLoc);
-            review.setRateClean(rateClean);
-            review.setRateComu(rateComu);
-            review.setRateChip(rateChip);
-            review.setVisitDate(visitDate);
-            review.setRecommendPlace(recommendPlace);
-            review.setNotRecommendPerson(notRecommendPerson);
-            this.reviewService.registerReview(review);
-        }
-
-        // 파일
-        if (images != null) {
-            System.out.println("images");
-
-            for (MultipartFile file : images) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 1);
-                } else {
-                    fileName = "default.jpg";
+                if(visitDate.trim().equals("")){
+                    visitDate = null;
                 }
 
+                review.setPostNo(postNo);
+                review.setRoomNo(mapNo);
+                review.setRateLoc(rateLoc);
+                review.setRateClean(rateClean);
+                review.setRateComu(rateComu);
+                review.setRateChip(rateChip);
+                review.setVisitDate(visitDate);
+                review.setRecommendPlace(recommendPlace);
+                review.setNotRecommendPerson(notRecommendPerson);
+                this.reviewService.registerReview(review);
             }
         }
-        if (videos != null) {
-            System.out.println("videos");
 
-            for (MultipartFile file : videos) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 2);
-                } else {
-                    fileName = "default.mp4";
+
+        if(boardForUseCheck.getUsePhoto() == 1){
+            // 이미지
+            if (images != null) {
+                System.out.println("images");
+
+                for (MultipartFile file : images) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 1);
+                    } else {
+                        fileName = "default.jpg";
+                    }
+
                 }
+            }
+        }
 
+
+        if(boardForUseCheck.getUseVideo() == 1){
+            // 동영상
+            if (videos != null) {
+                System.out.println("videos");
+
+                for (MultipartFile file : videos) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 2);
+                    } else {
+                        fileName = "default.mp4";
+                    }
+
+                }
             }
         }
 
