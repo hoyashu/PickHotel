@@ -44,7 +44,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/comment/create")
 
-    public AlarmVo create(CommentVo comment, HttpServletRequest request) throws IOException {
+    public AlarmVo create(CommentVo comment, HttpServletRequest request) throws Exception {
         AlarmVo alarm = new AlarmVo();
 
         CommentVo comment1 = new CommentVo();

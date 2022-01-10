@@ -1,16 +1,20 @@
 package com.example.board.service;
 
+import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
 import com.example.board.persistent.PostDao;
 import com.example.board.persistent.ReviewDao;
+import com.example.common.paging.PaginationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service("postService")
 public class PostService {
     @Autowired
@@ -60,9 +64,39 @@ public class PostService {
         return posts;
     }
 
+    public List<PostVo> retrievePostList(PostVo params){
+        List<PostVo> postList = new ArrayList<PostVo>();
+
+        int postCount = this.postDao.selectPostCount(params);
+        PaginationInfo paginationInfo = new PaginationInfo(params);
+        paginationInfo.setTotalRecordCount(postCount);
+
+        params.setPaginationInfo(paginationInfo);
+
+        if (postCount > 0) {
+            postList = this.postDao.selectPostList(params);
+        }
+
+        return postList;
+    }
+
+    public int retrievePostCount(PostVo params) {
+        return this.postDao.selectPostCount(params);
+    }
+
+
     // 게시글 조회수 증가
     public void upHitcount(int postNo) {
         this.postDao.upHitcount(postNo);
+    }
+
+    // 모든 게시판 조회 번호와 이름만
+    public List<BoardVo> retrieveAllBoards() {
+       return this.postDao.selectAllBoards();
+    }
+
+    public BoardVo retrieveBoardForUseCheck(int boardNo) {
+        return this.postDao.selectBoardForUseCheck(boardNo);
     }
 
 

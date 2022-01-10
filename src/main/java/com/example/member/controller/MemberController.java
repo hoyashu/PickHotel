@@ -4,19 +4,19 @@ import com.example.member.CustomMailSender;
 import com.example.member.model.*;
 import com.example.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +26,10 @@ import java.util.Map;
 public class MemberController {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public CustomMailSender customMailSender;
 
     @Autowired
-    public CustomMailSender customMailSender;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     MemberService memberService;
@@ -82,7 +82,7 @@ public class MemberController {
 
 
     // 회원가입 폼
-    @GetMapping("/joinForm")
+    @GetMapping("/join")
     public String memberJoinForm() {
         return "page/member_join";
     }
@@ -103,7 +103,7 @@ public class MemberController {
         this.memberService.registerMember(map);
         this.memberService.registerRole(member.getId());
 
-        return "redirect:/user/welcome";
+        return "redirect:/welcome";
     }
 
     // 회원 가입 환영 페이지

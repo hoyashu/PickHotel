@@ -150,6 +150,13 @@
 			<version>1.4</version>
 		</dependency>
 		<!--파일업로드 끝-->
+		<!--json-->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20201115</version>
+		</dependency>
+		<!--json-->
 
 
 		<dependency>

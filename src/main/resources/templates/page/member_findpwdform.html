@@ -5,7 +5,7 @@
 		<h1 class="text-center">비밀번호 찾기</h1>
 	</div>
 
-	<form th:action="@{/user/alterPwdForm}" method="post"
+	<form th:action="@{/alterPwdForm}" method="post"
 		class="row justify-content-center align-self-center form-small d-flex">
 		<div class="mb-3">
 			<label for="id">아이디</label>
@@ -36,7 +36,7 @@
 				console.log("call");
 				var id = $('#id').val();
 				$.ajax({
-					url: '/user/idCheck?id=' + id,
+					url: '/idCheck?id=' + id,
 					type: 'GET',
 					success: function (data) {
 						console.log("1 = 중복o / 0 = 중복x : " + data);
@@ -64,7 +64,7 @@
 				$("#certifyNo").attr("disabled", false);
 				$("#checkCertifyCodeBtn").attr("disabled", false);
 				$.ajax({
-					url: '/user/sendMail?id=' + id,
+					url: '/sendMail?id=' + id,
 					type: 'GET',
 					success: function (data) {
 						console.log(data);
@@ -79,7 +79,7 @@
 			$("#checkCertifyCodeBtn").click(function () {
 				var certifyNo = $('#certifyNo').val();
 				$.ajax({
-					url: '/user/mailCheck',
+					url: '/mailCheck',
 					type: 'GET',
 					success: function (data) {
 						const result = data;

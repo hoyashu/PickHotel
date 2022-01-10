@@ -79,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/loginForm")
+                .loginPage("/login")
                 .loginProcessingUrl("/login")                  //UsernamePasswordAuthenticationFilter 수행한다. 디폴트(/login)
                 .successHandler(domainSuccessHandler)
                 .failureHandler(domainFailureHandler)

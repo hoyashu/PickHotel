@@ -1,5 +1,6 @@
 package com.example.board.persistent;
 
+import com.example.board.model.BoardVo;
 import com.example.board.model.PostUpdateCommentVo;
 import com.example.board.model.PostVo;
 import org.apache.ibatis.session.SqlSession;
@@ -26,9 +27,17 @@ public class PostDao {
         return lists;
     }
 
+    public List<PostVo> selectPostList(PostVo params) {
+        return this.sqlSession.selectList("PostDao.selectPostList", params);
+    }
+
+    public int selectPostCount(PostVo params) {
+        return this.sqlSession.selectOne("PostDao.selectPostCount", params);
+    }
+
     //총 게시글 수를 구한다.
     public int selectTotalPostCount(HashMap<String, String> map) {
-        int count = 0;
+        int count = 0 ;
         count = this.sqlSession.selectOne("PostDao.selectTotalPostCount", map);
         return count;
     }
@@ -43,11 +52,20 @@ public class PostDao {
         return list;
     }
 
-    //게시글 번호에 해당하는 게시글 상세정보를 조회하다.
+    public List<BoardVo> selectAllBoards() {
+        return this.sqlSession.selectList("PostDao.selectAllBoards");
+    }
+
+    public BoardVo selectBoardForUseCheck(int boardNo){
+        return this.sqlSession.selectOne("PostDao.selectBoardForUseCheck", boardNo);
+    }
+
+    //게시글 번호에 해당하는 게시글 상세정보를 조회
     public PostVo selectDetailPost(int postNo) {
         return this.sqlSession.selectOne("PostDao.selectDetailPost", postNo);
     }
 
+    //내가 작성한 게시글 조회
     public List<PostVo> selectMyPosts(int MemNo) {
         return this.sqlSession.selectList("PostDao.selectMyPosts", MemNo);
     }
