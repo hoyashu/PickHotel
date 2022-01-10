@@ -1,13 +1,18 @@
 package com.example.board.controller;
 
+import com.example.board.model.BoardVo;
+import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
 import com.example.board.service.FileUploadService;
+import com.example.board.service.MapServiceForApi;
 import com.example.board.service.PostService;
 import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
+import org.codehaus.groovy.transform.SourceURIASTTransformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Transactional
 @Controller
 public class FileController {
     @Autowired
@@ -28,8 +34,9 @@ public class FileController {
     @Autowired
     private FileUploadService fileUploadService;
 
+    @Autowired
+    private MapServiceForApi mapServiceForApi;
 
-    //게시글 작성
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
@@ -37,19 +44,36 @@ public class FileController {
                                 @RequestParam(value = "subject", required = false) String subject,
                                 @RequestParam(value = "content", required = false) String content,
                                 @RequestParam(value = "tag", required = false) String tag,
-                                @RequestParam(value = "roomNo", required = false, defaultValue = "-1") int roomNo,
+                                @RequestParam(value = "address_name", required = false) String address_name,
+                                @RequestParam(value = "category_group_code", required = false, defaultValue = "noValue") String category_group_code,
+                                @RequestParam(value = "category_group_name", required = false, defaultValue = "noValue") String category_group_name,
+                                @RequestParam(value = "category_name", required = false, defaultValue = "noValue") String category_name,
+                                @RequestParam(value = "distance", required = false, defaultValue = "noValue") String distance,
+                                @RequestParam(value = "id", required = false, defaultValue = "noValue") String id,
+                                @RequestParam(value = "phone", required = false, defaultValue = "noValue") String phone,
+                                @RequestParam(value = "place_name", required = false, defaultValue = "noValue") String place_name,
+                                @RequestParam(value = "place_url", required = false, defaultValue = "noValue") String place_url,
+                                @RequestParam(value = "road_address_name", required = false, defaultValue = "noValue") String road_address_name,
+                                @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
+                                @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
                                 @RequestParam(value = "rateLoc", required = false) int rateLoc,
                                 @RequestParam(value = "rateClean", required = false) int rateClean,
                                 @RequestParam(value = "rateComu", required = false) int rateComu,
                                 @RequestParam(value = "rateChip", required = false) int rateChip,
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) {
-
+                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
+        int writerNo = 1;
         HttpSession session = request.getSession();
-        MemberVo memberVo = (MemberVo) session.getAttribute("member");
-        int writerNo = memberVo.getMemNo();
+        try {
+            MemberVo memberVo = (MemberVo) session.getAttribute("member");
+            writerNo = memberVo.getMemNo();
+        } catch (Exception e) {
 
+        }
+
+
+        // 게시글
         String newContent = convert(content);
         PostVo postVo = new PostVo();
         postVo.setWriterNo(writerNo);
@@ -61,43 +85,86 @@ public class FileController {
         int postNo = postService.registerPost(postVo);
         session.setAttribute("boardNo", boardNo);
 
-        if (roomNo != -1) {
-            ReviewVo review = new ReviewVo();
-            review.setRoomNo(roomNo);
-            review.setRateLoc(rateLoc);
-            review.setRateClean(rateClean);
-            review.setRateComu(rateComu);
-            review.setRateChip(rateChip);
-            review.setVisitDate(visitDate);
-            review.setRecommendPlace(recommendPlace);
-            review.setNotRecommendPerson(notRecommendPerson);
-            this.reviewService.registerReview(review);
-        }
 
-        if (images != null) {
-            System.out.println("images");
 
-            for (MultipartFile file : images) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 1);
-                } else {
-                    fileName = "default.jpg";
+        BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
+        if(boardForUseCheck.getType().equals("basic")){
+
+        } else {
+            // 숙소 정보, 리뷰 정보
+            if (address_name.trim().equals("")) {
+
+            } else{
+                MapVoForApi mapVoForApi = new MapVoForApi();
+                mapVoForApi.setAddress_name(address_name);
+                mapVoForApi.setCategory_group_code(category_group_code);
+                mapVoForApi.setCategory_group_name(category_group_name);
+                mapVoForApi.setCategory_name(category_name);
+                mapVoForApi.setDistance(distance);
+                mapVoForApi.setId(id);
+                mapVoForApi.setPhone(phone);
+                mapVoForApi.setPlace_name(place_name);
+                mapVoForApi.setPlace_url(place_url);
+                mapVoForApi.setRoad_address_name(road_address_name);
+                mapVoForApi.setX(x);
+                mapVoForApi.setY(y);
+
+                String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
+                String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/")+1);
+                int mapNo = Integer.parseInt(strMapNo);
+
+                ReviewVo review = new ReviewVo();
+
+                if(visitDate.trim().equals("")){
+                    visitDate = null;
                 }
 
+                review.setPostNo(postNo);
+                review.setRoomNo(mapNo);
+                review.setRateLoc(rateLoc);
+                review.setRateClean(rateClean);
+                review.setRateComu(rateComu);
+                review.setRateChip(rateChip);
+                review.setVisitDate(visitDate);
+                review.setRecommendPlace(recommendPlace);
+                review.setNotRecommendPerson(notRecommendPerson);
+                this.reviewService.registerReview(review);
             }
         }
-        if (videos != null) {
-            System.out.println("videos");
 
-            for (MultipartFile file : videos) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 2);
-                } else {
-                    fileName = "default.mp4";
+
+        if(boardForUseCheck.getUsePhoto() == 1){
+            // 이미지
+            if (images != null) {
+                System.out.println("images");
+
+                for (MultipartFile file : images) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 1);
+                    } else {
+                        fileName = "default.jpg";
+                    }
+
                 }
+            }
+        }
 
+
+        if(boardForUseCheck.getUseVideo() == 1){
+            // 동영상
+            if (videos != null) {
+                System.out.println("videos");
+
+                for (MultipartFile file : videos) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 2);
+                    } else {
+                        fileName = "default.mp4";
+                    }
+
+                }
             }
         }
         return "redirect:/post/" + postVo.getPostNo();

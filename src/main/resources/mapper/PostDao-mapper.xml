@@ -64,6 +64,7 @@
 		WHERE post_no = #{postNo}
 	</select>
 
+<!--	board 관련 -->
 	<select id="selectBoardNo" resultType="int">
 		SELECT bo_no FROM board;
 	</select>
@@ -72,43 +73,87 @@
 		SELECT bo_name FROM board;
 	</select>
 
-	<!-- <resultMap type="PostVo" id="selectPostMap">
-		<result property="postNo" column="post_no" />
-		<result property="subject" column="po_subject" />
-		<result property="content" column="po_content" />
-		<result property="writerNo" column="po_mb_no" />
-		<result property="tag" column="po_tag" />
-		<result property="views" column="po_views" />
-		<result property="createDate" column="writedate" />
-		<result property="boardNo" column="bo_no" />
-		<result property="writerNick" column="mb_nick" />
-		<collection property="attachList" column="atta_no" javaType="ArrayList" ofType="AttachVo">
-			<result property=""></result>
-		</collection>
-		<association property="review"></association>
+	<resultMap id="BoardVoResult" type="BoardVo">
+		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
+		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
 	</resultMap>
 
-	<select id="selectPost" parameterType="int" resultMap="selectPostMap">
-		SELECT p.post_no, p.po_subject, p.po_content, p.po_mb_no, p.po_tag, p.po_views,
-		date_format(p.po_datetime, '%Y/%m/%d %h:%i:%s') as writedate, p.bo_no ,
-		a.atta_realname, a.atta_sysname, a.atta_size, a.atta_no, m.mb_nick,
-		roo_no, re_rate_loc, re_rate_clean, re_rate_comu, re_rate_chip, re_vsdate, re_push_pl, re_push_npl
-		FROM post as p LEFT JOIN attach as a ON p.post_no = a.post_no
-		INNER JOIN member AS m ON m.mb_no = p.po_mb_no
-		LEFT JOIN review AS r ON p.post_no = r.post_no
-		WHERE p.post_no = #{postNo}
-	</select>-->
+	<select id="selectAllBoards" resultType="BoardVo" resultMap="BoardVoResult">
+		SELECT bo_no, bo_name from board ORDER BY bo_no asc
+	</select>
+
+	<resultMap id="BoardVoResultMapForUseCheck" type="BoardVo">
+		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
+		<result property="groupNo" javaType="int" column="bo_group_no" jdbcType="INTEGER"/>
+		<result property="groupName" javaType="string" column="bo_group_name" jdbcType="VARCHAR"/>
+		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
+		<result property="type" javaType="string" column="bo_type" jdbcType="VARCHAR" />
+		<result property="boGrade" javaType="int" column="bo_grade" jdbcType="INTEGER" />
+		<result property="usePhoto" javaType="int" column="bo_use_photo" jdbcType="INTEGER" />
+		<result property="useVideo" javaType="int" column="bo_use_video" jdbcType="INTEGER" />
+		<result property="useFile" javaType="int" column="bo_use_fupdown" jdbcType="INTEGER" />
+		<result property="useComment" javaType="int" column="bo_use_comment" jdbcType="INTEGER" />
+		<result property="creatDatetime" javaType="string" column="bo_datetime" jdbcType="VARCHAR" />
+		<result property="postCount" javaType="int" column="bo_post" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="selectBoardForUseCheck" parameterType="int" resultMap="BoardVoResultMapForUseCheck">
+		select bo_no, bo_group_no, bo_name, bo_type, bo_grade,
+			   bo_use_photo, bo_use_video, bo_use_fupdown, bo_use_comment, bo_datetime, bo_post
+		from board where bo_no = #{boardNo}
+	</select>
+	<!--	board 관련-->
+
+	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
+		SELECT post_no, po_mb_no, po_subject,
+		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick
+		FROM post JOIN member ON post.po_mb_no = member.mb_no
+		WHERE bo_no = #{boardNo} and po_isblind = 0
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("subject")'>
+			and po_subject like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("content")'>
+			and po_content like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
+			and mb_nick like concat('%',#{searchKeyword},'%')
+		</if>
+		ORDER BY writedate DESC
+		LIMIT
+		#{paginationInfo.firstRecordIndex}, #{recordsPerPage}
+	</select>
+
+	<select id="selectPostCount" parameterType="PostVo" resultType="int">
+		SELECT
+		COUNT(post_no)
+		FROM post JOIN member ON post.po_mb_no = member.mb_no
+		where bo_no = #{boardNo} and po_isblind = 0
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("subject")'>
+			and po_subject like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("content")'>
+			and po_content like concat('%',#{searchKeyword},'%')
+		</if>
+		<if
+				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
+			and mb_nick like concat('%',#{searchKeyword},'%')
+		</if>
+	</select>
 
 	<!--게시글 수정-->
 	<parameterMap id="PostVoUpdateParameterMap" type="PostVo" >
 		<parameter property="postNo" javaType="int" jdbcType="INTEGER" />
-		<parameter property="boardNo" javaType="int" jdbcType="INTEGER" />
 		<parameter property="subject" javaType="string" jdbcType="VARCHAR" />
 		<parameter property="content" javaType="string" jdbcType="VARCHAR" />
 		<parameter property="tag" javaType="string" jdbcType="VARCHAR" />
 	</parameterMap>
 	<update id="updatePost" parameterMap="PostVoUpdateParameterMap">
-		UPDATE post SET bo_no = #{boardNo}, po_subject = #{subject}, po_content = #{content},  po_tag = #{tag}
+		UPDATE post SET po_subject = #{subject}, po_content = #{content},  po_tag = #{tag}
 		WHERE post_no = #{postNo}
 	</update>
 

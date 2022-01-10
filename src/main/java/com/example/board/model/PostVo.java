@@ -1,5 +1,6 @@
 package com.example.board.model;
 
+import com.example.common.paging.CommonVo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
-public class PostVo {
+public class PostVo extends CommonVo {
     @NotNull(message = "[개발자] 게시글 번호가 누락되었습니다.")
     private int postNo;
     private String groupName;
@@ -30,6 +31,4 @@ public class PostVo {
     private int commont;
     private String createDate;
     private int blind;
-    private ArrayList<AttachVo> attachList = new ArrayList<AttachVo>();
-    private ReviewVo review;
 }
