@@ -86,7 +86,7 @@
                 const nick = $("input[name=nick]").val();
                 if (nick != orgNick) { //수정된 경우에만 닉네임 중복 검사 실행
                     $.ajax({
-                        url    : '/user/nickCheck?nick=' + nick,
+                        url    : '/nickCheck?nick=' + nick,
                         type   : 'GET',
                         success: function (data) {
                             const result = data;

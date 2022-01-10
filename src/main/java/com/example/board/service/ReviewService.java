@@ -10,19 +10,19 @@ public class ReviewService {
     @Autowired
     private ReviewDao reviewDao;
 
-    public void registerReview(ReviewVo review) throws Exception {
+    public void registerReview(ReviewVo review) {
         this.reviewDao.insertReview(review);
     }
 
-    public void modifyReview(ReviewVo review) throws Exception {
+    public void modifyReview(ReviewVo review) {
         this.reviewDao.updateReview(review);
     }
 
-    public void removeReview(int postNo) throws Exception {
+    public void removeReview(int postNo) {
         this.reviewDao.deleteReview(postNo);
     }
 
-    public ReviewVo retrieveReview(int postNo) throws Exception {
+    public ReviewVo retrieveReview(int postNo) {
         return this.reviewDao.selectReview(postNo);
     }
 }

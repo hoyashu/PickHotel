@@ -4,7 +4,6 @@ import com.example.board.model.Link;
 import com.example.board.model.MapResponseForApi;
 import com.example.board.model.MapVoForApi;
 import com.example.config.RestTemplateResponseErrorHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
