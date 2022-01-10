@@ -24,7 +24,7 @@ public class RoleHierarchyService {
                 concatedRoles.append(" > ");
             }
         }
-//        concatedRoles.append("\n");
+        concatedRoles.append("\n");
 
         System.out.println("Role Hierarchy : " + concatedRoles.toString());
         return concatedRoles.toString();

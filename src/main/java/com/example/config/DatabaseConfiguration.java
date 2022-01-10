@@ -1,4 +1,4 @@
-package com.example.grade.persistent.config;
+package com.example.config;
 
 import javax.servlet.Filter;
 import javax.sql.DataSource;

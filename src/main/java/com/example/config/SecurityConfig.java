@@ -1,4 +1,4 @@
-package com.example.grade.persistent.config;
+package com.example.config;
 
 import com.example.member.service.RoleHierarchyService;
 import com.example.security.DomainFailureHandler;
@@ -67,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //정적 컨텐츠의 액세스는 인증을 걸지 않는다.
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 //        web.ignoring().antMatchers("/webjars/**", "/static/**");
-
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/img/**", "/user/**").permitAll()
+                .antMatchers("/user/**","/img/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -140,7 +139,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public RoleHierarchyImpl roleHierarchy(){
         String allHierarchy = roleHierarchyService.findAllHierarchy();
-        System.out.println("allHierarchy : " + allHierarchy + "allHierarchy");
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy(allHierarchy);
         return roleHierarchy;
