@@ -24,6 +24,11 @@ public class RoleResourceDao {
         return this.sqlSessionTemplate.selectList("RoleResourceDao.findRolesById",id);
     }
 
+    // 계층 권한 조회
+    public List<String> roleHierarchy(Integer desc){
+        return this.sqlSessionTemplate.selectList("RoleResourceDao.findroleHierarchy",desc);
+    }
+
     // 권한 및 URL 조회(시큐리티)
     public List<RoleResourcesVo> getRoleResources(){
         return this.sqlSessionTemplate.selectList("RoleResourceDao.findRoleResources");

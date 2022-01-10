@@ -76,7 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user/**","/img/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -94,9 +93,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
-                .permitAll();
-//                .and()
-//                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
+                .permitAll()
+                .and()
+                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
 
     }
 
@@ -136,19 +135,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     ----------------------------------------------------------------------------
     */
 
-    @Bean
-    public RoleHierarchyImpl roleHierarchy(){
-        String allHierarchy = roleHierarchyService.findAllHierarchy();
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(allHierarchy);
-        return roleHierarchy;
-    }
-
-    @Bean
-    public AccessDecisionVoter<? extends Object> roleVoter(){
-        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
-        return roleHierarchyVoter;
-    }
+//    @Bean
+//    public RoleHierarchyImpl roleHierarchy(){
+//        String allHierarchy = roleHierarchyService.findAllHierarchy();
+//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+//        roleHierarchy.setHierarchy(allHierarchy);
+//        return roleHierarchy;
+//    }
+//
+//    @Bean
+//    public AccessDecisionVoter<? extends Object> roleVoter(){
+//        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
+//        return roleHierarchyVoter;
+//    }
 
 }
 

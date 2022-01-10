@@ -29,19 +29,20 @@ public class MemberController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    MemberService memberService;
-
-    @Autowired
     public CustomMailSender customMailSender;
 
+    @Autowired
+    MemberService memberService;
+
+
     // 아이디 찾기 폼
-    @GetMapping("/user/findIdForm")
+    @GetMapping("/findIdForm")
     public String memberFindIdForm() {
         return "page/member_findidform";
     }
 
     // 아이디 찾기 결과
-    @PostMapping("/user/findId")
+    @PostMapping("/findId")
     public String memberFindId(@Valid MemberFindIDVo member, Model model) {
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -54,21 +55,22 @@ public class MemberController {
         return "page/member_findid";
     }
 
+
     // 비밀번호 찾기 폼
-    @GetMapping("/user/findPwdForm")
+    @GetMapping("/findPwdForm")
     public String memberFindPwForm() {
-        return "page/member_findpwform";
+        return "page/member_findpwdform";
     }
 
     // 비밀번호 변경 폼
-    @PostMapping("/user/alterPwdForm")
+    @PostMapping("/alterPwdForm")
     public String memberAlterPwForm(@Valid MemberIdVo member, Model model) {
         model.addAttribute("id", member.getId());
-        return "page/member_alterpwform";
+        return "page/member_alterpwdform";
     }
 
     // 비밀번호 변경
-    @PostMapping("/user/alterPwd")
+    @PostMapping("/alterPwd")
     public String memberAlterPw(@Valid MemberIdPwVo member) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", member.getId());
@@ -78,14 +80,15 @@ public class MemberController {
         return "page/index";
     }
 
+
     // 회원가입 폼
-    @GetMapping("/user/joinForm")
+    @GetMapping("/joinForm")
     public String memberJoinForm() {
         return "page/member_join";
     }
 
     //회원가입
-    @PostMapping("/user/join")
+    @PostMapping("/join")
     public String memberJoin(@Valid MemberJoinVo member) {
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -104,13 +107,13 @@ public class MemberController {
     }
 
     // 회원 가입 환영 페이지
-    @GetMapping("/user/welcome")
+    @GetMapping("/welcome")
     public String memberWelcome() {
         return "page/member_welcome";
     }
 
     // 탈퇴회원 조회
-    @GetMapping("/user/withdarwCheck")
+    @GetMapping("/withdarwCheck")
     @ResponseBody
     public Map memberWithDarwCheck(@Valid MemberIdVo member, HttpServletResponse response) throws Exception {
 
@@ -122,7 +125,7 @@ public class MemberController {
     }
 
     // 인증메일 발송
-    @GetMapping("/user/sendMail")
+    @GetMapping("/sendMail")
     @ResponseBody
     public Map memberMailSender(@Valid MemberIdVo member, HttpServletRequest req)
             throws MessagingException, IOException {
@@ -146,7 +149,7 @@ public class MemberController {
     }
 
     // 인증번호 체크
-    @GetMapping("/user/mailCheck")
+    @GetMapping("/mailCheck")
     @ResponseBody
     public Map memberMailSender(HttpServletRequest req) throws MessagingException, IOException {
 
@@ -159,7 +162,7 @@ public class MemberController {
     }
 
     // 아이디 중복체크
-    @GetMapping("/user/idCheck")
+    @GetMapping("/idCheck")
     @ResponseBody
     public Map memberIdCheck(@Valid MemberIdVo member, Model model) {
 
@@ -178,7 +181,7 @@ public class MemberController {
     }
 
     // 닉네임 중복체크
-    @GetMapping("/user/nickCheck")
+    @GetMapping("/nickCheck")
     @ResponseBody
     public Map memberNickCheck(@Valid MemberNickVo member, Model model) {
 
@@ -205,64 +208,6 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
-
-
-
-
-    // 로그인 (시큐리티)
-    @GetMapping("/loginForm")
-    public String login() {
-        return "page/member_login";
-    }
-
-    // 로그인 Post (시큐리티)
-    @PostMapping("/loginForm")
-    public String login2() {
-        return "page/member_login";
-    }
-
-    // 로그아웃 (시큐리티)
-    @GetMapping("/logout")
-    public String logout(){
-        return "/";
-    }
-
-
-
-//    @GetMapping("/loginSuccess")
-//    @ResponseBody
-//    public String loginSuccess(){
-//
-//        String pwd = passwordEncoder.encode("1111");
-//        System.out.println("pwd"+pwd);
-//
-//        return "로그인에 성공하셨습니다.";
-//    }
-//
-//    @GetMapping("/loginFail")
-//    @ResponseBody
-//    public String loginfail(){
-//
-//        String pwd = passwordEncoder.encode("1111");
-//        System.out.println("pwd"+pwd);
-//
-//        return "로그인에 실패하셨습니다.";
-//    }
-//
-//    @GetMapping("/admin/1")
-//    @ResponseBody
-//    public String admin(){
-//        return "admin 페이지입니다.";
-//    }
-//
-//
-//    @GetMapping("/member/1")
-//    @ResponseBody
-//    public String member(){
-//        return "member 페이지입니다.";
-//    }
-
-
 
     // 회원 정보 상세조회 + 수정 폼
     @GetMapping("/member")
