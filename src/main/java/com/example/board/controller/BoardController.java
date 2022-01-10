@@ -9,6 +9,7 @@ import com.example.member.model.MemberVo;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -155,11 +156,16 @@ public class BoardController {
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
         MapVoForApi mapVoForApi = new MapVoForApi();
+
         try {
             mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
             model.addAttribute("mapVoForApi", mapVoForApi);
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception exception){
+            exception.printStackTrace();
+            model.addAttribute("exception", exception);
+            model.addAttribute("status", 500);
+            model.addAttribute("message", exception.getMessage());
+            return "error/500";
         }
 
         if(mapVoForApi == null){
