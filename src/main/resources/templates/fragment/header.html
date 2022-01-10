@@ -7,26 +7,26 @@
 
             <ul id="menu-box">
                 <li>
-                    <a class="nav-link px-2 link-dark" th:href="@{/board/}+'3'">숙소리뷰</a>
+                    <a class="nav-link px-2 link-dark" th:href="@{/user/board/}+'3'">숙소리뷰</a>
                 </li>
                 <li class="dropdown"><a aria-expanded="false" aria-haspopup="true"
                                         class="nav-link px-2 link-dark dropdown-toggle"
                                         data-toggle="dropdown" href="#" id="dropdownBoard1">숙소톡톡</a>
                     <ul aria-labelledby="dropdownBoard1" class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" th:href="@{/board/}+'1'">해안가 인근 숙소 추천</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'2'">조용한 숙소 추천</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'15'">우리 동네 숙소</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'7'">이벤트</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'1'">해안가 인근 숙소 추천</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'2'">조용한 숙소 추천</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'15'">우리 동네 숙소</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'7'">이벤트</a></li>
                     </ul>
 
                 </li>
             </ul>
 
             <div id="login-box" th:if="${session.member} == null">
-                <button class="btn btn-outline-primary me-2" onclick="location.href='/join'"
+                <button class="btn btn-outline-primary me-2" onclick="location.href='/user/joinForm'"
                         type="button">회원가입
                 </button>
-                <button class="btn btn-primary" onclick="location.href='/loginform'" type="button">로그인</button>
+                <button class="btn btn-primary" onclick="location.href='/loginForm'" type="button">로그인</button>
             </div>
             <div id="user-box" th:if="${session.member}">
                 <ul class="notice-box">

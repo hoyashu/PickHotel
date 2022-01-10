@@ -28,7 +28,7 @@ public class DomainFailureHandler implements AuthenticationFailureHandler {
         String message = getExceptionMessage(exception);
         log.info("Login error : " + message);
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("loginform/Post");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/loginForm");
         request.setAttribute("message",message);
         dispatcher.forward(request, response);
 

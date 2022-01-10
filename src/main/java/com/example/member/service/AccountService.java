@@ -3,6 +3,7 @@ package com.example.member.service;
 import com.example.member.model.MemberRoleVo;
 import com.example.member.model.MemberVo;
 
+import com.example.member.persistent.MemberDao;
 import com.example.member.persistent.RoleResourceDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +23,9 @@ public class AccountService implements UserDetailsService {
 
     @Autowired
     private RoleResourceDao roleResourceDao;
+
+    @Autowired
+    private MemberDao memberDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,6 +40,13 @@ public class AccountService implements UserDetailsService {
 
         try {
             member = roleResourceDao.getUserById(id);
+
+            boolean state = false;
+
+            if (1 != Integer.parseInt(memberDao.SelectWithDraw(id))){
+                state = true;
+            }
+
 
             log.info("2. AccountService getLoginUser User {}", member);
 
@@ -62,6 +71,7 @@ public class AccountService implements UserDetailsService {
                     .username(member.getId())
                     .password(member.getPwd())
                     .roles(roles.toArray(new String[roles.size()])) //List<SimpleGrantedAuthority>
+                    .disabled(state)
                     .build();
 
 
