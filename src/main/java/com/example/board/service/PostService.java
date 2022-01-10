@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service("postService")
 public class PostService {
     @Autowired
@@ -26,14 +27,14 @@ public class PostService {
     private AttachDao attachDao;
 
     // 게시글 정보를 등록하다.
-    public int registerPost(PostVo post) {
+    public int registerPost(PostVo post) throws Exception {
         int no = this.postDao.insertPost(post);
         return no;
     }
 
     //게시글 전체 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrieveAllPosts(int boardNo) {
+    public List<PostVo> retrieveAllPosts(int boardNo) throws Exception {
         List<PostVo> posts = this.postDao.selectAllPosts(boardNo);
         if (posts.size() == 0) {
             posts = null;
@@ -41,21 +42,21 @@ public class PostService {
         return posts;
     }
 
-    public List<Integer> retrieveBoardNo() {
+    public List<Integer> retrieveBoardNo() throws Exception {
         return this.postDao.selectBoardNo();
     }
 
-    public List<String> retrieveBoardName() {
+    public List<String> retrieveBoardName() throws Exception {
         return this.postDao.selectBoardName();
     }
 
     // 게시글 상세정보 조회
-    public PostVo retrieveDetailBoard(int postNo) {
+    public PostVo retrieveDetailBoard(int postNo) throws Exception {
         return this.postDao.selectDetailPost(postNo);
     }
 
     //회원별 게시글 목록 조회
-    public List<PostVo> retrieveMyPosts(int MemNo) {
+    public List<PostVo> retrieveMyPosts(int MemNo)  throws Exception {
         List<PostVo> posts = this.postDao.selectMyPosts(MemNo);
         if (posts.size() == 0) {
             posts = null;
@@ -63,7 +64,7 @@ public class PostService {
         return posts;
     }
 
-    public List<PostVo> retrievePostList(PostVo params){
+    public List<PostVo> retrievePostList(PostVo params) throws Exception {
         List<PostVo> postList = new ArrayList<PostVo>();
 
         int postCount = this.postDao.selectPostCount(params);
@@ -79,36 +80,36 @@ public class PostService {
         return postList;
     }
 
-    public int retrievePostCount(PostVo params){
+    public int retrievePostCount(PostVo params) throws Exception{
         return this.postDao.selectPostCount(params);
     }
 
 
     // 게시글 조회수 증가
-    public void upHitcount(int postNo) {
+    public void upHitcount(int postNo) throws Exception {
         this.postDao.upHitcount(postNo);
     }
 
     // 모든 게시판 조회 번호와 이름만
-    public List<BoardVo> retrieveAllBoards(){
+    public List<BoardVo> retrieveAllBoards() throws Exception {
        return this.postDao.selectAllBoards();
     }
 
-    public BoardVo retrieveBoardForUseCheck(int boardNo) {
+    public BoardVo retrieveBoardForUseCheck(int boardNo) throws Exception {
         return this.postDao.selectBoardForUseCheck(boardNo);
     }
 
 
     //게시글 정보를 변경하다.
-    public void modifyPost(PostVo post) {
+    public void modifyPost(PostVo post) throws Exception {
         this.postDao.updatePost(post);
     }
 
-    public void removePostAttach(int attachNo) {
+    public void removePostAttach(int attachNo) throws Exception {
         attachDao.deletePostAttach(attachNo);
     }
 
-    public void removePost(int postNo) {
+    public void removePost(int postNo) throws Exception {
         attachDao.deleteAttachbyPost(postNo);
         reviewDao.deleteReview(postNo);
         postDao.deletePost(postNo);

@@ -62,7 +62,7 @@ public class FileController {
                                 @RequestParam(value = "rateChip", required = false) int rateChip,
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) {
+                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
         int writerNo = 1;
         HttpSession session = request.getSession();
         try {

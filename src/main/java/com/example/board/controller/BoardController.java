@@ -52,7 +52,7 @@ public class BoardController {
     // ########## 게시글 ########## //
     // 게시글 작성 폼
     @GetMapping("/post/write")
-    public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request) {
+    public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request)  throws Exception{
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();
@@ -95,7 +95,7 @@ public class BoardController {
     //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
     @ResponseBody
     @GetMapping("/post/checkUse")
-    public Map checkUse(@RequestParam(value = "boardNo", required = false, defaultValue = "1") int boardNo) {
+    public Map checkUse(@RequestParam(value = "boardNo", required = false, defaultValue = "1") int boardNo) throws Exception {
         BoardVo board = this.boardService.selectBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
@@ -106,7 +106,7 @@ public class BoardController {
     // 게시글 목록
     @GetMapping("/board/{boardNo}")
     public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
-                       @ModelAttribute("params") PostVo params) {
+                       @ModelAttribute("params") PostVo params) throws Exception {
 
         //게시판 ID로 해당 게시판 내 게시글 목록을 가져온다.
         List<PostVo> posts = this.postService.retrievePostList(params);
@@ -121,7 +121,7 @@ public class BoardController {
 
     // 내가 작성한 게시글 목록
     @GetMapping("/member/room")
-    public String myList(HttpServletRequest request, Model model) {
+    public String myList(HttpServletRequest request, Model model) throws Exception {
         HttpSession session = request.getSession();
 
         MemberVo member = (MemberVo) session.getAttribute("member");
@@ -134,7 +134,7 @@ public class BoardController {
 
     // 회원이 작성한 게시글 목록 (회원 정보 확인/회원이 작성한 글)
     @GetMapping("/member/{memNo}")
-    public String memberWriteList(@PathVariable("memNo") int memNo, Model model) {
+    public String memberWriteList(@PathVariable("memNo") int memNo, Model model) throws Exception {
 
         List<PostVo> posts = this.postService.retrieveMyPosts(memNo);
         model.addAttribute("posts", posts);
@@ -144,7 +144,7 @@ public class BoardController {
 
     // 게시글 상세보기
     @GetMapping("/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String read(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // ######### 게시글 상세정보 시작 ######### //
         PostVo post = this.postService.retrieveDetailBoard(postNo);
@@ -229,7 +229,7 @@ public class BoardController {
     // 카카오 맵에 정보 전달
     @ResponseBody
     @GetMapping("/findMapInfo")
-    public Map giveMapinfo(@RequestParam(value = "postNo") int postNo){
+    public Map giveMapinfo(@RequestParam(value = "postNo") int postNo) throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
 
         PostVo post = this.postService.retrieveDetailBoard(postNo);
@@ -258,7 +258,7 @@ public class BoardController {
 
     // 게시글 수정폼
     @GetMapping("/post/modify/{postNo}")
-    public String modifyFrom(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request) {
+    public String modifyFrom(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request) throws Exception {
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
@@ -323,7 +323,7 @@ public class BoardController {
 
     // 게시글 수정
     @PostMapping("/post/update")
-    public String update(@Valid PostVo post, HttpServletRequest request) {
+    public String update(@Valid PostVo post, HttpServletRequest request) throws Exception {
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();
@@ -369,7 +369,7 @@ public class BoardController {
     // 선택한 파일 삭제
     @ResponseBody
     @GetMapping("/attach/delete/{attachNo}")
-    public Map deleteFile(@PathVariable("attachNo") int attachNo){
+    public Map deleteFile(@PathVariable("attachNo") int attachNo) throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         String success = "fail";
         try {
@@ -384,7 +384,7 @@ public class BoardController {
 
     // 게시글 삭제
     @GetMapping("/post/delete/{postNo}")
-    public String delete(@PathVariable("postNo") int postNo, HttpServletRequest request) {
+    public String delete(@PathVariable("postNo") int postNo, HttpServletRequest request) throws Exception {
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();

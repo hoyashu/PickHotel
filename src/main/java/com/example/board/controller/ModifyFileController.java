@@ -11,6 +11,7 @@ import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Transactional
 @Controller
 public class ModifyFileController {
     @Autowired
@@ -61,7 +63,7 @@ public class ModifyFileController {
                               @RequestParam(value = "rateChip", required = false) Integer rateChip,
                               @RequestParam(value = "visitDate", required = false) String visitDate,
                               @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson){
+                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
         int writerNo = 1;
         HttpSession session = request.getSession();
         try {

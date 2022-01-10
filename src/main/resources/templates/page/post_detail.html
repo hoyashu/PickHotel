@@ -46,8 +46,8 @@
         }
 
         .photos  img {
-            height: 200px;
-            width: auto;
+            height: auto;
+            width: 370px;
         }
 
     </style>
@@ -89,12 +89,8 @@
                 </div>
                 <div th:if="${attachList != null}">
                     <div class="photos">
-                        <div class="mb-3">
-                            <div id="images" th:each="attach : ${attachList}">
-                                <span th:if="${attach.fileType == 1}">
-                                    <img th:src="'/upload/' + ${attach.systemFileName}"/>
-                                </span>
-                            </div>
+                        <div id="images">
+                            <img th:each="attach : ${attachList}" th:if="${attach.fileType == 1}" th:src="'/upload/' + ${attach.systemFileName}"/>
                         </div>
                     </div>
                     <div class="videos">
@@ -111,6 +107,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <div class="review" th:if="${review != null}">
                     <div class="mb-3">
