@@ -86,15 +86,13 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="tag">태그</label>
+                <div class="mb-3 tag-box" th:if="*{tag != ''}">
                     <div id="tag" th:text="*{tag}"></div>
                 </div>
+                v
                 <div class="mb-3 panel-heading text-end">
-                    <a class="btn btn-secondary" onClick="editPost()"
-                       th:if="${session.member != null && writerNo == session.member.memNo}">수정</a>
-                    <a class="btn btn-danger" onClick="removePost()"
-                       th:if="${session.member != null && writerNo == session.member.memNo}">삭제</a>
+                    <a class="btn btn-secondary" onClick="editPost()">수정</a>
+                    <a class="btn btn-danger" onClick="removePost()">삭제</a>
                     <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>
                     <a class="btn btn-secondary" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
                 </div>
@@ -188,7 +186,20 @@
                         }
                     };
 
+
                     $(document).ready(function () {
+
+                        //태그 출력 셋팅
+                        if ($('#tag').length > 0) {
+                            const str = $('#tag').text();
+                            const arr = str.split(" ");
+                            let htmlstr = "";
+                            for (var i = 0; i < arr.length; i++) {
+                                htmlstr += ` <a href="/"><span>#${arr[i]}</span></a>`;
+                            }
+                            $('#tag').html(htmlstr);
+                        }
+
                         //댓글 작성시 로그인 여부에 따라 placeholder값 다르게 출력
                         //작성하려고 할 경우 로그인창으로 유도
                         if (typeof g_sUserMemNo === 'undefined') {
