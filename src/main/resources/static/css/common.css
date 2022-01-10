@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 /*
 작성자 : 김소진
 작성일 : 2022-01-05
@@ -17,7 +16,6 @@ html {
 body {
     height: 100%;
 }
-
 
 a:hover, a:active {
     text-decoration: underline;
@@ -48,7 +46,6 @@ header #menu-box > li + li {
     margin-left: 20px;
 }
 
-
 header .nav-link:hover, header .nav-link:active {
     text-decoration: none;
 }
@@ -75,7 +72,6 @@ header ul.notice-box {
 header ul.notice-box li {
     float: left;
 }
-
 
 header ul.notice-box > li + li {
     margin-left: 20px;
@@ -221,7 +217,6 @@ header ul.notice-box #alarm-box .alarm-bottom {
 }
 
 header ul.notice-box #alarm-box .alarm-bottom .alarm-info_time:before {
-
     content: "";
     display: inline-block;
     width: 2px;
@@ -233,7 +228,6 @@ header ul.notice-box #alarm-box .alarm-bottom .alarm-info_time:before {
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
 }
-
 
 header ul.notice-box #alarm-box .alarm-bottom .alarm-info_time {
     position: relative;

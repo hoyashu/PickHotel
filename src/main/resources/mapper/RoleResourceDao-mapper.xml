@@ -18,6 +18,15 @@
         WHERE mb_id = #{id}
     </select>
 
+    <select id="findroleHierarchy" parameterType="integer" resultType="string">
+        select  role_name
+        from    (select * from role
+                 order by role_desc, role_id) products_sorted,
+                (select @pv := #{desc}) initialisation
+        where   find_in_set(role_desc, @pv)
+          and     length(@pv := concat(@pv, ',', role_id))
+    </select>
+
     <select id="findRoleResources"  resultType="RoleResourcesVo">
         select rr.role_resource_id as roleResourceId, res.resource_name as resourceName, res.resource_type as resourceType,
                r.role_name as roleName, r.role_desc as roleDesc

@@ -67,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //정적 컨텐츠의 액세스는 인증을 걸지 않는다.
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 //        web.ignoring().antMatchers("/webjars/**", "/static/**");
-
     }
 
     @Override
@@ -77,7 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/img/**", "/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -95,9 +93,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
-                .permitAll();
-//                .and()
-//                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
+                .permitAll()
+                .and()
+                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
 
     }
 
@@ -137,20 +135,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     ----------------------------------------------------------------------------
     */
 
-    @Bean
-    public RoleHierarchyImpl roleHierarchy(){
-        String allHierarchy = roleHierarchyService.findAllHierarchy();
-        System.out.println("allHierarchy : " + allHierarchy + "allHierarchy");
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(allHierarchy);
-        return roleHierarchy;
-    }
-
-    @Bean
-    public AccessDecisionVoter<? extends Object> roleVoter(){
-        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
-        return roleHierarchyVoter;
-    }
+//    @Bean
+//    public RoleHierarchyImpl roleHierarchy(){
+//        String allHierarchy = roleHierarchyService.findAllHierarchy();
+//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+//        roleHierarchy.setHierarchy(allHierarchy);
+//        return roleHierarchy;
+//    }
+//
+//    @Bean
+//    public AccessDecisionVoter<? extends Object> roleVoter(){
+//        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
+//        return roleHierarchyVoter;
+//    }
 
 }
 

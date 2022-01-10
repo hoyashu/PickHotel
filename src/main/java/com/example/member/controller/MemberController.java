@@ -27,10 +27,13 @@ public class MemberController {
 
     @Autowired
     public CustomMailSender customMailSender;
-    @Autowired
-    MemberService memberService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    MemberService memberService;
+
 
     // 아이디 찾기 폼
     @GetMapping("/findIdForm")
@@ -52,17 +55,18 @@ public class MemberController {
         return "page/member_findid";
     }
 
+
     // 비밀번호 찾기 폼
     @GetMapping("/findPwdForm")
     public String memberFindPwForm() {
-        return "page/member_findpwform";
+        return "page/member_findpwdform";
     }
 
     // 비밀번호 변경 폼
     @PostMapping("/alterPwdForm")
     public String memberAlterPwForm(@Valid MemberIdVo member, Model model) {
         model.addAttribute("id", member.getId());
-        return "page/member_alterpwform";
+        return "page/member_alterpwdform";
     }
 
     // 비밀번호 변경
@@ -75,6 +79,7 @@ public class MemberController {
 
         return "page/index";
     }
+
 
     // 회원가입 폼
     @GetMapping("/join")
@@ -157,7 +162,7 @@ public class MemberController {
     }
 
     // 아이디 중복체크
-    @GetMapping("//idCheck")
+    @GetMapping("/idCheck")
     @ResponseBody
     public Map memberIdCheck(@Valid MemberIdVo member, Model model) {
 
@@ -203,60 +208,6 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
-
-
-    // 로그인 (시큐리티)
-    @GetMapping("/login")
-    public String login() {
-        return "page/member_login";
-    }
-
-    // 로그인 Post (시큐리티)
-    @PostMapping("/login")
-    public String login2() {
-        return "page/member_login";
-    }
-
-    // 로그아웃 (시큐리티)
-    @GetMapping("/logout")
-    public String logout() {
-        return "/";
-    }
-
-
-//    @GetMapping("/loginSuccess")
-//    @ResponseBody
-//    public String loginSuccess(){
-//
-//        String pwd = passwordEncoder.encode("1111");
-//        System.out.println("pwd"+pwd);
-//
-//        return "로그인에 성공하셨습니다.";
-//    }
-//
-//    @GetMapping("/loginFail")
-//    @ResponseBody
-//    public String loginfail(){
-//
-//        String pwd = passwordEncoder.encode("1111");
-//        System.out.println("pwd"+pwd);
-//
-//        return "로그인에 실패하셨습니다.";
-//    }
-//
-//    @GetMapping("/admin/1")
-//    @ResponseBody
-//    public String admin(){
-//        return "admin 페이지입니다.";
-//    }
-//
-//
-//    @GetMapping("/member/1")
-//    @ResponseBody
-//    public String member(){
-//        return "member 페이지입니다.";
-//    }
-
 
     // 회원 정보 상세조회 + 수정 폼
     @GetMapping("/member")

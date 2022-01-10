@@ -19,10 +19,11 @@
                 </li>
             </ul>
             <div id="login-box" th:if="${session.member} == null">
+
                 <button class="btn btn-outline-primary me-2" onclick="location.href='/join'"
                         type="button">회원가입
                 </button>
-                <button class="btn btn-primary" onclick="location.href='/login'" type="button">로그인</button>
+                <button class="btn btn-primary" onclick="location.href='/loginForm'" type="button">로그인</button>
             </div>
             <div id="user-box" th:if="${session.member}">
                 <ul class="notice-box">
@@ -45,7 +46,7 @@
                              width="32"><span class="user-name" th:text="${session.member.nick}"></span>
                     </a>
                     <ul class="dropdown-menu-1 text-small" id="dropdownUserMenuBox" style="display: none">
-                        <li><a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/intranet}"
+                        <li><a class="dropdown-item" th:href="@{/intranet}"
                                th:if="${session.member.grade} == 5">관리자 페이지</a></li>
                         <!-- <li><a class="dropdown-item" th:href="@{/member/room?type=review}">나의 숙소 리뷰</a></li> -->
                         <li><a class="dropdown-item" th:href="@{/member/room?type=basic}">내가 쓴 게시글</a></li>

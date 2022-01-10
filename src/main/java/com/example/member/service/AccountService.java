@@ -47,7 +47,6 @@ public class AccountService implements UserDetailsService {
                 state = true;
             }
 
-
             log.info("2. AccountService getLoginUser User {}", member);
 
             if (member == null) {
@@ -57,9 +56,16 @@ public class AccountService implements UserDetailsService {
             List<MemberRoleVo> memberRoles = roleResourceDao.getRolesById(id);
 
             List<String> roles = new ArrayList<>();
+            List<String> roleHierarchy = new ArrayList<>();
+
             for (MemberRoleVo memberRole : memberRoles) {
-                roles.add(memberRole.getRoleName().replace("ROLE_",""));
+                roleHierarchy = roleResourceDao.roleHierarchy(memberRole.getRoleDesc());
             }
+
+            for (String myRoles : roleHierarchy) {
+                roles.add(myRoles.replace("ROLE_",""));
+            }
+
             log.info("=======================================================");
             log.info("3. User id : {}", id);
             log.info("3. User Roles : {}", roles);
