@@ -68,23 +68,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</parameterMap>
 
 	<!-- 회원ID와 PW로 조회 -->
-	<select id="Selectlogin" parameterMap="MemberParamerterMap"
-		resultMap="MemberResultMap">
-		(select NULL AS mb_no, NULL AS mb_id, NULL AS mb_nick, NULL
-		AS mb_grade, NULL AS mb_state
-		FROM member
-		WHERE NOT EXISTS(
-		select mb_no,
-		mb_id, mb_nick, mb_grade, mb_state
-		from member
-		where mb_id = #{id} and
-		mb_pwd = #{pwd}))
-		UNION
-		(select mb_no, mb_id,
-		mb_nick, mb_grade, mb_state
-		from member
-		where mb_id = #{id} and mb_pwd = #{pwd})
-	</select>
+<!--	<select id="Selectlogin" parameterMap="MemberParamerterMap"-->
+<!--		resultMap="MemberResultMap">-->
+<!--		(select NULL AS mb_no, NULL AS mb_id, NULL AS mb_nick, NULL-->
+<!--		AS mb_grade, NULL AS mb_state-->
+<!--		FROM member-->
+<!--		WHERE NOT EXISTS(-->
+<!--		select mb_no,-->
+<!--		mb_id, mb_nick, mb_grade, mb_state-->
+<!--		from member-->
+<!--		where mb_id = #{id} and-->
+<!--		mb_pwd = #{pwd}))-->
+<!--		UNION-->
+<!--		(select mb_no, mb_id,-->
+<!--		mb_nick, mb_grade, mb_state-->
+<!--		from member-->
+<!--		where mb_id = #{id} and mb_pwd = #{pwd})-->
+<!--	</select>-->
 
 	<!-- 회원이름과 생년월일로 조회 -->
 	<select id="SelectNBMemberList"
@@ -105,6 +105,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		DATE_FORMAT(now(), '%Y/%m/%d %H:%i:%s'))
 	</insert>
 
+
+	<!-- 회원 룰 추가 -->
+	<insert id="InsertRole" parameterType="string">
+		INSERT INTO member_role(mb_id, role_name) VALUES (#{id}, 'ROLE_GRADE1')
+	</insert>
 
 	<select id="selectIdCheck" parameterMap="MemberParamerterMap"
 		resultType="string">

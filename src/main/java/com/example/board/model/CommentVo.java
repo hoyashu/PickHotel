@@ -18,6 +18,7 @@ public class CommentVo {
     private int isblind;
     private String writeday;
     private String memNick;
+
     private int isDelect;
 
     //    삭제 댓글 목록 출력시
@@ -25,7 +26,6 @@ public class CommentVo {
         super();
         this.isDelect = isDelect;
     }
-
 
     //    댓글 블라인드 처리시 사용
     public CommentVo(int comNo, int isblind) {

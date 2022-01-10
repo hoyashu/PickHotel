@@ -4,7 +4,8 @@
 	<div id="page-title" class="row">
 		<h1 class="text-center">비밀번호 변경</h1>
 	</div>
-	<form th:action="@{/member_alterpw}" method="post" class="row justify-content-center align-self-center form-small  d-flex">
+
+	<form th:action="@{/user/alterPwd}" method="post" class="row justify-content-center align-self-center form-small  d-flex">
 		<input type="hidden" name="id" id="id" th:value="${id}">
 		<div class="mb-3">
 			<label for="id">비밀번호 입력</label>
@@ -133,6 +134,7 @@
 
 
 				$('form').submit();
+				alert("비밀번호가 변경되었습니다.");
 			}
 
 			$('#submitBtn').on('click', function (e) {

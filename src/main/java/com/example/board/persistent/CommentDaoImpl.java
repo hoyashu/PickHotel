@@ -30,6 +30,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 댓글 목록 조회
+
     @Override
     public CommentVo selectComment(int comNo) {
         CommentVo comment = new CommentVo();
@@ -38,6 +39,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 마지막 댓글 pk조회
+
     @Override
     public int selectCommentMax() {
         int max = this.sqlSession.selectOne("CommentDao.selectCommentMax");
@@ -45,6 +47,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 댓글 그룹내 순서 조회
+
     @Override
     public int selectCommentOrder(int parents) {
         int order = this.sqlSession.selectOne("CommentDao.selectCommentOrder", parents);
@@ -57,9 +60,10 @@ public class CommentDaoImpl implements CommentDao {
         this.sqlSession.update("CommentDao.updateComment", comment);
     }
 
+
+    // 댓글삭제
     @Override
     public void blindComment(int comNo, int isblind) {
-
     }
 
     // 댓글삭제
@@ -67,6 +71,5 @@ public class CommentDaoImpl implements CommentDao {
     public void deleteComment(int comNo) {
         this.sqlSession.delete("CommentDao.deleteComment", comNo);
     }
-
 
 }
