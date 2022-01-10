@@ -34,7 +34,6 @@ public class MemberController {
     @Autowired
     public CustomMailSender customMailSender;
 
-
     // 아이디 찾기 폼
     @GetMapping("/user/findIdForm")
     public String memberFindIdForm() {
@@ -48,7 +47,6 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", member.getName());
         map.put("birth", member.getBirth());
-
         List<MemberVo> findIdResultList = memberService.retrieveMemberId(map);
 
         model.addAttribute("findIdResultList", findIdResultList);
@@ -207,6 +205,7 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
+
 
 
 

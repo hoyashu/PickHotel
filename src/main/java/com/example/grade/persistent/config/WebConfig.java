@@ -1,11 +1,7 @@
-package com.example.config;
+package com.example.grade.persistent.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -18,11 +14,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-//        registry.addResourceHandler("/static/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
+        // registry.addResourceHandler("/static/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
 
+        // 윈도우용 설정
+        // registry.addResourceHandler("/upload/**").addResourceLocations("file:///C:/upload/");
+
+        // 리눅스용 설정
         registry.addResourceHandler("/upload/**").addResourceLocations("file:///upload/");
 
     }
-
-
 }

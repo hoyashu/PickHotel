@@ -1,4 +1,4 @@
-package com.example.config;
+package com.example.grade.persistent.config;
 
 import com.example.member.service.RoleHierarchyService;
 import com.example.security.DomainFailureHandler;
@@ -153,4 +153,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 }
+
 

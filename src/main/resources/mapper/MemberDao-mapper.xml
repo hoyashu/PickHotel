@@ -105,11 +105,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		DATE_FORMAT(now(), '%Y/%m/%d %H:%i:%s'))
 	</insert>
 
+
 	<!-- 회원 룰 추가 -->
 	<insert id="InsertRole" parameterType="string">
 		INSERT INTO member_role(mb_id, role_name) VALUES (#{id}, 'ROLE_GRADE1')
 	</insert>
-
 
 	<select id="selectIdCheck" parameterMap="MemberParamerterMap"
 		resultType="string">

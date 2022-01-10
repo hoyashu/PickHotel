@@ -1,6 +1,7 @@
 package com.example.member.persistent;
 
 import com.example.member.model.*;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

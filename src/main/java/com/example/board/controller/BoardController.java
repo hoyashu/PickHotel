@@ -2,7 +2,9 @@ package com.example.board.controller;
 
 import com.example.board.model.*;
 import com.example.board.service.*;
-//import com.example.common.exception.Constants;
+
+import com.example.common.exception.Constants;
+
 import com.example.member.model.MemberVo;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,22 @@ public class BoardController {
     @GetMapping("/post/write")
     public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request) {
 
+        // 작성자 본인이거나 관리자 인지 권한 확인
+        // 세션 준비
+        HttpSession session = request.getSession();
+        MemberVo member = (MemberVo) session.getAttribute("member");
+
+        // 회원이 아닌 경우 작성이 제한됨
+        if (member == null) {
+
+            //회원이 아닌 경우 로그인 페이지로 이동함
+            return "redirect:/login?redirectUrl=" + request.getRequestURL() + "?" + request.getQueryString();
+
+        } else {
+            // 회원인 경우
+            //해당 게시판 접근권한이 있는지 확인 할것
+
+
             //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
             int defaultListNo = 0;
             if (boardNo == null) {
@@ -76,6 +94,8 @@ public class BoardController {
             model.addAttribute("boardList", boardList);
 
             return "page/post_write";
+
+        }
 
     }
 
@@ -135,14 +155,18 @@ public class BoardController {
 
         // ######### 게시글 상세정보 시작 ######### //
         PostVo post = this.postService.retrieveDetailBoard(postNo);
-//        if (post == null) {
-//            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-//        }
+
+        if (post == null) {
+            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+        }
+
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
         RoomVo room = new RoomVo();
-        if (review != null) {
+
+        if(review != null){
+
             room = this.roomService.retrieveRoom(review.getRoomNo());
         }
 
@@ -215,6 +239,15 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+
+        // 회원이 아닌 경우 작성이 제한됨
+        if (member == null) {
+
+            //회원이 아닌 경우 로그인 페이지로 이동함
+            return "redirect:/login?redirectUrl=" + request.getRequestURL();
+
+        } else {
+
             // 회원 id
             int memNo = member.getMemNo();
 
@@ -232,9 +265,11 @@ public class BoardController {
                 PostVo post = this.postService.retrieveDetailBoard(postNo);
 
                 //현존하지 않은 게시글인 경우
-//                if (post == null) {
-//                    throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-//                }
+
+                if (post == null) {
+                    throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+                }
+
 
                 //게시판 목록 정보 가져오기
                 List<String> boardNames = this.postService.retrieveBoardName();
@@ -256,6 +291,7 @@ public class BoardController {
             }
         }
 
+    }
 
     // 게시글 수정
     @PostMapping("/post/update")
@@ -265,6 +301,14 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+
+        // 회원이 아닌 경우 작성이 제한됨
+        if (member == null) {
+
+            //회원이 아닌 경우 로그인 페이지로 이동함
+            return "redirect:/login?redirectUrl=/post/" + post.getPostNo();
+
+        } else {
 
             // 회원 id
             int memNo = member.getMemNo();
@@ -295,6 +339,8 @@ public class BoardController {
             }
         }
 
+    }
+
 
     // 게시글 삭제
     @GetMapping("/post/delete/{postNo}")
@@ -304,6 +350,13 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+        // 회원이 아닌 경우 작성이 제한됨
+        if (member == null) {
+
+            //회원이 아닌 경우 로그인 페이지로 이동함
+            return "redirect:/login?redirectUrl=/post/" + postNo;
+
+        } else {
 
             // 회원 id
             int memNo = member.getMemNo();
@@ -329,5 +382,7 @@ public class BoardController {
                 return "redirect:/board/" + boardNo;
             }
         }
+
+    }
 
 }
