@@ -1,0 +1,13 @@
+<script th:src="@{/js/jquery-1.11.0.min.js}" type="text/javascript"></script>
+<script th:if="${session.member}" th:inline="javascript">
+    /*<![CDATA[*/
+    var g_sUserMemNo = [[${session.member.memNo}]];
+    var g_sUserId = '[[${session.member.id}]]';
+    var g_sUserNick = '[[${session.member.nick}]]';
+    /*]]>*/
+</script>
+<script>
+    //공통 변수 설정
+    const _confirmLoginTxt = "로그인 후 가능합니다.\n로그인 창으로 이동하시겠습니까?";
+    const _loginPage = "/login";
+</script>

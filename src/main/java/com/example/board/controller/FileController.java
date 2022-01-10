@@ -167,8 +167,6 @@ public class FileController {
                 }
             }
         }
-
-
         return "redirect:/post/" + postVo.getPostNo();
     }
 

@@ -85,6 +85,12 @@ public class PostDao {
         this.sqlSession.update("PostDao.updatePost", post);
     }
 
+
+    //게시글을 블라인드 처리한다.
+    public void blindPost(int postNo, int isblind) {
+        this.sqlSession.delete("PostDao.deletePost", postNo);
+    }
+
     //게시글 정보를 삭제하다.
     public void deletePost(int postNo) {
         this.sqlSession.delete("PostDao.deletePost", postNo);

@@ -4,7 +4,9 @@ import com.example.board.MapApi.MapVo;
 import com.example.board.MapApi.MetaVo;
 import com.example.board.model.*;
 import com.example.board.service.*;
+
 import com.example.common.exception.Constants;
+
 import com.example.member.model.MemberVo;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +71,7 @@ public class BoardController {
             // 회원인 경우
             //해당 게시판 접근권한이 있는지 확인 할것
 
+
             //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
             int defaultListNo = 0;
             if (boardNo == null) {
@@ -90,7 +93,9 @@ public class BoardController {
             model.addAttribute("boardList", boardList);
 
             return "page/post_write";
+
         }
+
     }
 
     //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
@@ -149,9 +154,11 @@ public class BoardController {
 
         // ######### 게시글 상세정보 시작 ######### //
         PostVo post = this.postService.retrieveDetailBoard(postNo);
+
         if (post == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
+
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
@@ -271,6 +278,7 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+
         // 회원이 아닌 경우 작성이 제한됨
         if (member == null) {
 
@@ -278,6 +286,7 @@ public class BoardController {
             return "redirect:/login?redirectUrl=" + request.getRequestURL();
 
         } else {
+
             // 회원 id
             int memNo = member.getMemNo();
 
@@ -310,6 +319,7 @@ public class BoardController {
                 }
 
                 //현존하지 않은 게시글인 경우
+
                 if (post == null) {
                     throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
                 }
@@ -325,6 +335,7 @@ public class BoardController {
                 return "page/post_modify";
             }
         }
+
     }
 
     // 게시글 수정
@@ -335,6 +346,7 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+
         // 회원이 아닌 경우 작성이 제한됨
         if (member == null) {
 
@@ -342,6 +354,7 @@ public class BoardController {
             return "redirect:/login?redirectUrl=/post/" + post.getPostNo();
 
         } else {
+
             // 회원 id
             int memNo = member.getMemNo();
 
@@ -370,6 +383,7 @@ public class BoardController {
                 return "redirect:/post/" + post.getPostNo();
             }
         }
+
     }
 
     // 선택한 파일 삭제
@@ -403,6 +417,7 @@ public class BoardController {
             return "redirect:/login?redirectUrl=/post/" + postNo;
 
         } else {
+
             // 회원 id
             int memNo = member.getMemNo();
 
@@ -427,5 +442,7 @@ public class BoardController {
                 return "redirect:/board/" + boardNo;
             }
         }
+
     }
+
 }

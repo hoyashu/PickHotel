@@ -1,4 +1,4 @@
-package com.example.config;
+package com.example.grade.persistent.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

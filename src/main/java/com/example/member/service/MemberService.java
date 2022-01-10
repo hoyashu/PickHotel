@@ -13,13 +13,9 @@ import java.util.Map;
 
 @Service("cityService")
 public class MemberService {
+    
     @Autowired
     private MemberDao memberDao;
-
-    // 로그인
-    public MemberVo loginMember(Map map) {
-        return this.memberDao.Selectlogin(map);
-    }
 
     // 방문횟수 카운트
     public void visitCount(String id) {
@@ -45,6 +41,9 @@ public class MemberService {
     public void registerMember(Map map) {
         this.memberDao.insertMember(map);
     }
+
+    // 회원가입 Role 추가
+    public void registerRole(String id) { this.memberDao.insertRole(id); }
 
     // 아이디 중복체크
     public String retrieveIdCheck(String id) {
