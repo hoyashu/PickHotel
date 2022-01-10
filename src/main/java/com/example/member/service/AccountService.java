@@ -47,7 +47,6 @@ public class AccountService implements UserDetailsService {
                 state = true;
             }
 
-
             log.info("2. AccountService getLoginUser User {}", member);
 
             if (member == null) {
