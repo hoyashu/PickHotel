@@ -66,7 +66,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomVo retrieveRoom(int roomNo) {
 
-
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("roomNo", roomNo);
 

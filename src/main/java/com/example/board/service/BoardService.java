@@ -1,7 +1,6 @@
 package com.example.board.service;
 
 import com.example.board.model.BoardVo;
-
 import java.util.List;
 
 public interface BoardService {

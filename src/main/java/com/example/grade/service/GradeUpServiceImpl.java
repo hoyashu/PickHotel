@@ -17,7 +17,6 @@ public class GradeUpServiceImpl implements GradeUpService {
     @Override
     public void registerGradeUp(GradeUpVo gradeup) {
         this.gradeUpDao.insertGradeUp(gradeup);
-
     }
 
     //	등업 신청 건 상세조회
@@ -43,6 +42,7 @@ public class GradeUpServiceImpl implements GradeUpService {
     public int checkedGradeUp(int memNo) {
         return this.gradeUpDao.checkedGradeUp(memNo);
     }
+
 
     // 등업 신청건 '수락' 상태 변경
     @Override

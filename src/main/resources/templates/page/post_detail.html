@@ -45,6 +45,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="room" th:if="${room.no != 0}">
                     <div>
                         <span th:text="${room.roomName}"></span>
@@ -114,6 +115,7 @@
                     </div>
                     <!-- 댓글 목록 -->
                     <ul class="list-group list-group-flush" id="ListComment">
+
                         <li class="commont-noline" th:if="${comments==null or comments.isEmpty()}">첫번째 댓글을 남겨보세요✨</li>
                         <li th:class="'commont-line dept_'+${comment.comClass}" th:each="comment : ${comments}"
                             th:id="'comment_'+${comment.comNo}"
@@ -240,8 +242,6 @@
                             async function requestProcess(url, postNo) {
                                 try {
                                     rs = await getAjax(url, postNo);
-                                    const itemLen = Object.keys(rs).length;
-
                                     $('#ListComment').html("");
                                     let htmlStr = "";
 
@@ -287,7 +287,6 @@
                                         }
                                         $('#ListComment').html(htmlStr);
                                     }
-
 
                                 } catch (error) {
                                     console.log("error : ", error);
@@ -551,7 +550,6 @@
                             ;
                         });
                         //******댓글AJAX작동 컨트롤 끝*******//
-
                         const beforeStr = location.hash;
                         const afterStr = beforeStr.split('?')[0].replace("#", "");
                         if (beforeStr != "") {

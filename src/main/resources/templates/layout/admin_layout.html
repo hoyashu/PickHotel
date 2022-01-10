@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <title layout:title-pattern="$LAYOUT_TITLE : $CONTENT_TITLE">PickHotel Intranet</title>
@@ -49,6 +50,7 @@
         <!-- Footer -->
         <th:block layout:fragment="admin_footer" th:include="@{/fragment/admin_footer}"></th:block>
         <!-- End of Footer -->
+
         <th:block layout:fragment="live_alarm" th:if="${session.member}"
                   th:include="@{/fragment/live_alarm}"></th:block>
     </div>

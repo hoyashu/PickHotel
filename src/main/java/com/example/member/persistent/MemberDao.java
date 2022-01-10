@@ -1,7 +1,7 @@
 package com.example.member.persistent;
 
-import com.example.member.model.MemberJoinVo;
-import com.example.member.model.MemberVo;
+import com.example.member.model.*;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,13 +11,10 @@ import java.util.Map;
 
 @Repository("memberDao")
 public class MemberDao {
+
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
 
-    // 로그인
-    public MemberVo Selectlogin(Map map) {
-        return this.sqlSessionTemplate.selectOne("MemberDao.Selectlogin", map);
-    }
 
     // 방문횟수 카운트
     public void UpdateVisitCount(String id) {
@@ -43,6 +40,9 @@ public class MemberDao {
     public void insertMember(Map map) {
         this.sqlSessionTemplate.insert("MemberDao.InsertMember", map);
     }
+
+    // 회원가입 룰 추가
+    public void insertRole(String id) { this.sqlSessionTemplate.insert("MemberDao.InsertRole", id);}
 
     // 아이디 중복체크
     public String selectIdCheck(String id) {

@@ -86,7 +86,7 @@
                 const nick = $("input[name=nick]").val();
                 if (nick != orgNick) { //수정된 경우에만 닉네임 중복 검사 실행
                     $.ajax({
-                        url    : '/member_nickcheck?nick=' + nick,
+                        url    : '/user/nickCheck?nick=' + nick,
                         type   : 'GET',
                         success: function (data) {
                             const result = data;
@@ -259,6 +259,7 @@
                     if (confirm("비밀번호를 변경하시겠습니까?") == false) {
                         return false;
                     }
+
                 }
                 $('form').submit();
             };
@@ -268,6 +269,7 @@
             });
             $('#withDrawBtn').on('click', function (e) {
                 e.preventDefault()
+
                 var memNo = $(memNo).val();
                 if (confirm("정말로 탈퇴하시나요?\n슬프지만 다음에 또 만나요😢") == true) {
                     location.href = '/member/withdarw'

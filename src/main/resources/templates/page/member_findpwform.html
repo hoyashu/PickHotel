@@ -4,7 +4,8 @@
 	<div id="page-title" class="row">
 		<h1 class="text-center">비밀번호 찾기</h1>
 	</div>
-	<form th:action="@{/member_alterpwform}" method="post"
+
+	<form th:action="@{/user/alterPwdForm}" method="post"
 		class="row justify-content-center align-self-center form-small d-flex">
 		<div class="mb-3">
 			<label for="id">아이디</label>
@@ -12,8 +13,8 @@
 				<input type="text" class="form-control" name="id" id="id">
 				<button type="button" id="sendCertifyCodeBtn" class="btn btn-secondary" disabled="disabled">인증메일
 					발송</button>
-				<div class="check_font" id="id_check"></div>
 			</div>
+			<div class="check_font" id="id_check"></div>
 		</div>
 		<div class="mb-3">
 			<label for="certifyNo">인증번호</label>
@@ -35,7 +36,7 @@
 				console.log("call");
 				var id = $('#id').val();
 				$.ajax({
-					url: '/member_idcheck?id=' + id,
+					url: '/user/idCheck?id=' + id,
 					type: 'GET',
 					success: function (data) {
 						console.log("1 = 중복o / 0 = 중복x : " + data);
@@ -63,7 +64,7 @@
 				$("#certifyNo").attr("disabled", false);
 				$("#checkCertifyCodeBtn").attr("disabled", false);
 				$.ajax({
-					url: '/member_sendmail?id=' + id,
+					url: '/user/sendMail?id=' + id,
 					type: 'GET',
 					success: function (data) {
 						console.log(data);
@@ -78,7 +79,7 @@
 			$("#checkCertifyCodeBtn").click(function () {
 				var certifyNo = $('#certifyNo').val();
 				$.ajax({
-					url: '/member_mailcheck',
+					url: '/user/mailCheck',
 					type: 'GET',
 					success: function (data) {
 						const result = data;

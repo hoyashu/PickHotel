@@ -4,49 +4,56 @@
             <a class="logo" href="/">
                 <img alt="사이트 로고" class="logo me-5" th:src="@{/img/logo.png}">
             </a>
+
             <ul id="menu-box">
                 <li>
-                    <a class="nav-link px-2 link-dark" th:href="@{/board/}+'3'">숙소리뷰</a>
+                    <a class="nav-link px-2 link-dark" th:href="@{/user/board/}+'3'">숙소리뷰</a>
                 </li>
-                <li class="dropdown"><a class="nav-link px-2 link-dark " href="#" id="dropdownBoard">숙소톡톡</a>
-                    <ul class="text-small dropdown-menu-1" id="dropdownBoardBox" style="display: none">
-                        <li><a class="dropdown-item" th:href="@{/board/}+'1'">해안가 인근 숙소 추천</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'2'">조용한 숙소 추천</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'15'">우리 동네 숙소</a></li>
-                        <li><a class="dropdown-item" th:href="@{/board/}+'7'">이벤트</a></li>
+                <li class="dropdown"><a aria-expanded="false" aria-haspopup="true"
+                                        class="nav-link px-2 link-dark dropdown-toggle"
+                                        data-toggle="dropdown" href="#" id="dropdownBoard1">숙소톡톡</a>
+                    <ul aria-labelledby="dropdownBoard1" class="dropdown-menu text-small">
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'1'">해안가 인근 숙소 추천</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'2'">조용한 숙소 추천</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'15'">우리 동네 숙소</a></li>
+                        <li><a class="dropdown-item" th:href="@{/user/board/}+'7'">이벤트</a></li>
                     </ul>
 
                 </li>
             </ul>
+
             <div id="login-box" th:if="${session.member} == null">
-                <button class="btn btn-outline-primary me-2" onclick="location.href='/join'"
+                <button class="btn btn-outline-primary me-2" onclick="location.href='/user/joinForm'"
                         type="button">회원가입
                 </button>
-                <button class="btn btn-primary" onclick="location.href='/login'" type="button">로그인</button>
+                <button class="btn btn-primary" onclick="location.href='/loginForm'" type="button">로그인</button>
             </div>
             <div id="user-box" th:if="${session.member}">
                 <ul class="notice-box">
-                    <li class="alarm-area">
-                        <a class="nav-link px-2 link-dark user-alarm" href="#" id="dropdownAlarmList">알림<span
-                                class="dropdown notion"></span></a>
-                        <div class="dropdown-menu-1 " id="alarm-box" style="display: none">
+                    <li class="dropdown">
+
+                        <a aria-expanded="false" aria-haspopup="true"
+                           class="nav-link px-2 link-dark dropdown-toggle user-alarm"
+                           data-toggle="dropdown" href="#" id="dropdownAlarmList">알림<span
+                                class="notion"></span></a>
+                        <div aria-labelledby='dropdownAlarmList' class='dropdown-menu text-small' id="alarm-box">
                         </div>
                     </li>
-                    <li class="note-area">
+                    <li>
                         <a class="nav-link px-2 link-dark user-note" th:href="@{/note/list}">쪽지<span class="notion">
 								<!-- <i
 									class="ico">3</i> --></span></a></li>
                 </ul>
                 <div class="dropdown private-box">
-                    <a class="d-block link-dark text-decoration-none dropdown"
-                       href="#" id="dropdownUserMenu">
-                        <img alt="회원 등급 아이콘" class="rounded-circle" height="32"
-                             th:src="@{|/img/icon_grade_${session.member.grade}.png|}"
+
+                    <a aria-expanded="false" aria-haspopup="true"
+                       class="d-block link-dark text-decoration-none dropdown-toggle"
+                       data-toggle="dropdown" href="#" id="dropdownUserMenu">
+                        <img alt="mdo" class="rounded-circle" height="32" src="https://github.com/mdo.png"
                              width="32"><span class="user-name" th:text="${session.member.nick}"></span>
                     </a>
-                    <ul class="dropdown-menu-1 text-small" id="dropdownUserMenuBox" style="display: none">
-                        <li><a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/intranet}"
-                               th:if="${session.member.grade} == 5">관리자 페이지</a></li>
+                    <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu text-small">
+                        <li><a class="dropdown-item"  th:href="@{/intranet}" th:if="${session.member.grade} == 5">관리자 페이지</a></li>
                         <!-- <li><a class="dropdown-item" th:href="@{/member/room?type=review}">나의 숙소 리뷰</a></li> -->
                         <li><a class="dropdown-item" th:href="@{/member/room?type=basic}">내가 쓴 게시글</a></li>
                         <li><a class="dropdown-item" th:href="@{/member/gradeup_list}">등업신청</a></li>
@@ -60,6 +67,7 @@
                         </li>
                     </ul>
                 </div>
+
             </div>
         </div>
     </div>

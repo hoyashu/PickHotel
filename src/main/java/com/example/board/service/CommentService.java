@@ -1,7 +1,6 @@
 package com.example.board.service;
 
 import com.example.board.model.CommentVo;
-
 import java.util.List;
 
 public interface CommentService {

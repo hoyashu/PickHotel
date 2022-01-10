@@ -28,6 +28,7 @@ public class FileController {
     @Autowired
     private FileUploadService fileUploadService;
 
+
     //게시글 작성
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -44,6 +45,7 @@ public class FileController {
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
                                 @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) {
+
         HttpSession session = request.getSession();
         MemberVo memberVo = (MemberVo) session.getAttribute("member");
         int writerNo = memberVo.getMemNo();
@@ -95,9 +97,9 @@ public class FileController {
                 } else {
                     fileName = "default.mp4";
                 }
+
             }
         }
-
         return "redirect:/post/" + postVo.getPostNo();
     }
 
