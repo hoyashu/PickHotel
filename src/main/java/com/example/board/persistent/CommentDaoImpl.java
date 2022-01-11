@@ -39,7 +39,6 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 마지막 댓글 pk조회
-
     @Override
     public int selectCommentMax() {
         int max = this.sqlSession.selectOne("CommentDao.selectCommentMax");
@@ -47,7 +46,6 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 댓글 그룹내 순서 조회
-
     @Override
     public int selectCommentOrder(int parents) {
         int order = this.sqlSession.selectOne("CommentDao.selectCommentOrder", parents);

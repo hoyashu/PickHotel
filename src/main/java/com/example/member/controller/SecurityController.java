@@ -1,28 +1,33 @@
 package com.example.member.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class SecurityController {
 
     // 로그인 GET
-    @GetMapping("/loginForm")
-    public String login() {
+    @GetMapping("/login")
+    public String login(HttpServletRequest request, Model model) {
+        String referrer = request.getHeader("Referer");
+        request.getSession().setAttribute("url_prior_login", referrer);
         return "page/member_login";
     }
 
     // 로그인 Post
-    @PostMapping("/loginForm")
+    @PostMapping("/login")
     public String login2() {
         return "page/member_login";
     }
 
     // 로그아웃
     @GetMapping("/logout")
-    public String logout(){
+    public String logout() {
         return "/";
     }
 
@@ -50,37 +55,37 @@ public class SecurityController {
     /*권한 test*/
     @GetMapping("/intranet/1")
     @ResponseBody
-    public String admin(){
+    public String admin() {
         return "admin 페이지입니다.";
     }
 
     @GetMapping("/member/1")
     @ResponseBody
-    public String member(){
+    public String member() {
         return "member 페이지입니다.";
     }
 
     @GetMapping("/grade4/1")
     @ResponseBody
-    public String grade4(){
+    public String grade4() {
         return "grade4 페이지입니다.";
     }
 
     @GetMapping("/grade3/1")
     @ResponseBody
-    public String grade3(){
+    public String grade3() {
         return "grade3 페이지입니다.";
     }
 
     @GetMapping("/grade2/1")
     @ResponseBody
-    public String grade2(){
+    public String grade2() {
         return "grade2 페이지입니다.";
     }
 
     @GetMapping("/grade1/1")
     @ResponseBody
-    public String grade1(){
+    public String grade1() {
         return "grade1 페이지입니다.";
     }
 }
