@@ -298,9 +298,8 @@
                 }
             }
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
-            var keyword = document.getElementById('keyword').value;
             $.ajax({
-                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                url    : '/board/' + bordNoSelect + '/post/checkUse',
                 type   : 'GET',
                 success: function (data) {
                     const result = data;
@@ -338,9 +337,8 @@
             var place_name = document.getElementById('place_name').value;
             var subject = document.getElementById('subject').value;
             var content = CKEDITOR.instances['content'].getData();
-
             $.ajax({
-                url    : '/post/checkUse?boardNo=' + bordNoSelect,
+                url    : '/board/' + bordNoSelect + '/post/checkUse',
                 type   : 'GET',
                 success: function (data) {
                     var result = data;

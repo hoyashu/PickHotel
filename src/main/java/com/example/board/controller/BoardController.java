@@ -93,7 +93,7 @@ public class BoardController {
     //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
     @ResponseBody
     @GetMapping("/board/{boardNo}/post/checkUse")
-    public Map checkUse(@RequestParam(value = "boardNo", required = false, defaultValue = "1") int boardNo) {
+    public Map checkUse(@PathVariable("boardNo") int boardNo) {
         BoardVo board = this.boardService.selectBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
