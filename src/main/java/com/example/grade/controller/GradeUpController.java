@@ -1,6 +1,8 @@
 package com.example.grade.controller;
 
 import com.example.grade.model.GradeUpVo;
+import com.example.grade.model.SiteGradeVo;
+import com.example.grade.persistent.SiteGradeDao;
 import com.example.grade.service.GradeUpService;
 import com.example.member.model.MemberVo;
 import com.example.member.service.MemberService;
@@ -21,6 +23,9 @@ public class GradeUpController {
 
     @Autowired
     private GradeUpService gradeUpService;
+
+    @Autowired
+    private SiteGradeDao siteGradeDao;
 
     // 등업신청목록조회(사용자)
     @GetMapping("/member/gradeup_list")
@@ -53,15 +58,11 @@ public class GradeUpController {
     @PostMapping("/member/gradeup_check")
     public int gradeup_checked(HttpServletRequest request) {
 
-        int memNo = 2;
-        // 해당 회원앞으로 대기중인 등업신청건이 몇개인지 확인 할 것
         HttpSession session = request.getSession();
-        try {
-            MemberVo member = (MemberVo) session.getAttribute("member");
-            memNo = member.getMemNo();
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+
+        MemberVo member = (MemberVo) session.getAttribute("member");
+        int memNo = member.getMemNo();
+
         int yetOk = gradeUpService.checkedGradeUp(memNo);
         // 1. 신청자가 대기중인 등업신청건이 있는지 확인
         if (yetOk == 0)
@@ -88,7 +89,13 @@ public class GradeUpController {
             return "redirect:/";
         }
 
-        // 2.가능한 등급 목록 정보 받아올것'
+        // 2.가능한 등급 목록 정보 받아올것
+        List<SiteGradeVo> possibleGrades = this.siteGradeDao.possibleGrade(memNo);
+        if (possibleGrades.isEmpty()) {
+            model.addAttribute("possibleGrades", "NoData");
+        } else {
+            model.addAttribute("possibleGrades", possibleGrades);
+        }
 
         // 3. 현재 회원의 정보를 받아와야함
         MemberVo member = memberService.retrieveMember(memNo);
@@ -121,40 +128,57 @@ public class GradeUpController {
     }
 
     // 등업신청 작동 (등업 신청 버튼 누르면 실행함)
+    @ResponseBody
     @PostMapping("/member/gradeup")
     public String gradeup(@ModelAttribute("GradeUpVo") GradeUpVo gradeUp, HttpServletRequest request) {
 
         // 세션 가져오기
-        int memNo = 2;
-        int beforegrade = 1;
         HttpSession session = request.getSession();
-        try {
-            MemberVo member = (MemberVo) session.getAttribute("member");
-            memNo = member.getMemNo();
-        } catch (Exception e) {
-            // TODO: handle exception
+        MemberVo member = (MemberVo) session.getAttribute("member");
+        int memNo = member.getMemNo();
+        int beforegrade = member.getGrade();
+
+        //회원이 신청한 등급
+        int aftergrade = gradeUp.getAftergrade();
+
+        // 신청 가능한 등급인지 확인 할 것
+        int result = 0;
+        List<SiteGradeVo> possibleGrades = this.siteGradeDao.possibleGrade(memNo);
+        for (SiteGradeVo possibleGrade : possibleGrades) {
+            int grade = possibleGrade.getMemGrade();
+            if (grade == aftergrade) {
+                result++;
+            }
         }
-
-        gradeUp.setMemNo(memNo);
-        gradeUp.setBeforegrade(beforegrade);
-
-        gradeUpService.registerGradeUp(gradeUp);
-
-        return "redirect:/member/gradeup_list";
-
+        //신청한 내용과 db 일치여부
+        if (result > 0) {
+            gradeUp.setMemNo(memNo);
+            gradeUp.setBeforegrade(beforegrade);
+            gradeUpService.registerGradeUp(gradeUp);
+            return "success";
+        } else {
+            return "false";
+        }
     }
 
     // 등업신청 삭제
     @ResponseBody
     @GetMapping("/member/gradeup_delete/{gradeno}")
-    public String gradeupdelete(@PathVariable("gradeno") int gradeno, Model model) {
+    public String gradeupdelete(@PathVariable("gradeno") int gradeno, Model model, HttpServletRequest request) {
+        // 세션 가져오기
+        HttpSession session = request.getSession();
+        MemberVo member = (MemberVo) session.getAttribute("member");
+        int memNo = member.getMemNo();
 
-        gradeUpService.deleteGradeUp(gradeno);
+        int gradeupstate = gradeUpService.checkedGradeUp(memNo);
+        // 1. 신청자가 대기중인 등업신청건이 있는지 확인
+        if (gradeupstate == 1) {
+            gradeUpService.deleteGradeUp(gradeno);
+            return "success";
+        } else {
+            return "false";
+        }
 
-        model.addAttribute("delete", gradeno);
-        // 세션으로 본인임을 확인.
-
-        return "success";
     }
 
 }

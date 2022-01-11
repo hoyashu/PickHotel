@@ -8,6 +8,7 @@ import java.util.List;
 public interface SiteGradeDao {
     List<SiteGradeVo> retriveSiteGrade();
 
-    int updateSiteGrade(List<SiteGradeVo> siteGrade);
+    void updateSiteGrade(SiteGradeVo sitegrade);
 
+    List<SiteGradeVo> possibleGrade(int memNos);
 }
