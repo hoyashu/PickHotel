@@ -25,6 +25,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -44,6 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private DomainSuccessHandler domainSuccessHandler;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     private RoleHierarchyService roleHierarchyService;
@@ -77,6 +81,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .formLogin()
                 .loginPage("/login")

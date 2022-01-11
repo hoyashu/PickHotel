@@ -147,6 +147,7 @@
                 </div>
 
                 <input id="postNo" name="postNo" th:value="*{postNo}" type="hidden">
+                <input id="boardNo" name="postNo" th:value="*{boardNo}" type="hidden">
             </div>
 
             <!-- 댓글시작 -->
@@ -223,6 +224,7 @@
                 <script>
 
                     const postNo = $("#postNo").val();
+                    const boardNo = $("#boardNo").val();
 
                     // 페이지 로드 후 카카오 지도에 등록된 정보를 넣어준다.
                     window.onload = function(){
@@ -443,14 +445,14 @@
                 <script>
                     // 글 수정
                     function editPost() {
-                        location.href = "/post/modify/" + postNo
+                        location.href = "/board/" + boardNo + "/post/" + postNo + "/modify"
                     };
 
                     // 글 삭제
                     function removePost() {
                         const con = confirm("해당 글을 삭제 하시겠습니까?\n삭제된 글은 복구할수 없습니다.");
                         if (con == true) {
-                            location.href = "/post/delete/" + postNo
+                            location.href = "/board/" + boardNo + "/post/" + postNo + "/delete"
                         }
                     };
 

@@ -55,6 +55,11 @@ public class PostService {
         return this.postDao.selectDetailPost(postNo);
     }
 
+    // 게시글 존재 여부 조회
+    public Integer retrievePostSearch(PostVo post) {
+        return this.postDao.selectPostSearch(post);
+    }
+
     //회원별 게시글 목록 조회
     public List<PostVo> retrieveMyPosts(int MemNo) {
         List<PostVo> posts = this.postDao.selectMyPosts(MemNo);
