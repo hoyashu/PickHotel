@@ -168,7 +168,7 @@ public class BoardController {
 
     // 게시글 상세보기
     @GetMapping("/{grade}/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String read(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
 
         // ######### 게시글 상세정보 시작 ######### //
         PostVo post = this.postService.retrieveDetailBoard(postNo);
@@ -186,11 +186,7 @@ public class BoardController {
             mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
             model.addAttribute("mapVoForApi", mapVoForApi);
         } catch (Exception exception) {
-            exception.printStackTrace();
-            model.addAttribute("exception", exception);
-            model.addAttribute("status", 500);
-            model.addAttribute("message", exception.getMessage());
-            return "error/500";
+
         }
 
         if (mapVoForApi == null) {
