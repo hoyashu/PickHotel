@@ -27,12 +27,11 @@
                                                th:value="${SiteGrade.memGradeName}"
                                                type="text">
 
-                                        <input name="memGrade" th:value="${SiteGrade.memGrade}" type="hidden">
+                                        <input name="memGrade[]" th:value="${SiteGrade.memGrade}" type="hidden">
                                     </td>
                                     <td>
                                         <div class="input-group-prepend">
-                                            <select class="form-control select2bs4 memGradeType"
-                                                    name="memGradeType[]">
+                                            <select class="form-control select2bs4 memGradeType" name="memGradeType[]">
                                                 <option th:selected="${SiteGrade.memGradeType == 0}" value="0">자동
                                                 </option>
                                                 <option th:selected="${SiteGrade.memGradeType == 1}" value="1">수동
@@ -55,19 +54,19 @@
                                         <div>
                                             <span>게시글</span>
                                             <input class="memGradeBoard memSiteArg" min="0"
-                                                   name="memGradeBoard"
+                                                   name="memGradeBoard[]"
                                                    th:value="${SiteGrade.memGradeBoard}" type="number">
                                         </div>
                                         <div>
                                             <span>댓  글</span>
                                             <input class="memGradeComment memSiteArg" min="0"
-                                                   name="memGradeComment"
+                                                   name="memGradeComment[]"
                                                    th:value="${SiteGrade.memGradeComment}"
                                                    type="number">
                                         </div>
                                         <div>
                                             <span>방문수</span> <input class="memGradeVisit memSiteArg" min="0"
-                                                                    name="memGradeVisit"
+                                                                    name="memGradeVisit[]"
                                                                     th:value="${SiteGrade.memGradeVisit}" type="number">
                                         </div>
 
@@ -81,14 +80,11 @@
             </form>
         </div>
         <div class="card-footer">
-            <button class="btn btn-primary" id="updateGradeBtn" onclick="fnSubmit();">저장</button>
+            <button class="btn btn-primary" id="updateGradeBtn" onclick="fnSubmit();">완료</button>
         </div>
         <script>
 
             function fnSubmit() {
-                alert("작업 중... -시우-");
-                return false;
-
 
                 var rv = true;
 
@@ -107,11 +103,6 @@
                         return false;
                     }
                 });
-
-                if (rv == false) {
-                    return false;
-                }
-
                 if (confirm("등급수정을 완료 하시겠습니까?")) {
                     alert("등급수정이 완료되었습니다.");
                     $("#reqSiteGradeForm").submit();

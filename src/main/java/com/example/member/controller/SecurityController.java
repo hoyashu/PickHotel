@@ -1,9 +1,12 @@
 package com.example.member.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class SecurityController {
@@ -22,7 +25,7 @@ public class SecurityController {
 
     // 로그아웃
     @GetMapping("/logout")
-    public String logout(){
+    public String logout() {
         return "/";
     }
 
@@ -89,4 +92,5 @@ public class SecurityController {
 //    public String grade1(){
 //        return "grade1 페이지입니다.";
 //    }
+
 }

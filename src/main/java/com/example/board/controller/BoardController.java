@@ -61,32 +61,32 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
+        //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
+        int defaultListNo = 0;
+        if (boardNo == null) {
+            defaultListNo = 1;
+        } else {
+            defaultListNo = boardNo;
+        }
 
-            //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
-            int defaultListNo = 0;
-            if (boardNo == null) {
-                defaultListNo = 1;
-            } else {
-                defaultListNo = boardNo;
-            }
+        List<String> boardNames = this.postService.retrieveBoardName();
+        HashMap<Integer, String> boardList = new HashMap<Integer, String>();
+        int i = 1;
+        for (String string : boardNames) {
+            boardList.put(i, string);
+            i++;
+        }
 
-            List<String> boardNames = this.postService.retrieveBoardName();
-            HashMap<Integer, String> boardList = new HashMap<Integer, String>();
-            int i = 1;
-            for (String string : boardNames) {
-                boardList.put(i, string);
-                i++;
-            }
+        List<RoomVo> roomList = this.roomService.retrieveRoomList();
 
-            List<RoomVo> roomList = this.roomService.retrieveRoomList();
+        model.addAttribute("roomList", roomList);
+        // request 영역에 디폴트 게시판 정보를 저장한다.
+        model.addAttribute("defaultListNo", defaultListNo);
+        // request 영역에 게시판 리스트 정보를 저장한다.
+        model.addAttribute("boardList", boardList);
 
-            model.addAttribute("roomList", roomList);
-            // request 영역에 디폴트 게시판 정보를 저장한다.
-            model.addAttribute("defaultListNo", defaultListNo);
-            // request 영역에 게시판 리스트 정보를 저장한다.
-            model.addAttribute("boardList", boardList);
 
-            return "page/post_write";
+        return "page/post_write";
 
     }
 
@@ -117,6 +117,7 @@ public class BoardController {
         BoardVo board = boardService.selectBoard(boardNo);
         model.addAttribute("board", board);
 
+
         return "page/post_list";
     }
 
@@ -146,6 +147,7 @@ public class BoardController {
     // 게시글 상세보기
     @GetMapping("/board/{boardNo}/post/{postNo}")
     public String read(@PathVariable("postNo") int postNo,@PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request, HttpServletResponse response) {
+
 
         // ######### 게시글 상세정보 시작 ######### //
 
@@ -283,107 +285,92 @@ public class BoardController {
         MemberVo member = (MemberVo) session.getAttribute("member");
 
 
-        // 회원이 아닌 경우 작성이 제한됨
-        if (member == null) {
+        // 회원 id
+        int memNo = member.getMemNo();
 
-            //회원이 아닌 경우 로그인 페이지로 이동함
-            return "redirect:/login?redirectUrl=" + request.getRequestURL();
+        // 작성된 게시글 작성자 id
+        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
+        System.out.println("회원" + memNo + "작성자" + writerNo);
+        // 작성자 본인이 아닌 경우
+        if (memNo != writerNo) {
+            //권한 없음 페이지로 이동
+            return "redirect:/denine";
 
         } else {
-
-            // 회원 id
-            int memNo = member.getMemNo();
-
-            // 작성된 게시글 작성자 id
-            int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
-            System.out.println("회원" + memNo + "작성자" + writerNo);
-            // 작성자 본인이 아닌 경우
-            if (memNo != writerNo) {
-                //권한 없음 페이지로 이동
-                return "redirect:/denine";
-
-            } else {
-                // 작성자 본인인 경우
-                // 게시글 정보 가져오기
-                PostVo post = this.postService.retrieveDetailBoard(postNo);
-                BoardVo board = this.postService.retrieveBoardForUseCheck(post.getBoardNo());
-                ReviewVo review = this.reviewService.retrieveReview(postNo);
-                List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
-                MapVoForApi mapVoForApi = new MapVoForApi();
-                try {
-                    model.addAttribute("mapNo", review.getRoomNo());
-                    mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
-                    model.addAttribute("mapVoForApi", mapVoForApi);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (mapVoForApi == null) {
-                    model.addAttribute("mapVoForApi", mapVoForApi);
-                }
-
-                //현존하지 않은 게시글인 경우
-
-                if (post == null) {
-                    throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-                }
-
-                //게시글 정보 model셋팅
-                model.addAttribute("post", post);
-                model.addAttribute("board", board);
-                model.addAttribute("review", review);
-                model.addAttribute("attachList", attachVoList);
-
-                return "page/post_modify";
+            // 작성자 본인인 경우
+            // 게시글 정보 가져오기
+            PostVo post = this.postService.retrieveDetailBoard(postNo);
+            BoardVo board = this.postService.retrieveBoardForUseCheck(post.getBoardNo());
+            ReviewVo review = this.reviewService.retrieveReview(postNo);
+            List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
+            MapVoForApi mapVoForApi = new MapVoForApi();
+            try {
+                model.addAttribute("mapNo", review.getRoomNo());
+                mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
+                model.addAttribute("mapVoForApi", mapVoForApi);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            if (mapVoForApi == null) {
+                model.addAttribute("mapVoForApi", mapVoForApi);
+            }
+
+            //현존하지 않은 게시글인 경우
+            if (post == null) {
+                throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+            }
+
+            if (attachVoList.size() == 0) {
+                attachVoList = null;
+            }
+
+            //게시글 정보 model셋팅
+            model.addAttribute("post", post);
+            model.addAttribute("board", board);
+            model.addAttribute("review", review);
+            model.addAttribute("attachList", attachVoList);
+
+            return "page/post_modify";
         }
 
     }
 
     // 게시글 수정
-    @PostMapping("/{grade}/post/update")
-    public String update(@Valid PostVo post, @PathVariable("grade") int grade, HttpServletRequest request) {
+    @PostMapping("/post/update")
+    public String update(@Valid PostVo post, HttpServletRequest request) {
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
 
-        // 회원이 아닌 경우 작성이 제한됨
-        if (member == null) {
+        // 회원 id
+        int memNo = member.getMemNo();
 
-            //회원이 아닌 경우 로그인 페이지로 이동함
-            return "redirect:/login?redirectUrl=/" + grade + "/post/" + post.getPostNo();
+        // 작성된 게시글 작성자 id
+        int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
+        System.out.println("회원" + memNo + "작성자" + writerNo);
+
+        // 작성자 본인이 아닌 경우
+        if (memNo != writerNo) {
+            //권한 없음 페이지로 이동
+            return "redirect:/denine";
 
         } else {
+            // 작성자 본인인 경우
+            // 값 셋팅
+            PostVo postVo = new PostVo();
+            postVo.setPostNo(post.getPostNo());
+            postVo.setBoardNo(post.getBoardNo());
+            postVo.setSubject(post.getSubject());
+            postVo.setContent(post.getContent());
+            postVo.setTag(post.getTag());
 
-            // 회원 id
-            int memNo = member.getMemNo();
+            // 수정 쿼리 실행
+            this.postService.modifyPost(postVo);
 
-            // 작성된 게시글 작성자 id
-            int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
-            System.out.println("회원" + memNo + "작성자" + writerNo);
-
-            // 작성자 본인이 아닌 경우
-            if (memNo != writerNo) {
-                //권한 없음 페이지로 이동
-                return "redirect:/denine";
-
-            } else {
-                // 작성자 본인인 경우
-                // 값 셋팅
-                PostVo postVo = new PostVo();
-                postVo.setPostNo(post.getPostNo());
-                postVo.setBoardNo(post.getBoardNo());
-                postVo.setSubject(post.getSubject());
-                postVo.setContent(post.getContent());
-                postVo.setTag(post.getTag());
-
-                // 수정 쿼리 실행
-                this.postService.modifyPost(postVo);
-
-                return "redirect:/" + grade + "/post/" + post.getPostNo();
-            }
+            return "redirect:/post/" + post.getPostNo();
         }
 
     }
@@ -423,28 +410,26 @@ public class BoardController {
         MemberVo member = (MemberVo) session.getAttribute("member");
 
 
+        // 회원 id
+        int memNo = member.getMemNo();
 
-            // 회원 id
-            int memNo = member.getMemNo();
+        // 작성된 게시글 작성자 id
+        PostVo post = this.postService.retrieveDetailBoard(postNo);
+        int writerNo = post.getWriterNo();
+        // 작성자 본인이 아닌 경우
+        if (memNo != writerNo) {
+            //권한 없음 페이지로 이동
+            return "redirect:/denine";
 
-            // 작성된 게시글 작성자 id
-            PostVo post = this.postService.retrieveDetailBoard(postNo);
-            int writerNo = post.getWriterNo();
-            // 작성자 본인이 아닌 경우
-            if (memNo != writerNo) {
-                //권한 없음 페이지로 이동
-                return "redirect:/denine";
+        } else {
 
-            } else {
 
-                // 작성자 본인인 경우
-                // 해당 게시글의 board pk값 받아옴 (삭제 후 목록이로 이동하기 위함)
-
-                // 삭제 쿼리 실행
-                this.postService.removePost(postNo);
+            // 삭제 쿼리 실행
+            this.postService.removePost(postNo);
 
                 return "redirect:/board/" + boardNo;
             }
+
     }
 
 }

@@ -1,13 +1,13 @@
 package com.example.grade.controller;
 
 import com.example.grade.model.SiteGradeVo;
-import com.example.grade.persistent.SiteGradeDao;
 import com.example.grade.service.SiteGradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +30,26 @@ public class SiteGradeController {
 
     // 사이트 등급수정
     @PostMapping("/intranet/grade/update")
-    public String SiteGradeModify(ArrayList<SiteGradeVo> siteGrade) {
-        System.out.println("ㅋㅋㅋ" + siteGrade);
-        ArrayList<SiteGradeDao> siteGradeDaoArrayList = new ArrayList<SiteGradeDao>();
+    public String SiteGradeModify(@RequestParam(value = "memGrade[]") int[] memGrade, @RequestParam(value = "memGradeName[]") String[] memGradeNames, @RequestParam(value = "memGradeType[]") int[] memGradeTypes,
+                                  @RequestParam(value = "memGradeUse[]") int[] memGradeUses, @RequestParam(value = "memGradeBoard[]") int[] memGradeBoards,
+                                  @RequestParam(value = "memGradeComment[]") int[] memGradeComments, @RequestParam(value = "memGradeVisit[]") int[] memGradeVisits
+    ) {
+
+        List<SiteGradeVo> SiteGrades = new ArrayList<SiteGradeVo>();
+        for (int i = 0; i < memGradeNames.length; i++) {
+            SiteGradeVo siteGrade = new SiteGradeVo();
+            siteGrade.setMemGrade(memGrade[i]);
+            siteGrade.setMemGradeName(memGradeNames[i]);
+            siteGrade.setMemGradeType(memGradeTypes[i]);
+            siteGrade.setMemGradeUse(memGradeUses[i]);
+            siteGrade.setMemGradeBoard(memGradeBoards[i]);
+            siteGrade.setMemGradeComment(memGradeComments[i]);
+            siteGrade.setMemGradeVisit(memGradeVisits[i]);
+
+            this.siteGradeService.siteGradeModify(siteGrade);
+
+
+        }
 
 
         return "redirect:/intranet/grade/list";

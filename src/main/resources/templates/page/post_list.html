@@ -21,7 +21,9 @@
 					</tr>
 					<tr th:each="post : ${posts}"  th:if="${posts!=null}">
 						<td th:text="${post.postNo}"></td>
+
                         <td><a th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.PostNo},boardNo=${board.BoardNo})}"><span class="post-subject"
+
                                                                                                               th:text="${post.subject}"></span><span
                                 class="post-comment" th:text="'('+${post.commont}+')'"></span></a>
 						</td>
@@ -32,7 +34,9 @@
             </tbody>
         </table>
         <div id="writePost" style="text-align: right;">
+
             <a th:href="@{/board/{boardNo}/post/register(boardNo=${board.boardNo},grade=${grade})}">
+
                 <button class="btn btn-primary" type="button">글작성</button>
             </a>
         </div>

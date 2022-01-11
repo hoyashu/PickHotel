@@ -44,7 +44,7 @@
                    jdbcType="INTEGER" mode="IN"/>
     </parameterMap>
     <!-- 사이트 등급 수정 -->
-    <update id="updateSiteGrade" parameterType="SiteGradeVo" parameterMap="updateSiteGradeParameter">
+    <update id="updateSiteGrade" parameterMap="updateSiteGradeParameter">
 
         UPDATE membergrade
         SET mg_name=#{memGradeName},
@@ -54,7 +54,23 @@
             mg_visit=#{memGradeVisit},
             mg_use=#{memGradeUse}
         WHERE mg_grade = #{memGrade}
+
     </update>
 
+    <!-- 등업신청 가능 등급 조회 -->
+    <resultMap id="possibleGradeVoResult" type="SiteGradeVo">
+        <result property="memGrade" javaType="int" column="mg_grade" jdbcType="INTEGER"/>
+        <result property="memGradeName" javaType="string" column="mg_name" jdbcType="VARCHAR"/>
+    </resultMap>
 
+    <select id="possibleGrade" parameterType="int" resultMap="possibleGradeVoResult">
+        SELECT mg_grade, mg_name
+        FROM membergrade
+                 LEFT JOIN member
+                           ON mb_board >= mg_board AND mb_visit >= mg_visit AND mb_comment >= mg_com
+        <![CDATA[
+        WHERE mb_grade < mg_grade
+          AND mb_no = ${memNo}
+        ]]>
+    </select>
 </mapper>
