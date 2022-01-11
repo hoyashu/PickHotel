@@ -53,18 +53,13 @@ public class BoardController {
 
     // ########## 게시글 ########## //
     // 게시글 작성 폼
-    @GetMapping("/post/write")
+    @GetMapping("/board/{boardNo}/post/register")
     public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request) {
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
-
-
-        // 회원인 경우
-        //해당 게시판 접근권한이 있는지 확인 할것
-
 
         //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
         int defaultListNo = 0;
@@ -96,8 +91,8 @@ public class BoardController {
 
     //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
     @ResponseBody
-    @GetMapping("/post/checkUse")
-    public Map checkUse(@RequestParam(value = "boardNo", required = false, defaultValue = "1") int boardNo) {
+    @GetMapping("/board/{boardNo}/post/checkUse")
+    public Map checkUse(@PathVariable("boardNo") int boardNo) {
         BoardVo board = this.boardService.selectBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
@@ -121,16 +116,6 @@ public class BoardController {
         BoardVo board = boardService.selectBoard(boardNo);
         model.addAttribute("board", board);
 
-        //시큐리티 주소 설정
-//        String no = String.valueOf(board.getBoGrade());
-//        String grade = "grade";
-//        String result = "";
-//        if (board.getBoGrade() == 0) {
-//            result = "user";
-//        } else {
-//            result = grade.concat(no);
-//        }
-//        model.addAttribute("grade", result);
 
         return "page/post_list";
     }
@@ -159,16 +144,23 @@ public class BoardController {
     }
 
     // 게시글 상세보기
-    @GetMapping("/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/board/{boardNo}/post/{postNo}")
+    public String read(@PathVariable("postNo") int postNo,@PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request, HttpServletResponse response) {
+
 
         // ######### 게시글 상세정보 시작 ######### //
-        PostVo post = this.postService.retrieveDetailBoard(postNo);
 
+        PostVo post = null;
+        PostVo test = new PostVo();
+        test.setPostNo(postNo);
+        test.setBoardNo(boardNo);
+
+        if(postService.retrievePostSearch(test) != null) {
+            post = this.postService.retrieveDetailBoard(postNo);
+        }
         if (post == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
-
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
@@ -275,8 +267,16 @@ public class BoardController {
 
 
     // 게시글 수정폼
-    @GetMapping("/post/modify/{postNo}")
-    public String modifyFrom(@PathVariable("postNo") int postNo, Model model, HttpServletRequest request) {
+    @GetMapping("/board/{boardNo}/post/{postNo}/modify")
+    public String modifyFrom(@PathVariable("postNo") int postNo,@PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
+
+        PostVo test = new PostVo();
+        test.setPostNo(postNo);
+        test.setBoardNo(boardNo);
+
+        if(postService.retrievePostSearch(test) == null) {
+            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+        }
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
@@ -407,8 +407,17 @@ public class BoardController {
 
 
     // 게시글 삭제
-    @GetMapping("/post/delete/{postNo}")
-    public String delete(@PathVariable("postNo") int postNo, HttpServletRequest request) {
+    @GetMapping("/board/{boardNo}/post/{postNo}/delete")
+    public String delete(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, HttpServletRequest request) {
+
+        PostVo test = new PostVo();
+        test.setPostNo(postNo);
+        test.setBoardNo(boardNo);
+
+        if(postService.retrievePostSearch(test) == null) {
+            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+        }
+
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
         HttpSession session = request.getSession();
@@ -434,8 +443,8 @@ public class BoardController {
             // 삭제 쿼리 실행
             this.postService.removePost(postNo);
 
-            return "redirect:/board/" + boardNo;
-        }
+                return "redirect:/board/" + boardNo;
+            }
 
     }
 

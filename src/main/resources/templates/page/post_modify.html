@@ -380,7 +380,7 @@
         function OnChange() {
             var bordNoSelect = document.getElementById("bordNo").value;
             $.ajax({
-                url: '/post/checkUse?boardNo=' + bordNoSelect,
+                url: '/board/' + bordNoSelect + '/post/checkUse',
                 type: 'GET',
                 success: function (data) {
                     const result = data;

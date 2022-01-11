@@ -4,20 +4,26 @@ import com.example.member.model.RoleResourcesVo;
 
 import com.example.member.persistent.RoleResourceDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
     private RoleResourceDao roleResourceDao;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
@@ -48,6 +54,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
                     .orElseGet(ArrayList::new);
 
             System.out.println("flag " + flag);
+
             return flag;
         }
         return null;

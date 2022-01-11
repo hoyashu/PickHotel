@@ -64,6 +64,19 @@
 		WHERE post_no = #{postNo}
 	</select>
 
+	<select id="selectPostSearch" parameterMap="PostVoParameterMap" resultType="integer">
+		(select NULL AS bo_no
+		 FROM post
+		 WHERE NOT EXISTS(
+				 SELECT bo_no
+				 FROM post
+				 WHERE bo_no = #{boardNo} AND post_no = #{postNo}))
+		UNION
+		(SELECT bo_no
+		FROM post
+		WHERE bo_no = #{boardNo} AND post_no = #{postNo})
+	</select>
+
 <!--	board 관련 -->
 	<select id="selectBoardNo" resultType="int">
 		SELECT bo_no FROM board;
