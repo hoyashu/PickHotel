@@ -57,13 +57,13 @@ public class ModifyFileController {
                               @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
                               @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
                               @RequestParam(value = "map_no", required = false, defaultValue = "0") Integer map_no,
-                              @RequestParam(value = "rateLoc", required = false) Integer rateLoc,
-                              @RequestParam(value = "rateClean", required = false) Integer rateClean,
-                              @RequestParam(value = "rateComu", required = false) Integer rateComu,
-                              @RequestParam(value = "rateChip", required = false) Integer rateChip,
+                              @RequestParam(value = "rateLoc", required = false, defaultValue = "0") int rateLoc,
+                              @RequestParam(value = "rateClean", required = false, defaultValue = "0") int rateClean,
+                              @RequestParam(value = "rateComu", required = false, defaultValue = "0") int rateComu,
+                              @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
                               @RequestParam(value = "visitDate", required = false) String visitDate,
                               @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
+                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception {
         int writerNo = 1;
         HttpSession session = request.getSession();
         try {
@@ -74,7 +74,7 @@ public class ModifyFileController {
         }
 
         // 게시글
-        String newContent = convert(content);
+        String newContent = content;
         PostVo postVo = new PostVo();
         postVo.setPostNo(postNo);
         postVo.setSubject(subject);
@@ -86,12 +86,12 @@ public class ModifyFileController {
 
         // 숙소 정보, 리뷰 정보
         BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
-        if(boardForUseCheck.getType().equals("basic")){
+        if (boardForUseCheck.getType().equals("basic")) {
 
         } else {
             if (address_name.trim().equals("") || map_no == 0) {
 
-            } else{
+            } else {
                 MapVoForApi mapVoForApi = new MapVoForApi();
                 mapVoForApi.setAddress_name(address_name);
                 mapVoForApi.setCategory_group_code(category_group_code);
@@ -111,7 +111,7 @@ public class ModifyFileController {
 
                 ReviewVo review = new ReviewVo();
 
-                if(visitDate.trim().equals("")){
+                if (visitDate.trim().equals("")) {
                     visitDate = null;
                 }
 
@@ -126,8 +126,6 @@ public class ModifyFileController {
                 this.reviewService.modifyReview(review);
             }
         }
-
-
 
 
         // 파일
@@ -161,11 +159,11 @@ public class ModifyFileController {
         return "redirect:/post/" + postVo.getPostNo();
     }
 
-    private String convert(String oldStr) {
-        String newStr = oldStr.replace("'", "''");
-        newStr = newStr.replace("<", "&lt;");
-        newStr = newStr.replace(">", "&gt;");
-        newStr = newStr.replace("\n", "<br />");
-        return newStr;
-    }
+//    private String convert(String oldStr) {
+//        String newStr = oldStr.replace("'", "''");
+//        newStr = newStr.replace("<", "&lt;");
+//        newStr = newStr.replace(">", "&gt;");
+//        newStr = newStr.replace("\n", "<br />");
+//        return newStr;
+//    }
 }

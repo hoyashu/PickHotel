@@ -1,80 +1,43 @@
 <html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <div class="board-page" id="postWrite" layout:fragment="content">
-    <style>
-        .map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
-        .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-        .map_wrap {position:relative;width:100%;height:500px;}
-        #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
-        .bg_white {background:#fff;}
-        #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
-        #menu_wrap .option{text-align: center;}
-        #menu_wrap .option p {margin:10px 0;}
-        #menu_wrap .option button {margin-left:5px;}
-        #placesList li {list-style: none;}
-        #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;}
-        #placesList .item span {display: block;margin-top:4px;}
-        #placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
-        #placesList .item .info{padding:10px 0 10px 55px;}
-        #placesList .info .gray {color:#8a8a8a;}
-        #placesList .info .jibun {padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
-        #placesList .info .tel {color:#009900;}
-        #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:10px 0 0 10px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
-        #placesList .item .marker_1 {background-position: 0 -10px;}
-        #placesList .item .marker_2 {background-position: 0 -56px;}
-        #placesList .item .marker_3 {background-position: 0 -102px}
-        #placesList .item .marker_4 {background-position: 0 -148px;}
-        #placesList .item .marker_5 {background-position: 0 -194px;}
-        #placesList .item .marker_6 {background-position: 0 -240px;}
-        #placesList .item .marker_7 {background-position: 0 -286px;}
-        #placesList .item .marker_8 {background-position: 0 -332px;}
-        #placesList .item .marker_9 {background-position: 0 -378px;}
-        #placesList .item .marker_10 {background-position: 0 -423px;}
-        #placesList .item .marker_11 {background-position: 0 -470px;}
-        #placesList .item .marker_12 {background-position: 0 -516px;}
-        #placesList .item .marker_13 {background-position: 0 -562px;}
-        #placesList .item .marker_14 {background-position: 0 -608px;}
-        #placesList .item .marker_15 {background-position: 0 -654px;}
-        #pagination {margin:10px auto;text-align: center;}
-        #pagination a {display:inline-block;margin-right:10px;}
-        #pagination .on {font-weight: bold; cursor: default;color:#777;}
-
-        .videos  video {
-            height: 200px;
-            width: auto;
-        }
-
-        .photos  img {
-            height: 200px;
-            width: auto;
-        }
-
-    </style>
-
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 작성</h1>
     </div>
-
-    <div class="map_wrap">
-        <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
-
-        <div id="menu_wrap" class="bg_white">
-            <div class="option">
-                <div>
-                    <form onsubmit="searchPlaces(); return false;">
-                        키워드 : <input type="text" id="keyword" size="15">
-                        <button type="submit">검색하기</button>
-                    </form>
-                </div>
-            </div>
-            <hr>
-            <ul id="placesList"></ul>
-            <div id="pagination"></div>
-        </div>
-    </div>
-
     <form id="saveAll" accept-charset="UTF-8" enctype="multipart/form-data" method="POST" th:action="@{/uploadFile}">
-        <div class="mapInfo">
+        <div class="mb-2">
+            <select class="form-select" aria-label="Default select example" id="bordNo" name="bordNo" onchange="OnChange('click');">
+                <div th:each="board : ${boardList}">
+					<span th:if="${board.key}==${defaultListNo}">
+						<option selected="${defaultListNo}" th:value="${board.key}"><span th:text="${board.value}"></span></option>
+					</span>
+                    <span th:unless="${board.key}==${defaultListNo}">
+						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
+					</span>
+                </div>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="subject" class="visually-hidden">제목</label>
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text" required>
+        </div>
+
+        <div class="mb-4 map_wrap">
+            <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
+            <div id="menu_wrap" class="bg_white">
+                <div class="option">
+                    <div>
+                        키워드 : <input type="text" id="keyword" size="15">
+                        <button type="button" onclick="searchPlaces(); return false;">검색하기</button>
+                    </div>
+                </div>
+                <hr>
+                <ul id="placesList"></ul>
+                <div id="pagination"></div>
+            </div>
+        </div>
+
+        <div class="mb-4 mapInfo">
             숙소 이름 : <input type="text" id="place_name" name="place_name" readonly>
             숙소 주소 : <input type="text" id="road_address_name" name="road_address_name" readonly>
             <input type="hidden" id="address_name" name="address_name">
@@ -88,91 +51,58 @@
             <input type="hidden" id="x" name="x">
             <input type="hidden" id="y" name="y">
         </div>
-
-        <div class="mb-3">
-            <label for="subject">제목</label>
-            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text" required>
-        </div>
-        <div class="mb-3">
-            <label for="bordNo">게시판 선택</label>
-            <select id="bordNo" name="bordNo" onchange="OnChange();">
-                <div th:each="board : ${boardList}">
-					<span th:if="${board.key}==${defaultListNo}">
-						<option selected="${defaultListNo}" th:value="${board.key}"><span th:text="${board.value}"></span></option>
-					</span>
-                    <span th:unless="${board.key}==${defaultListNo}">
-						<option th:value="${board.key}"><span th:text="${board.value}"></span></option>
-					</span>
-                </div>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="content">내용</label>
-            <textarea class="form-control" id="content" name="content" placeholder="내용을 입력해 주세요" rows="5" required></textarea>
-        </div>
-        <div class="photos">
-            <label for="images">사진(3MB 이하)</label>
-            <input accept="image/*" id="images" multiple name="images" type="file"/>
-            <div class="photogallery"></div>
-        </div>
-
-        <div class="videos">
-            <label for="videos">동영상(.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하)</label>
-            <input id="videos" multiple name="videos" type="file"/>
-            <div class="videogallery"></div>
-        </div>
-
-
-        <div class="review">
-            <label for="rateLoc">위치</label>
-            <select id="rateLoc" name="rateLoc">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <label for="rateClean">위생</label>
-            <select id="rateClean" name="rateClean">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <label for="rateComu">의사소통</label>
-            <select id="rateComu" name="rateComu">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <label for="rateChip">가성비</label>
-            <select id="rateChip" name="rateChip">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-
-
-            <div class="mb-3">
-                <label for="visitDate">방문 날짜를 선택하세요</label>
+        <div class="mb-4 review">
+            <label>위치</label>
+            <div class="star-container">
+                <input type="radio" name="rateLoc" class="star-check" title="5" value="1">
+                <input type="radio" name="rateLoc" class="star-check" title="4" value="2">
+                <input type="radio" name="rateLoc" class="star-check" title="3" value="3">
+                <input type="radio" name="rateLoc" class="star-check" title="2" value="4">
+                <input type="radio" name="rateLoc" class="star-check" title="1" value="5">
+            </div>
+            <label>위생</label>
+            <div class="star-container">
+                <input type="radio" name="rateClean" class="star-check" title="5" value="1">
+                <input type="radio" name="rateClean" class="star-check" title="4" value="2">
+                <input type="radio" name="rateClean" class="star-check" title="3" value="3">
+                <input type="radio" name="rateClean" class="star-check" title="2" value="4">
+                <input type="radio" name="rateClean" class="star-check" title="1" value="5">
+            </div>
+            <label>의사소통</label>
+            <div class="star-container">
+                <input type="radio" name="rateComu" class="star-check" title="5" value="1">
+                <input type="radio" name="rateComu" class="star-check" title="4" value="2">
+                <input type="radio" name="rateComu" class="star-check" title="3" value="3">
+                <input type="radio" name="rateComu" class="star-check" title="2" value="4">
+                <input type="radio" name="rateComu" class="star-check" title="1" value="5">
+            </div>
+            <label>가성비</label>
+            <div class="star-container">
+                <input type="radio" name="rateChip" class="star-check" title="5" value="1">
+                <input type="radio" name="rateChip" class="star-check" title="4" value="2">
+                <input type="radio" name="rateChip" class="star-check" title="3" value="3">
+                <input type="radio" name="rateChip" class="star-check" title="2" value="4">
+                <input type="radio" name="rateChip" class="star-check" title="1" value="5">
+            </div>
+            <div class="mb-4">
+                <p><label for="visitDate">방문 날짜<span class="chose">(선택)</span></label></p>
                 <input id="visitDate" name="visitDate" type="date"/>
             </div>
-            <div class="mb-3">
-                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
+            <div class="mb-4">
+                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요<span class="chose">(선택)</span></label>
                 <input class="form-control" id="recommendPlace" name="recommendPlace" type="text">
             </div>
-            <div class="mb-3">
-                <label for="notRecommendPerson">이런분들께는 비추에요</label>
+            <div class="mb-4">
+                <label for="notRecommendPerson">이런분들께는 비추에요<span class="chose">(선택)</span></label>
                 <input class="form-control" id="notRecommendPerson" name="notRecommendPerson" type="text">
             </div>
         </div>
-        <div class="mb-3 tag-box">
-            <label for="tag-input">태그</label>
+        <div>
+            <label for="content" class="visually-hidden">내용</label>
+            <textarea name="content" id="content" placeholder="내용을 입력해 주세요" ></textarea>
+        </div>
+        <div class="mb-4 tag-box">
+            <label for="tag-input" class="visually-hidden">태그</label>
             <div class="textarea_tag">
                 <span class="wrap_tag_input">
                 <input autocomplete="off" class="tag_input" id="tag-input" placeholder="태그 입력 (최대 30개)"
@@ -180,12 +110,30 @@
                        value=""></span>
             </div>
         </div>
-        <div>
-            <button class="btn btn-sm btn-primary" id="saveBtn" type="button" onclick="submitCheck()">글등록</button>
+
+        <div class="mb-4 photos">
+            <p class="m-0"><label for="images">사진<span class="chose">(선택)</span></label></p>
+            <p class="notion">3MB 이하</p>
+            <input accept="image/*" id="images" multiple name="images" type="file"/>
+            <div class="photogallery"></div>
+        </div>
+
+        <div class="mb-4 videos">
+            <p class="m-0"><label for="videos">동영상<span class="chose">(선택)</span></label></p>
+            <p class="notion">.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하</p>
+            <input id="videos" multiple name="videos" type="file"/>
+            <div class="videogallery"></div>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-primary btn-lg" id="saveBtn" type="button" onclick="submitCheck()">등록</button>
         </div>
     </form>
+
+    <script th:src="@{/js/ckeditor/ckeditor.js}"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"></script>
+
     <script>
+        //태그 JS시작
         $("#tag-input").keydown(function (event) {
 
     
@@ -310,16 +258,45 @@
         $(document).on('focus', '#tag-input', function () {
             $(".textarea_tag .tag").removeClass("active");
         });
+        //태그 JS끝
     </script>
+
     <script type="text/javascript">
 
         //페이지 로딩시 사용성 체크 사용
         window.onload = function () {
             OnChange();
+
+            CKEDITOR.replace( 'content' );
         }
 
+        //onBeforeUnload 이벤트 지정
+        $(window).bind('beforeunload', function () {
+            //페이지 변경이 있었는지 체크..
+            var isChanged = true;
+
+            //출력할 내용을 Return 해주면 확인 창이 뜨게 됩니다.
+            if (isChanged){
+                return '작성중인 글이 존재합니다. 페이지를 나가시겠습니까?';
+                //확인 창을 띄우지 않으려면 아무 내용도 Return 하지 마세요!! (Null조차도)
+            }
+        });
+
+        //Form Submit 등 onBeforeUnload Event가 발생하길 원하지 않는 경우, 이벤트 해제
+        $("#saveAll").submit(function () {
+            $(window).unbind('beforeunload');
+        });
+        //작성중인 창 떠나기전 확인 끝
+
         // 사용성 체크
-        function OnChange() {
+        function OnChange(type) {
+
+            if(type == "click"){
+                const con = confirm("선택한 게시판의 글양식이 본문에 추가됩니다. 계속 하시겠습니까?");
+                if(con == false){
+                    return false;
+                }
+            }
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
             var keyword = document.getElementById('keyword').value;
             $.ajax({
@@ -360,7 +337,7 @@
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
             var place_name = document.getElementById('place_name').value;
             var subject = document.getElementById('subject').value;
-            var content = document.getElementById('content').value;
+            var content = CKEDITOR.instances['content'].getData();
 
             $.ajax({
                 url    : '/post/checkUse?boardNo=' + bordNoSelect,
@@ -383,6 +360,8 @@
                         alert("내용을 입력해주세요");
                         return false;
                     }
+
+                    document.getElementById('content').value = content;
                     document.getElementById('saveAll').submit();
                 },
                 error  : function () {
@@ -655,21 +634,21 @@
                 itemStr += '    <span>' +  places.address_name  + '</span>';
             }
 
-            itemStr += '  <span class="tel">' + places.phone  + '</span>';
-            itemStr += '<input type="hidden" name="address_name" value="' + places.address_name +'">';
-            itemStr += '<input type="hidden" name="category_group_code" value="' + places.category_group_code +'">';
-            itemStr += '<input type="hidden" name="category_group_name" value="' + places.category_group_name +'">';
-            itemStr += '<input type="hidden" name="category_name" value="' + places.category_name +'">';
-            itemStr += '<input type="hidden" name="distance" value="' + places.distance +'">';
-            itemStr += '<input type="hidden" name="id" value="' + places.id +'">';
-            itemStr += '<input type="hidden" name="phone" value="' + places.phone +'">';
-            itemStr += '<input type="hidden" name="place_name" value="' + places.place_name +'">';
-            itemStr += '<input type="hidden" name="place_url" value="' + places.place_url +'">';
-            itemStr += '<input type="hidden" name="road_address_name" value="' + places.road_address_name +'">';
-            itemStr += '<input type="hidden" name="x" value="' + places.x +'">';
-            itemStr += '<input type="hidden" name="y" value="' + places.y +'">' + '</div></div>';
-            itemStr += '<a href="' + places.place_url + '" target="_blank"><button>상세보기</a></button>';
-            itemStr += '<button id="'+ index +'" onclick="GetMapInfo(this)">숙소선택</button>';
+            itemStr += `<span class="tel">${places.phone }</span>`;
+            itemStr += `<input type="hidden" value="${places.address_name}">`;
+            itemStr += `<input type="hidden" value="${places.category_group_code}">`;
+            itemStr += `<input type="hidden" value="${places.category_group_name}">`;
+            itemStr += `<input type="hidden" value="${places.category_name}">`;
+            itemStr += `<input type="hidden" value="${places.distance}">`;
+            itemStr += `<input type="hidden" value="${places.id}">`;
+            itemStr += `<input type="hidden" value="${places.phone}">`;
+            itemStr += `<input type="hidden" value="${places.place_name}">`;
+            itemStr += `<input type="hidden" value="${places.place_url}">`;
+            itemStr += `<input type="hidden" value="${places.road_address_name}">`;
+            itemStr += `<input type="hidden" value="${places.x}">`;
+            itemStr += `<input type="hidden" value="${places.y}"></div></div>`;
+            itemStr += `<a href="${places.place_url}" target="_blank"><button>상세보기</a></button>`;
+            itemStr += `<button id="${index}" onclick="GetMapInfo(this)" type="button">숙소선택</button>`;
 
             el.innerHTML = itemStr;
             el.className = 'item';
@@ -701,7 +680,7 @@
 
             var mapInfo = [];
             mapInfo = $(realInfo).children();
-
+console.log(mapInfo);
             var address_name = mapInfo[4].value;
             var category_group_code = mapInfo[5].value;
             var category_group_name = mapInfo[6].value;
