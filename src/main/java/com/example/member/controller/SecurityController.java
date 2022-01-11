@@ -13,9 +13,7 @@ public class SecurityController {
 
     // 로그인 GET
     @GetMapping("/login")
-    public String login(HttpServletRequest request, Model model) {
-        String referrer = request.getHeader("Referer");
-        request.getSession().setAttribute("url_prior_login", referrer);
+    public String login() {
         return "page/member_login";
     }
 
@@ -52,40 +50,47 @@ public class SecurityController {
 //        return "로그인에 실패하셨습니다.";
 //    }
 
-    /*권한 test*/
-    @GetMapping("/intranet/1")
-    @ResponseBody
-    public String admin() {
-        return "admin 페이지입니다.";
-    }
+//    /*권한 test*/
+//    @GetMapping("/intranet/1")
+//    @ResponseBody
+//    public String admin(){
+//        return "admin 페이지입니다.";
+//    }
 
-    @GetMapping("/member/1")
-    @ResponseBody
-    public String member() {
-        return "member 페이지입니다.";
-    }
+//    @GetMapping("/member/1")
+//    @ResponseBody
+//    public String member(){
+//        return "member 페이지입니다.";
+//    }
+//
+//    @GetMapping("board/5")
+//    @ResponseBody
+//    public String grade5(){
+//        return "grade5 페이지입니다.";
+//    }
+//
+//    @GetMapping("board/4")
+//    @ResponseBody
+//    public String grade4(){
+//        return "grade4 페이지입니다.";
+//    }
+//
+//    @GetMapping("board/3")
+//    @ResponseBody
+//    public String grade3(){
+//        return "grade3 페이지입니다.";
+//    }
+//
+//    @GetMapping("board/2")
+//    @ResponseBody
+//    public String grade2(){
+//        return "grade2 페이지입니다.";
+//    }
+//
+//    @GetMapping("board/1")
+//    @ResponseBody
+//    public String grade1(){
+//        return "grade1 페이지입니다.";
+//    }
 
-    @GetMapping("/grade4/1")
-    @ResponseBody
-    public String grade4() {
-        return "grade4 페이지입니다.";
-    }
-
-    @GetMapping("/grade3/1")
-    @ResponseBody
-    public String grade3() {
-        return "grade3 페이지입니다.";
-    }
-
-    @GetMapping("/grade2/1")
-    @ResponseBody
-    public String grade2() {
-        return "grade2 페이지입니다.";
-    }
-
-    @GetMapping("/grade1/1")
-    @ResponseBody
-    public String grade1() {
-        return "grade1 페이지입니다.";
-    }
 }

@@ -16,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // registry.addResourceHandler("/static/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
 
+
         // 윈도우용 설정
          registry.addResourceHandler("/upload/**").addResourceLocations("file:///C:/upload/");
 
