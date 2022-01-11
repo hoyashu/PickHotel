@@ -13,7 +13,7 @@
         </div>
 
         <div class="mb-4 map_wrap" th:if="${mapVoForApi != null}">
-            <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
+            <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
 
             <div id="menu_wrap" class="bg_white">
                 <div class="option">
@@ -64,41 +64,41 @@
             </div>
             <label>위생</label>
             <div class="star-container">
-                <input type="radio" th:selected="${review.rateClean == 1}" name="rateClean" class="star-check" title="5"
+                <input type="radio" th:checked="${review.rateClean == 1}" name="rateClean" class="star-check" title="5"
                     value="1">
-                <input type="radio" th:selected="${review.rateClean == 2}" name="rateClean" class="star-check" title="4"
+                <input type="radio" th:checked="${review.rateClean == 2}" name="rateClean" class="star-check" title="4"
                     value="2">
-                <input type="radio" th:selected="${review.rateClean == 3}" name="rateClean" class="star-check" title="3"
+                <input type="radio" th:checked="${review.rateClean == 3}" name="rateClean" class="star-check" title="3"
                     value="3">
-                <input type="radio" th:selected="${review.rateClean == 4}" name="rateClean" class="star-check" title="2"
+                <input type="radio" th:checked="${review.rateClean == 4}" name="rateClean" class="star-check" title="2"
                     value="4">
-                <input type="radio" th:selected="${review.rateClean == 5}" name="rateClean" class="star-check" title="1"
+                <input type="radio" th:checked="${review.rateClean == 5}" name="rateClean" class="star-check" title="1"
                     value="5">
             </div>
             <label>의사소통</label>
             <div class="star-container">
-                <input type="radio" th:selected="${review.rateComu == 1}" name="rateComu" class="star-check" title="5"
+                <input type="radio" th:checked="${review.rateComu == 1}" name="rateComu" class="star-check" title="5"
                     value="1">
-                <input type="radio" th:selected="${review.rateComu == 2}" name="rateComu" class="star-check" title="4"
+                <input type="radio" th:checked="${review.rateComu == 2}" name="rateComu" class="star-check" title="4"
                     value="2">
-                <input type="radio" th:selected="${review.rateComu == 3}" name="rateComu" class="star-check" title="3"
+                <input type="radio" th:checked="${review.rateComu == 3}" name="rateComu" class="star-check" title="3"
                     value="3">
-                <input type="radio" th:selected="${review.rateComu == 4}" name="rateComu" class="star-check" title="2"
+                <input type="radio" th:checked="${review.rateComu == 4}" name="rateComu" class="star-check" title="2"
                     value="4">
-                <input type="radio" th:selected="${review.rateComu == 5}" name="rateComu" class="star-check" title="1"
+                <input type="radio" th:checked="${review.rateComu == 5}" name="rateComu" class="star-check" title="1"
                     value="5">
             </div>
             <label>가성비</label>
             <div class="star-container">
-                <input type="radio" th:selected="${review.rateChip == 1}" name="rateChip" class="star-check" title="5"
+                <input type="radio" th:checked="${review.rateChip == 1}" name="rateChip" class="star-check" title="5"
                     value="1">
-                <input type="radio" th:selected="${review.rateChip == 2}" name="rateChip" class="star-check" title="4"
+                <input type="radio" th:checked="${review.rateChip == 2}" name="rateChip" class="star-check" title="4"
                     value="2">
-                <input type="radio" th:selected="${review.rateChip == 3}" name="rateChip" class="star-check" title="3"
+                <input type="radio" th:checked="${review.rateChip == 3}" name="rateChip" class="star-check" title="3"
                     value="3">
-                <input type="radio" th:selected="${review.rateChip == 4}" name="rateChip" class="star-check" title="2"
+                <input type="radio" th:checked="${review.rateChip == 4}" name="rateChip" class="star-check" title="2"
                     value="4">
-                <input type="radio" th:selected="${review.rateChip == 5}" name="rateChip" class="star-check" title="1"
+                <input type="radio" th:checked="${review.rateChip == 5}" name="rateChip" class="star-check" title="1"
                     value="5">
             </div>
 

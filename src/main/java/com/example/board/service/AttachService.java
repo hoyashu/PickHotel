@@ -22,14 +22,18 @@ public class AttachService {
         this.attachDao.deletePostAttach(attNo);
     }
 
-    //게시글에 의한 파일삭제
+    //게시글 삭제에 의해 파일을 삭제한다.
     public void removeAttachByPost(int poNo) {
         this.attachDao.deleteAttachbyPost(poNo);
     }
 
-    // 파일을 조회하다.
+    //게시글 번호로 파일목록을 조회한다.
     public List<AttachVo> retrievePostAttach(int poNo) {
         return this.attachDao.selectPostAttach(poNo);
     }
 
+    //파일을 조회한다.
+    public AttachVo retrievePostAttachByAtNo(int attaNo) {
+        return this.attachDao.selectPostAttachByAtNo(attaNo);
+    }
 }

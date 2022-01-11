@@ -283,20 +283,19 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
-
         // 회원 id
         int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
         int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
-        System.out.println("회원" + memNo + "작성자" + writerNo);
-        // 작성자 본인이 아닌 경우
-        if (memNo != writerNo) {
+
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
             //권한 없음 페이지로 이동
             return "redirect:/denine";
 
-        } else {
-            // 작성자 본인인 경우
+        } else { // 작성자 본인인 경우
             // 게시글 정보 가져오기
             PostVo post = this.postService.retrieveDetailBoard(postNo);
             BoardVo board = this.postService.retrieveBoardForUseCheck(post.getBoardNo());
@@ -343,21 +342,19 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
-
         // 회원 id
         int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
         int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
-        System.out.println("회원" + memNo + "작성자" + writerNo);
 
-        // 작성자 본인이 아닌 경우
-        if (memNo != writerNo) {
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
             //권한 없음 페이지로 이동
             return "redirect:/denine";
 
-        } else {
-            // 작성자 본인인 경우
+        } else { // 작성자 본인인 경우
             // 값 셋팅
             PostVo postVo = new PostVo();
             postVo.setPostNo(post.getPostNo());
@@ -377,15 +374,33 @@ public class BoardController {
     // 선택한 파일 삭제
     @ResponseBody
     @GetMapping("/attach/delete/{attachNo}")
-    public Map deleteFile(@PathVariable("attachNo") int attachNo) throws Exception {
+    public Map deleteFile(@PathVariable("attachNo") int attachNo, HttpServletRequest request) {
+        // 작성자 본인이거나 관리자 인지 권한 확인
+        // 세션 준비
+        HttpSession session = request.getSession();
+        MemberVo member = (MemberVo) session.getAttribute("member");
+
+        // 회원 id
+        int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
+
+        // 작성된 게시글 작성자 id
+        AttachVo attach = this.attachService.retrievePostAttachByAtNo(attachNo);
+        int writerNo = this.postService.retrieveDetailBoard(attach.getPostNo()).getWriterNo();
+
         Map<String, String> map = new HashMap<String, String>();
         String success = "fail";
-        try {
+
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
+            //권한 없음 페이지로 이동
+            success = "fail";
+
+        } else { // 작성자 본인인 경우
             this.attachService.removePostAttach(attachNo);
             success = "success";
-        } catch (Exception e) {
-
         }
+
         map.put("success", success);
         return map;
     }
@@ -399,21 +414,20 @@ public class BoardController {
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
 
-
         // 회원 id
         int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
         PostVo post = this.postService.retrieveDetailBoard(postNo);
         int writerNo = post.getWriterNo();
-        // 작성자 본인이 아닌 경우
-        if (memNo != writerNo) {
+
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
             //권한 없음 페이지로 이동
             return "redirect:/denine";
 
-        } else {
-
-            // 작성자 본인인 경우
+        } else { // 작성자 본인인 경우
             // 해당 게시글의 board pk값 받아옴 (삭제 후 목록이로 이동하기 위함)
             int boardNo = post.getBoardNo();
 

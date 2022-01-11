@@ -64,14 +64,9 @@ public class ModifyFileController {
                               @RequestParam(value = "visitDate", required = false) String visitDate,
                               @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
                               @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception {
-        int writerNo = 1;
         HttpSession session = request.getSession();
-        try {
-            MemberVo memberVo = (MemberVo) session.getAttribute("member");
-            writerNo = memberVo.getMemNo();
-        } catch (Exception e) {
-
-        }
+        MemberVo memberVo = (MemberVo) session.getAttribute("member");
+        int writerNo = memberVo.getMemNo();
 
         // 게시글
         String newContent = content;
@@ -82,7 +77,6 @@ public class ModifyFileController {
         postVo.setTag(tag);
 
         this.postService.modifyPost(postVo);
-        System.out.println("숙소 정보 : " + address_name);
 
         // 숙소 정보, 리뷰 정보
         BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
@@ -130,8 +124,6 @@ public class ModifyFileController {
 
         // 파일
         if (images != null) {
-            System.out.println("images");
-
             for (MultipartFile file : images) {
                 String fileName = null;
                 if (!file.getOriginalFilename().isEmpty()) {
@@ -139,12 +131,9 @@ public class ModifyFileController {
                 } else {
                     fileName = "default.jpg";
                 }
-
             }
         }
         if (videos != null) {
-            System.out.println("videos");
-
             for (MultipartFile file : videos) {
                 String fileName = null;
                 if (!file.getOriginalFilename().isEmpty()) {
@@ -152,7 +141,6 @@ public class ModifyFileController {
                 } else {
                     fileName = "default.mp4";
                 }
-
             }
         }
 
