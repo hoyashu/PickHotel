@@ -18,9 +18,14 @@ public class SiteGradeDaoImpl implements SiteGradeDao {
 
     }
 
-    public int updateSiteGrade(List<SiteGradeVo> siteGrade) {
-        return this.sqlSessionTemplate.update("SiteGradeDao.updateSiteGrade", siteGrade);
+    public void updateSiteGrade(SiteGradeVo sitegrade) {
+        this.sqlSessionTemplate.update("SiteGradeDao.updateSiteGrade", sitegrade);
     }
 
 
+    //등업신청 가능한 등급
+    @Override
+    public List<SiteGradeVo> possibleGrade(int memNo) {
+        return this.sqlSessionTemplate.selectList("SiteGradeDao.possibleGrade", memNo);
+    }
 }
