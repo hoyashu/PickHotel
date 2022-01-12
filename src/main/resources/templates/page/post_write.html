@@ -24,7 +24,7 @@
             <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" required type="text">
         </div>
 
-        <div class="mb-4 map_wrap">
+        <div class="mb-4 map_wrap" th:if="${boardType == 'review'}">
             <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
             <div class="bg_white" id="menu_wrap">
                 <div class="option">
