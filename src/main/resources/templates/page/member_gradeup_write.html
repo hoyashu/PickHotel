@@ -48,8 +48,9 @@
                                value="목록보기">
                     </td>
                 </tr>
-                <p>등업 조건에 충족한 경우에만 등업신청이 가능합니다.</p>
             </table>
+            <p class="notion">등업 조건에 충족한 경우에만 등업신청이 가능합니다.</p>
+            <p class="notion">등업신청게시판에 표시되는 게시글수는 신청시점이 아닌 현재 시점 수치입니다.</p>
         </form>
         <hr>
         <script>
@@ -65,9 +66,9 @@
                 if (confirm("등업신청을 완료 하시겠습니까?")) {
                     let aftergrade = $("#aftergrade").val();
                     $.ajax({
-                        url: '/member/gradeup',
-                        type: 'POST',
-                        data: {
+                        url    : '/member/gradeup',
+                        type   : 'POST',
+                        data   : {
                             "aftergrade": aftergrade
                         },
                         success: function (data) {
@@ -79,7 +80,7 @@
                                 location.reload();
                             }
                         },
-                        error: function (err) {
+                        error  : function (err) {
                             console.log(err);
                         }
                     });

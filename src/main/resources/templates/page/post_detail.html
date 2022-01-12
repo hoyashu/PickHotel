@@ -20,7 +20,7 @@
         <div class="panel panel-default" th:object="${post}">
             <div class="p-sm-4 panel-heading">
                 <p><span class="post-groupName" th:text="*{groupName}"></span><i>&gt;</i>
-                    <span class="post-boardTitle"><a class="" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}"
+                    <span class="post-boardTitle"><a class="" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}"
                                                      th:text="*{boardTitle}"></a></span>
                 </p>
                 <div class="post-subject" th:text="*{subject}"></div>
@@ -95,7 +95,7 @@
                     <a class="btn btn-secondary" onClick="editPost()">수정</a>
                     <a class="btn btn-danger" onClick="removePost()">삭제</a>
                     <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>
-                    <a class="btn btn-secondary" th:href="@{/board/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
+                    <a class="btn btn-secondary" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
                 </div>
 
                 <input id="postNo" name="postNo" th:value="*{postNo}" type="hidden">

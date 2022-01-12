@@ -100,7 +100,7 @@ public class BoardController {
     }
 
     // 게시글 목록
-    @GetMapping("/board/{boardNo}")
+    @GetMapping("/boardList/{boardNo}")
     public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
                        @ModelAttribute("params") PostVo params) {
 

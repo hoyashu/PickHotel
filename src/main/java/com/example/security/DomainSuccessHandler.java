@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,34 +31,31 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
     }
 
+    //소진 - 로그인후 페이지 처리 - https://codevang.tistory.com/269
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        /*강제 인터셉트 당했을 경우의 데이터 get*/
-//        RequestCache requestCache = new HttpSessionRequestCache();
-//        SavedRequest savedRequest = requestCache.getRequest(request, response);
-//
-//        /*로그인 버튼 눌러 접속했을 경우의 데이터 get*/
-//        String prevPage = (String) request.getSession().getAttribute("prevPage");
-//
-//        HttpSession session = request.getSession();
-//        if (session != null) {
-//            String redirectUrl = (String) session.getAttribute("url_prior_login");
-//            if (redirectUrl != null) {
-//                // we do not forget to clean this attribute from session
-//                session.removeAttribute("url_prior_login");
-//                // then we redirect
-//
-//                /*로그인 완료시 세션저장*/
-//                MemberVo member = resourceDao.getUserById(authentication.getName());
-//                session.setAttribute("member", member);
-//
-//                response.sendRedirect(redirectUrl);
-//            } else {
-//                response.sendRedirect(prevPage);
-//            }
-//        } else {
-//            response.sendRedirect(prevPage);
-//        }
+        // 디폴트 URI
+        String uri = "/";
+
+        /* 강제 인터셉트 당했을 경우의 데이터 get */
+        RequestCache requestCache = new HttpSessionRequestCache();
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+
+        /* 로그인 버튼 눌러 접속했을 경우의 데이터 get */
+        String prevPage = (String) request.getSession().getAttribute("prevPage");
+
+        if (prevPage != null) {
+            request.getSession().removeAttribute("prevPage");
+        }
+
+        // null이 아니라면 강제 인터셉트 당했다는 것
+        if (savedRequest != null) {
+            uri = savedRequest.getRedirectUrl();
+
+            // ""가 아니라면 직접 로그인 페이지로 접속한 것
+        } else if (prevPage != null && !prevPage.equals("")) {
+            uri = prevPage;
+        }
 
         log.info("call failureHandler");
 
@@ -64,6 +63,7 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
         HttpSession session = request.getSession();
         session.setAttribute("member", member);
 
-        response.sendRedirect("index");
+        // 세 가지 케이스에 따른 URI 주소로 리다이렉트
+        response.sendRedirect(uri);
     }
 }
