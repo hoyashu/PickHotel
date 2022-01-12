@@ -1,25 +1,25 @@
 <html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <div class="board-page" id="postWrite" layout:fragment="content">
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 수정</h1>
     </div>
-    <form id="saveAll" accept-charset="UTF-8" enctype="multipart/form-data" method="POST"
-        th:action="@{/uploadFileForModify}">
+    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
+          th:action="@{/uploadFileForModify}">
         <div class="mb-2">
-            <label for="subject" class="visually-hidden">제목</label>
-            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" type="text"
-                th:value="${post.subject}" required>
+            <label class="visually-hidden" for="subject">제목</label>
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" required
+                   th:value="${post.subject}" type="text">
         </div>
 
         <div class="mb-4 map_wrap" th:if="${mapVoForApi != null}">
-            <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
+            <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
 
-            <div id="menu_wrap" class="bg_white">
+            <div class="bg_white" id="menu_wrap">
                 <div class="option">
                     <div>
                         <form onsubmit="searchPlaces(); return false;">
-                            키워드 : <input type="text" id="keyword" size="15">
+                            키워드 : <input id="keyword" size="15" type="text">
                             <button type="submit">검색하기</button>
                         </form>
                     </div>
@@ -31,115 +31,135 @@
         </div>
 
         <div class="mb-4 mapInfo" th:if="${mapVoForApi != null}">
-            숙소 이름 : <input type="text" id="place_name" name="place_name" readonly>
-            숙소 주소 : <input type="text" id="road_address_name" name="road_address_name" readonly>
-            <input type="hidden" id="address_name" name="address_name">
-            <input type="hidden" id="category_group_code" name="category_group_code">
-            <input type="hidden" id="category_group_name" name="category_group_name">
-            <input type="hidden" id="category_name" name="category_name">
-            <input type="hidden" id="distance" name="distance">
-            <input type="hidden" id="id" name="id">
-            <input type="hidden" id="phone" name="phone">
-            <input type="hidden" id="place_url" name="place_url">
-            <input type="hidden" id="x" name="x">
-            <input type="hidden" id="y" name="y">
+            숙소 이름 : <input id="place_name" name="place_name" readonly type="text">
+            숙소 주소 : <input id="road_address_name" name="road_address_name" readonly type="text">
+            <input id="address_name" name="address_name" type="hidden">
+            <input id="category_group_code" name="category_group_code" type="hidden">
+            <input id="category_group_name" name="category_group_name" type="hidden">
+            <input id="category_name" name="category_name" type="hidden">
+            <input id="distance" name="distance" type="hidden">
+            <input id="id" name="id" type="hidden">
+            <input id="phone" name="phone" type="hidden">
+            <input id="place_url" name="place_url" type="hidden">
+            <input id="x" name="x" type="hidden">
+            <input id="y" name="y" type="hidden">
         </div>
-        <span th:if="${mapNo != null}"><input type="hidden" id="map_no" name="map_no" th:value="${mapNo}"></span>
-
+        <span th:if="${mapNo != null}"><input id="map_no" name="map_no" th:value="${mapNo}" type="hidden"></span>
 
 
         <div class="review" th:if="${review != null}">
-            <label>위치</label>
-            <div class="star-container">
-                <input type="radio" th:checked="${review.rateLoc == 1}" name="rateLoc" class="star-check" title="5"
-                    value="1">
-                <input type="radio" th:checked="${review.rateLoc == 2}" name="rateLoc" class="star-check" title="4"
-                    value="2">
-                <input type="radio" th:checked="${review.rateLoc == 3}" name="rateLoc" class="star-check" title="3"
-                    value="3">
-                <input type="radio" th:checked="${review.rateLoc == 4}" name="rateLoc" class="star-check" title="2"
-                    value="4">
-                <input type="radio" th:checked="${review.rateLoc == 5}" name="rateLoc" class="star-check" title="1"
-                    value="5">
-            </div>
-            <label>위생</label>
-            <div class="star-container">
-                <input type="radio" th:selected="${review.rateClean == 1}" name="rateClean" class="star-check" title="5"
-                    value="1">
-                <input type="radio" th:selected="${review.rateClean == 2}" name="rateClean" class="star-check" title="4"
-                    value="2">
-                <input type="radio" th:selected="${review.rateClean == 3}" name="rateClean" class="star-check" title="3"
-                    value="3">
-                <input type="radio" th:selected="${review.rateClean == 4}" name="rateClean" class="star-check" title="2"
-                    value="4">
-                <input type="radio" th:selected="${review.rateClean == 5}" name="rateClean" class="star-check" title="1"
-                    value="5">
-            </div>
-            <label>의사소통</label>
-            <div class="star-container">
-                <input type="radio" th:selected="${review.rateComu == 1}" name="rateComu" class="star-check" title="5"
-                    value="1">
-                <input type="radio" th:selected="${review.rateComu == 2}" name="rateComu" class="star-check" title="4"
-                    value="2">
-                <input type="radio" th:selected="${review.rateComu == 3}" name="rateComu" class="star-check" title="3"
-                    value="3">
-                <input type="radio" th:selected="${review.rateComu == 4}" name="rateComu" class="star-check" title="2"
-                    value="4">
-                <input type="radio" th:selected="${review.rateComu == 5}" name="rateComu" class="star-check" title="1"
-                    value="5">
-            </div>
-            <label>가성비</label>
-            <div class="star-container">
-                <input type="radio" th:selected="${review.rateChip == 1}" name="rateChip" class="star-check" title="5"
-                    value="1">
-                <input type="radio" th:selected="${review.rateChip == 2}" name="rateChip" class="star-check" title="4"
-                    value="2">
-                <input type="radio" th:selected="${review.rateChip == 3}" name="rateChip" class="star-check" title="3"
-                    value="3">
-                <input type="radio" th:selected="${review.rateChip == 4}" name="rateChip" class="star-check" title="2"
-                    value="4">
-                <input type="radio" th:selected="${review.rateChip == 5}" name="rateChip" class="star-check" title="1"
-                    value="5">
-            </div>
-
             <div class="mb-4">
-                <label for="visitDate">방문 날짜를 선택하세요</label>
-                <input id="visitDate" name="visitDate" type="date" th:value="${review.visitDate}" />
+                <label>위치</label>
+                <div class="star-container">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 1}" title="5" type="radio"
+                           value="1">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 2}" title="4" type="radio"
+                           value="2">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 3}" title="3" type="radio"
+                           value="3">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 4}" title="2" type="radio"
+                           value="4">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 5}" title="1" type="radio"
+                           value="5">
+                </div>
+                <label>위생</label>
+                <div class="star-container">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 1}" title="5"
+                           type="radio"
+                           value="1">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 2}" title="4"
+                           type="radio"
+                           value="2">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 3}" title="3"
+                           type="radio"
+                           value="3">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 4}" title="2"
+                           type="radio"
+                           value="4">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 5}" title="1"
+                           type="radio"
+                           value="5">
+                </div>
+                <label>의사소통</label>
+                <div class="star-container">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 1}" title="5"
+                           type="radio"
+                           value="1">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 2}" title="4"
+                           type="radio"
+                           value="2">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 3}" title="3"
+                           type="radio"
+                           value="3">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 4}" title="2"
+                           type="radio"
+                           value="4">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 5}" title="1"
+                           type="radio"
+                           value="5">
+                </div>
+                <label>가성비</label>
+                <div class="star-container">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 1}" title="5"
+                           type="radio"
+                           value="1">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 2}" title="4"
+                           type="radio"
+                           value="2">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 3}" title="3"
+                           type="radio"
+                           value="3">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 4}" title="2"
+                           type="radio"
+                           value="4">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 5}" title="1"
+                           type="radio"
+                           value="5">
+                </div>
             </div>
             <div class="mb-4">
-                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요</label>
-                <input class="form-control" id="recommendPlace" name="recommendPlace" type="text"
-                    th:value="${review.recommendPlace}">
+                <p class="m-0"><label for="visitDate">방문 날짜<span class="chose">(선택)</span></label></p>
+                <input id="visitDate" name="visitDate" th:value="${review.visitDate}" type="date"/>
             </div>
             <div class="mb-4">
-                <label for="notRecommendPerson">이런분들께는 비추에요</label>
-                <input class="form-control" id="notRecommendPerson" name="notRecommendPerson" type="text"
-                    th:value="${review.notRecommendPerson}">
+                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요<span class="chose">(선택)</span></label>
+                <input class="form-control" id="recommendPlace" name="recommendPlace"
+                       th:value="${review.recommendPlace}"
+                       type="text">
+            </div>
+            <div class="mb-4">
+                <label for="notRecommendPerson">이런분들께는 비추에요<span class="chose">(선택)</span></label>
+                <input class="form-control" id="notRecommendPerson" name="notRecommendPerson"
+                       th:value="${review.notRecommendPerson}"
+                       type="text">
             </div>
         </div>
         <div>
-            <label for="content" class="visually-hidden">내용</label>
-            <textarea name="content" id="content" placeholder="내용을 입력해 주세요" required></textarea>
+            <label class="visually-hidden" for="content">내용</label>
+            <textarea id="content" name="content" placeholder="내용을 입력해 주세요" required></textarea>
         </div>
         <div class="mb-4 tag-box">
-            <label for="tag-input" class="visually-hidden">태그</label>
+            <label class="visually-hidden" for="tag-input">태그</label>
             <div class="textarea_tag">
+                <span aria-label="d" class="tag" th:attr="aria-label=${tag}"
+                      th:each="tag : ${post.tags}" th:id="${'tag-item-'+tag}" th:if="${#lists.size(post.tags)>0}"
+                      th:text="${tag}"></span>
                 <span class="wrap_tag_input">
-                    <input autocomplete="off" class="tag_input" id="tag-input" placeholder="태그 입력 (최대 30개)" type="text"
-                        value=""></span>
+                <input autocomplete="off" class="tag_input" id="tag-input" placeholder="태그 입력 (최대 30개)"
+                       type="text"></span>
             </div>
         </div>
         <div class="mb-4 photos">
             <p class="m-0"><label for="images">사진<span class="chose">(선택)</span></label></p>
             <p class="info">3MB 이하</p>
-            <input accept="image/*" id="images" multiple name="images" type="file" />
+            <input accept="image/*" id="images" multiple name="images" type="file"/>
             <div class="photogallery"></div>
         </div>
 
         <div class="mb-4 videos">
             <p class="m-0"><label for="videos">동영상<span class="chose">(선택)</span></label></p>
             <p class="info">.mp4, .webm, .ogg, .mov만 사용가능, 30MB 이하</p>
-            <input id="videos" multiple name="videos" type="file" />
+            <input id="videos" multiple name="videos" type="file"/>
             <div class="videogallery"></div>
         </div>
 
@@ -148,9 +168,9 @@
             <div class="photos">
                 <div class="mb-3">
                     <div id="showImages" th:each="attach : ${attachList}">
-                        <span th:if="${attach.fileType == 1}" th:class="${attach.no}">
-                            <img th:src="'/upload/' + ${attach.systemFileName}" />
-                            <button type="button" th:id="${attach.no}" onclick="removeFile(this)">삭제</button>
+                        <span th:class="${attach.no}" th:if="${attach.fileType == 1}">
+                            <img th:src="'/upload/' + ${attach.systemFileName}"/>
+                            <button onclick="removeFile(this)" th:id="${attach.no}" type="button">삭제</button>
                         </span>
                     </div>
                 </div>
@@ -159,33 +179,31 @@
                 <div class="mb-3">
                     <label for="showVideos">등록된 동영상</label>
                     <div id="showVideos" th:each="attach : ${attachList}">
-                        <span th:if="${attach.fileType == 2}" th:class="${attach.no}">
+                        <span th:class="${attach.no}" th:if="${attach.fileType == 2}">
                             <video controls>
-                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4" />
-                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/webm" />
-                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg" />
+                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4"/>
+                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/webm"/>
+                                <source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg"/>
                             </video>
-                            <button type="button" th:id="${attach.no}" onclick="removeFile(this)">삭제</button>
+                            <button onclick="removeFile(this)" th:id="${attach.no}" type="button">삭제</button>
                         </span>
                     </div>
                 </div>
             </div>
         </div>
-        <input type="hidden" id="postNo" name="postNo" th:value="${post.postNo}">
-        <input type="hidden" id="bordNo" name="bordNo" th:value="${post.boardNo}">
+        <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden">
+        <input id="bordNo" name="bordNo" th:value="${post.boardNo}" type="hidden">
         <div class="text-center">
-            <button class="btn btn-primary btn-lg" id="saveBtn" type="button" onclick="submitCheck();">수정</button>
+            <button class="btn btn-primary btn-lg" id="saveBtn" onclick="submitCheck();" type="button">수정</button>
         </div>
     </form>
 
     <script th:src="@{/js/ckeditor/ckeditor.js}"></script>
-    <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"></script>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"
+            type="text/javascript"></script>
     <script>
         //태그 JS시작
         $("#tag-input").keydown(function (event) {
-
-
             let rs = true;
             let msg = "";
 
@@ -310,7 +328,7 @@
         // 태그 JS끝
     </script>
 
-    <script type="text/javascript" th:inline="javascript">
+    <script th:inline="javascript" type="text/javascript">
         //페이지 로딩시 사용성 체크 사용
         var postNo = document.getElementById("postNo").value;
 
@@ -318,15 +336,15 @@
         window.onload = function () {
             OnChange();
             CKEDITOR.replace('content')
-                
+
             /*<![CDATA[*/
             const content = "[(${post.content})]";
             CKEDITOR.instances['content'].setData(content);
             /*]]>*/
 
             $.ajax({
-                type: "GET",
-                url: "/findMapInfo?postNo=" + postNo,
+                type   : "GET",
+                url    : "/findMapInfo?postNo=" + postNo,
                 success: function (data) {
                     if (data != null) {
                         var documentsList = data.documents;
@@ -351,37 +369,36 @@
                     }
 
                 },
-                error: function () {
+                error  : function () {
                     alert("정보 가져오기 실패");
                 }
             });
         };
 
-        //onBeforeUnload 이벤트 지정
-        $(window).bind('beforeunload', function () {
-            //페이지 변경이 있었는지 체크..
-            var isChanged = true;
-
-            //출력할 내용을 Return 해주면 확인 창이 뜨게 됩니다.
-            if (isChanged) {
-                return '작성중인 글이 존재합니다. 페이지를 나가시겠습니까?';
-                //확인 창을 띄우지 않으려면 아무 내용도 Return 하지 마세요!! (Null조차도)
-            }
-        });
-
-        //Form Submit 등 onBeforeUnload Event가 발생하길 원하지 않는 경우, 이벤트 해제
-        $("#saveAll").submit(function () {
-            $(window).unbind('beforeunload');
-        });
-
+        // //onBeforeUnload 이벤트 지정
+        // $(window).bind('beforeunload', function () {
+        //     //페이지 변경이 있었는지 체크..
+        //     var isChanged = true;
+        //
+        //     //출력할 내용을 Return 해주면 확인 창이 뜨게 됩니다.
+        //     if (isChanged) {
+        //         return '작성중인 글이 존재합니다. 페이지를 나가시겠습니까?';
+        //         //확인 창을 띄우지 않으려면 아무 내용도 Return 하지 마세요!! (Null조차도)
+        //     }
+        // });
+        //
+        // //Form Submit 등 onBeforeUnload Event가 발생하길 원하지 않는 경우, 이벤트 해제
+        // $("#saveAll").submit(function () {
+        //     $(window).unbind('beforeunload');
+        // });
         //작성중인 창 떠나기전 확인 끝
 
         // 사용성 체크
         function OnChange() {
             var bordNoSelect = document.getElementById("bordNo").value;
             $.ajax({
-                url: '/board/' + bordNoSelect + '/post/checkUse',
-                type: 'GET',
+                url    : '/board/' + bordNoSelect + '/post/checkUse',
+                type   : 'GET',
                 success: function (data) {
                     const result = data;
                     if (result.board.usePhoto == 1) {
@@ -406,7 +423,7 @@
                         $('.map_wrap').hide();
                     }
                 },
-                error: function () {
+                error  : function () {
                     console.log("failed");
                 }
             });
@@ -419,8 +436,8 @@
             var content = CKEDITOR.instances['content'].getData();
 
             $.ajax({
-                url: '/post/checkUse?boardNo=' + bordNoSelect,
-                type: 'GET',
+                url    : '/board/' + bordNoSelect + '/post/checkUse',
+                type   : 'GET',
                 success: function (data) {
                     var result = data;
                     if (result.board.type == "review") {
@@ -430,9 +447,7 @@
                                 alert('장소를 입력해주세요!');
                                 return false;
                             }
-
                         }
-
                     }
                     if (!subject.replace(/^\s+|\s+$/g, '')) {
                         alert("제목을 입력해주세요");
@@ -443,10 +458,15 @@
                         alert("내용을 입력해주세요");
                         return false;
                     }
+                    let tags = [];
+                    $(".textarea_tag .tag").each(function () {
+                        tags.push($(this).attr("aria-label"));
+                    })
+                    document.getElementById('fake-tag').value = tags.toString();
                     document.getElementById('content').value = content;
                     document.getElementById('saveAll').submit();
                 },
-                error: function () {
+                error  : function () {
                     console.log("failed");
                 }
             });
@@ -582,8 +602,8 @@
 
 
             $.ajax({
-                type: 'GET',
-                url: '/attach/delete/' + attachNo,
+                type   : 'GET',
+                url    : '/attach/delete/' + attachNo,
                 success: function (data) {
                     if (data.success == 'success') {
                         console.log("삭제 성공");
@@ -592,7 +612,7 @@
                         console.log("삭제 실패");
                     }
                 },
-                error: function () {
+                error  : function () {
                     alert("심각한 오류!");
                 }
 
@@ -608,7 +628,7 @@
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div
             mapOption = {
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
+                level : 3 // 지도의 확대 레벨
             }
 
         // 지도 생성
@@ -643,15 +663,15 @@
 
             // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다 -> 키워드를 직접 받아 처리를 해줘야함 정보가 없을경우 없다고 알림
             $.ajax({
-                type: "GET",
-                url: "/map/search?query=" + keyword,
+                type   : "GET",
+                url    : "/map/search?query=" + keyword,
                 success: function (data) {
                     var documentsList = data.mapResponse.documents;
                     var meta = data.mapResponse.meta;
                     placesSearchCB(documentsList, meta);
 
                 },
-                error: function () {
+                error  : function () {
                     alert("데이터 가져오기 실패");
                 }
             });
@@ -734,8 +754,8 @@
 
             var el = document.createElement('li'),
                 itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
-                '<div id="infoNumber' + (index + 1) + '"><div class="info">' +
-                '   <h5>' + places.place_name + '</h5>';
+                    '<div id="infoNumber' + (index + 1) + '"><div class="info">' +
+                    '   <h5>' + places.place_name + '</h5>';
 
             if (places.road_address_name) {
                 itemStr += '    <span>' + places.road_address_name + '</span>' +
@@ -744,7 +764,7 @@
                 itemStr += '    <span>' + places.address_name + '</span>';
             }
 
-            itemStr += `<span class="tel">${places.phone }</span>`;
+            itemStr += `<span class="tel">${places.phone}</span>`;
             itemStr += `<input type="hidden" value="${places.address_name}">`;
             itemStr += `<input type="hidden" value="${places.category_group_code}">`;
             itemStr += `<input type="hidden" value="${places.category_group_name}">`;
@@ -822,17 +842,17 @@
         // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
         function addMarker(position, idx, title) {
             var imageSrc =
-                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+                    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
                 imageSize = new kakao.maps.Size(36, 37), // 마커 이미지의 크기
                 imgOptions = {
-                    spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                    spriteSize  : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
                     spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                    offset      : new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
                 },
                 markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
                 marker = new kakao.maps.Marker({
                     position: position, // 마커의 위치
-                    image: markerImage
+                    image   : markerImage
                 });
 
             marker.setMap(map); // 지도 위에 마커를 표출합니다

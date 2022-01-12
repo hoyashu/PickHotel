@@ -11,7 +11,6 @@ import com.example.board.service.PostService;
 import com.example.member.model.MemberVo;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -43,21 +40,16 @@ public class CommentController {
     // 댓글 등록 ajax (회원만 가능함)
     @ResponseBody
     @PostMapping("/comment/create")
-
-    public AlarmVo create(CommentVo comment, HttpServletRequest request) throws Exception {
+    public AlarmVo create(CommentVo comment, HttpServletRequest request) {
         AlarmVo alarm = new AlarmVo();
 
         CommentVo comment1 = new CommentVo();
         HttpSession session = request.getSession();
 
         MemberVo member = (MemberVo) session.getAttribute("member");
-
         // 회원이 아닌 경우 작성이 제한됨
         if (member == null) {
-
-            //jso.put("result", "isNotMember");
             alarm.setResult("isNotMember");
-
         } else {
             int memNo = member.getMemNo();
             comment1.setMemNo(memNo);
@@ -70,13 +62,11 @@ public class CommentController {
             int max = this.commentService.retrieveCommentMax();
             comment1.setComNo(max + 1);
 
-
             //알람 기본 값 설정
             String alarmSend = "false";
             String alarmType = "";
             String alarmMsg = "";
             int alarmGetMemNo = 0;
-
 
             //댓글인 경우
             if (comment.getComClass() == 0) {
@@ -84,7 +74,6 @@ public class CommentController {
                 comment1.setOrder(comment.getOrder());
                 //댓글 그룹는 인덱스번호 와 동일하다
                 comment1.setParents(max + 1);
-
 
                 //본인 글에 댓글 단 경우 알림을 발송하지 않는다.
                 PostVo post = this.postService.retrieveDetailBoard(comment.getPostNo());
@@ -102,7 +91,6 @@ public class CommentController {
 
                 //댓글 그룹은 댓글의 pk값을 받아온다.
                 comment1.setParents(comment.getParents());
-
 
                 //답글 타입 공통
                 alarmType = "2";
@@ -138,7 +126,6 @@ public class CommentController {
             alarm.setResult("OK");
         }
         return alarm;
-
     }
 
     // 댓글 목록 ajax
@@ -154,7 +141,7 @@ public class CommentController {
     @PostMapping("/comment/update")
     public String update(CommentVo comment, HttpServletRequest request) {
         // 리턴값 셋팅
-        String result = "false";
+        String result;
         // 세션가져올 준비
         HttpSession session = request.getSession();
 
@@ -165,13 +152,13 @@ public class CommentController {
         } else {
             // 회원 id
             int memNo = member.getMemNo();
+            int memberGrade = member.getGrade();
             // 작성된 댓글 작성자 id
-            int orComNothis = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
-            // 작성자 본인이 아닌 경우
-            if (memNo != orComNothis) {
+            int writerNo = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
+            // 작성자 본인이나 관리자가 아닌 경우
+            if (memNo != writerNo && memberGrade != 5) {
                 result = "denine";
-            } else { // 작성자 본인인 경우
-
+            } else { // 작성자 본인이거나 관리자인 경우
                 this.commentService.reviseComment(comment);
                 result = "OK";
             }
@@ -184,9 +171,7 @@ public class CommentController {
     @PostMapping("/comment/remove")
     public String remove(CommentVo comment, HttpServletRequest request) {
         // 리턴값 셋팅
-
         String result;
-
         // 세션가져올 준비
         HttpSession session = request.getSession();
 
@@ -197,25 +182,17 @@ public class CommentController {
         } else {
             // 회원 id
             int memNo = member.getMemNo();
-
-
-            System.out.println("ff" + comment.getComNo());
-
+            int memberGrade = member.getGrade();
             // 작성된 댓글 작성자 id
-            int writemMemNo = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
-
-            System.out.println("ffff" + writemMemNo);
-
-            // 작성자 본인이 아닌 경우
-            if (memNo != writemMemNo) {
+            int writerNo = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
+            // 작성자 본인이나 관리자가 아닌 경우
+            if (memNo != writerNo && memberGrade != 5) {
                 result = "denine";
-            } else {
-                // 작성자 본인인 경우
+            } else { // 작성자 본인이거나 관리자인 경우
                 this.commentService.removeComment(comment);
                 result = "OK";
             }
         }
         return result;
     }
-
 }

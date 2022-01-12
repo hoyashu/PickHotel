@@ -37,13 +37,8 @@ public class AlarmHandler extends TextWebSocketHandler {
 
         Integer memNo = getMemberId(session);
         if (memNo != null) {    // 로그인 값이 있는 경우만
-            log.info(memNo + " 연결 됨");
             users.put(memNo, session);
             WebSocketSession targetSession = users.get(memNo);
-            log.info("확인차..{}", targetSession);
-            log.info("몇명..{}", users.size());
-
-
         }
     }
 
@@ -58,19 +53,14 @@ public class AlarmHandler extends TextWebSocketHandler {
         if (msg != null) {
             // Json객체 → Java객체
             AlarmVo alarm = objectMapper.readValue(msg, AlarmVo.class);
-            log.info("메세지열어{}", alarm);
             String content = alarm.getContent();
             String url = alarm.getUrl();
             String type = alarm.getType();
 
             // 접속중인 회원 목록중에 목표 회원에게 발송한다.
             WebSocketSession targetSession = users.get(alarm.getMemNo());  // 메시지를 받을 세션 조회
-
-            log.info("여기ㅇ {}", alarm.getMemNo());
-            log.info("여기 {}", targetSession);
             // 목표 회원이 실시간 접속시 발송한다.
             if (targetSession != null) {
-                log.info("서버단 메세지 발송");
                 TextMessage tmpMsg = new TextMessage(msg);
                 targetSession.sendMessage(tmpMsg);
             }
@@ -82,9 +72,7 @@ public class AlarmHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Integer memNo = getMemberId(session);
         if (memNo != null) {    // 로그인 값이 있는 경우만
-            log.info(memNo + " 연결 종료됨");
             users.remove(memNo);
-
 //            list.remove(session);
         }
     }

@@ -62,10 +62,9 @@ public class FileController {
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
                                 @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception {
-        int writerNo = 1;
         HttpSession session = request.getSession();
         MemberVo memberVo = (MemberVo) session.getAttribute("member");
-        writerNo = memberVo.getMemNo();
+        int writerNo = memberVo.getMemNo();
 
         // 게시글
         String newContent = content;
@@ -78,7 +77,6 @@ public class FileController {
 
         int postNo = postService.registerPost(postVo);
         session.setAttribute("boardNo", boardNo);
-
 
         BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
         if (boardForUseCheck.getType().equals("basic")) {
@@ -102,8 +100,6 @@ public class FileController {
                 mapVoForApi.setX(x);
                 mapVoForApi.setY(y);
 
-                System.out.println("가자~~");
-                System.out.println(mapVoForApi.toString());
                 String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
                 String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/") + 1);
                 int mapNo = Integer.parseInt(strMapNo);
@@ -131,8 +127,6 @@ public class FileController {
         if (boardForUseCheck.getUsePhoto() == 1) {
             // 이미지
             if (images != null) {
-                System.out.println("images");
-
                 for (MultipartFile file : images) {
                     String fileName = null;
                     if (!file.getOriginalFilename().isEmpty()) {
@@ -140,7 +134,6 @@ public class FileController {
                     } else {
                         fileName = "default.jpg";
                     }
-
                 }
             }
         }
@@ -149,8 +142,6 @@ public class FileController {
         if (boardForUseCheck.getUseVideo() == 1) {
             // 동영상
             if (videos != null) {
-                System.out.println("videos");
-
                 for (MultipartFile file : videos) {
                     String fileName = null;
                     if (!file.getOriginalFilename().isEmpty()) {
@@ -162,7 +153,7 @@ public class FileController {
                 }
             }
         }
-        return "redirect:/post/" + postVo.getPostNo();
+        return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 
 //    private String convert(String oldStr) {

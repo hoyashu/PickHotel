@@ -16,27 +16,27 @@
             </tr>
             </thead>
             <tbody>
-					<tr th:if="${posts==null}">
-						<td class="text-left" colspan="5">등록된 게시글이 없습니다.</td>
-					</tr>
-					<tr th:each="post : ${posts}"  th:if="${posts!=null}">
-						<td th:text="${post.postNo}"></td>
+            <tr th:if="${posts==null}">
+                <td class="text-left" colspan="5">등록된 게시글이 없습니다.</td>
+            </tr>
+            <tr th:each="post : ${posts}" th:if="${posts!=null}">
+                <td th:text="${post.postNo}"></td>
 
-                        <td><a th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.PostNo},boardNo=${board.BoardNo})}"><span class="post-subject"
+                <td><a th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.postNo},boardNo=${post.boardNo})}"><span
+                        class="post-subject"
 
-                                                                                                              th:text="${post.subject}"></span><span
-                                class="post-comment" th:text="'('+${post.commont}+')'"></span></a>
-						</td>
-						<td><span th:text="${post.createDate}"></span></td>
-						<td><span th:text="${post.writerNick}"></span></td>
-                        <td><span th:text="${post.views}"></span></td>
-					</tr>
+                        th:text="${post.subject}"></span><span
+                        class="post-comment" th:text="'('+${post.commont}+')'"></span></a>
+                </td>
+                <td><span th:text="${post.createDate}"></span></td>
+                <td><span th:text="${post.writerNick}"></span></td>
+                <td><span th:text="${post.views}"></span></td>
+            </tr>
             </tbody>
         </table>
         <div id="writePost" style="text-align: right;">
 
-            <a th:href="@{/board/{boardNo}/post/register(boardNo=${board.boardNo},grade=${grade})}">
-
+            <a th:href="@{/board/{boardNo}/post/register(boardNo=${board.boardNo})}">
                 <button class="btn btn-primary" type="button">글작성</button>
             </a>
         </div>
@@ -49,28 +49,29 @@
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12">
-                <form th:action="@{/board/{boardNo}(boardNo=${boardNo})}" method="GET" id="postSearch"
-                      onsubmit="return false;">
+                <form id="postSearch" method="GET" onsubmit="return false;"
+                      th:action="@{/board/{boardNo}(boardNo=${boardNo})}">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <select class="form-control select2bs4" name="searchType" id="searchType">
-                                <option value="" th:selected="${params.searchType == ''}">==필터==
+                            <select class="form-control select2bs4" id="searchType" name="searchType">
+                                <option th:selected="${params.searchType == ''}" value="">==필터==
                                 </option>
-                                <option value="subject" th:selected="${params.searchType == 'subject'}">제목
+                                <option th:selected="${params.searchType == 'subject'}" value="subject">제목
                                 </option>
-                                <option value="content" th:selected="${params.searchType == 'content'}">내용
+                                <option th:selected="${params.searchType == 'content'}" value="content">내용
                                 </option>
-                                <option value="nick" th:selected="${params.searchType == 'nick'}">닉네임
+                                <option th:selected="${params.searchType == 'nick'}" value="nick">닉네임
                                 </option>
                             </select>
                         </div>
-                        <input type="text" class="form-control" placeholder="검색어를 입력하세요."
-                               name="searchKeyword" th:value="${params.searchKeyword}" id="searchKeyword">
-                        <button class="btn btn-primary" type="button" id="searchBtn">
+                        <input class="form-control" id="searchKeyword" name="searchKeyword"
+                               placeholder="검색어를 입력하세요." th:value="${params.searchKeyword}" type="text">
+                        <button class="btn btn-primary" id="searchBtn" type="button">
                             <i class="fa fa-search fa-sm"></i>
                         </button>
-                        <a th:if="${not #strings.isEmpty(params.searchKeyword)}" th:href="@{/board/{boardNo}(boardNo=${boardNo})}"
-                           class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm">필터 해제</a>
+                        <a class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                           th:href="@{/board/{boardNo}(boardNo=${boardNo})}"
+                           th:if="${not #strings.isEmpty(params.searchKeyword)}">필터 해제</a>
                     </div>
                 </form>
             </div>
