@@ -4,12 +4,10 @@
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 수정</h1>
     </div>
-    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
-          th:action="@{/uploadFileForModify}">
+    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST" th:action="@{/uploadFileForModify}">
         <div class="mb-2">
             <label class="visually-hidden" for="subject">제목</label>
-            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" required
-                   th:value="${post.subject}" type="text">
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" th:value="${post.subject}" type="text">
         </div>
 
         <div class="mb-4 map_wrap" th:if="${mapVoForApi != null}">
@@ -18,10 +16,8 @@
             <div class="bg_white" id="menu_wrap">
                 <div class="option">
                     <div>
-                        <form onsubmit="searchPlaces(); return false;">
-                            키워드 : <input id="keyword" size="15" type="text">
-                            <button type="submit">검색하기</button>
-                        </form>
+                        키워드 : <input id="keyword" size="15" type="text">
+                        <button onclick="searchPlaces(); return false;" type="button">검색하기</button>
                     </div>
                 </div>
                 <hr>
@@ -51,70 +47,70 @@
             <div class="mb-4">
                 <label>위치</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 1}" title="5" type="radio"
-                           value="1">
-                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 2}" title="4" type="radio"
-                           value="2">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 5}" title="5" type="radio"
+                           value="5">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 4}" title="4" type="radio"
+                           value="4">
                     <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 3}" title="3" type="radio"
                            value="3">
-                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 4}" title="2" type="radio"
-                           value="4">
-                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 5}" title="1" type="radio"
-                           value="5">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 2}" title="2" type="radio"
+                           value="2">
+                    <input class="star-check" name="rateLoc" th:checked="${review.rateLoc == 1}" title="1" type="radio"
+                           value="1">
                 </div>
                 <label>위생</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 1}" title="5"
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 5}" title="5"
                            type="radio"
-                           value="1">
-                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 2}" title="4"
+                           value="5">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 4}" title="4"
                            type="radio"
-                           value="2">
+                           value="4">
                     <input class="star-check" name="rateClean" th:checked="${review.rateClean == 3}" title="3"
                            type="radio"
                            value="3">
-                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 4}" title="2"
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 2}" title="2"
                            type="radio"
-                           value="4">
-                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 5}" title="1"
+                           value="2">
+                    <input class="star-check" name="rateClean" th:checked="${review.rateClean == 1}" title="1"
                            type="radio"
-                           value="5">
+                           value="1">
                 </div>
                 <label>의사소통</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 1}" title="5"
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 5}" title="5"
                            type="radio"
-                           value="1">
-                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 2}" title="4"
+                           value="5">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 4}" title="4"
                            type="radio"
-                           value="2">
+                           value="4">
                     <input class="star-check" name="rateComu" th:checked="${review.rateComu == 3}" title="3"
                            type="radio"
                            value="3">
-                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 4}" title="2"
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 2}" title="2"
                            type="radio"
-                           value="4">
-                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 5}" title="1"
+                           value="2">
+                    <input class="star-check" name="rateComu" th:checked="${review.rateComu == 1}" title="1"
                            type="radio"
-                           value="5">
+                           value="1">
                 </div>
                 <label>가성비</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 1}" title="5"
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 5}" title="5"
                            type="radio"
-                           value="1">
-                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 2}" title="4"
+                           value="5">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 4}" title="4"
                            type="radio"
-                           value="2">
+                           value="4">
                     <input class="star-check" name="rateChip" th:checked="${review.rateChip == 3}" title="3"
                            type="radio"
                            value="3">
-                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 4}" title="2"
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 2}" title="2"
                            type="radio"
-                           value="4">
-                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 5}" title="1"
+                           value="2">
+                    <input class="star-check" name="rateChip" th:checked="${review.rateChip == 1}" title="1"
                            type="radio"
-                           value="5">
+                           value="1">
                 </div>
             </div>
             <div class="mb-4">
@@ -140,6 +136,7 @@
         </div>
         <div class="mb-4 tag-box">
             <label class="visually-hidden" for="tag-input">태그</label>
+            <input id="fake-tag" name="tag" type="hidden">
             <div class="textarea_tag">
                 <span aria-label="d" class="tag" th:attr="aria-label=${tag}"
                       th:each="tag : ${post.tags}" th:id="${'tag-item-'+tag}" th:if="${#lists.size(post.tags)>0}"
@@ -191,8 +188,8 @@
                 </div>
             </div>
         </div>
-        <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden">
-        <input id="bordNo" name="bordNo" th:value="${post.boardNo}" type="hidden">
+        <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden" />
+        <input id="bordNo" name="bordNo" th:value="${post.boardNo}" type="hidden" />
         <div class="text-center">
             <button class="btn btn-primary btn-lg" id="saveBtn" onclick="submitCheck();" type="button">수정</button>
         </div>

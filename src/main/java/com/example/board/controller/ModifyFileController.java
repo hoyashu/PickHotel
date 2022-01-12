@@ -68,6 +68,9 @@ public class ModifyFileController {
         // 세션 준비
         HttpSession session = request.getSession();
         MemberVo member = (MemberVo) session.getAttribute("member");
+        System.out.println("아에이" + postNo);
+        System.out.println("아에이" + boardNo);
+        System.out.println(address_name);
 
         // 회원 id
         int memNo = member.getMemNo();
