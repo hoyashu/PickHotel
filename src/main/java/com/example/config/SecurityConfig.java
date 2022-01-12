@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.member.service.AccountService;
 import com.example.member.service.RoleHierarchyService;
 import com.example.security.DomainFailureHandler;
 import com.example.security.DomainSuccessHandler;
@@ -40,6 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+//    // Role Hierarchy
+//    @Autowired
+//    private RoleHierarchyService roleHierarchyService;
+
+    @Autowired
+    private AccountService accountService;
+
     @Autowired
     private DomainFailureHandler domainFailureHandler;
 
@@ -48,9 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
-
-    @Autowired
-    private RoleHierarchyService roleHierarchyService;
 
 
     @Bean("passwordEncoder")
@@ -67,8 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //WebSecurity : Security filter chain을 적용할 필요가 전혀 없는 요청인 경우
-        //정적 컨텐츠의 액세스는 인증을 걸지 않는다.
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 //        web.ignoring().antMatchers("/webjars/**", "/static/**");
     }
@@ -101,6 +104,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .permitAll()
+                .and()
+                .rememberMe()
+                .key("autoLogin")
+                .rememberMeParameter("remember-me")
+                .tokenValiditySeconds(86400 * 30)
+                .authenticationSuccessHandler(domainSuccessHandler)
+                .userDetailsService(accountService)
                 .and()
                 .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
 

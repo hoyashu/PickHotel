@@ -2,13 +2,15 @@ package com.example.member.service;
 
 import com.example.member.model.MemberRoleVo;
 import com.example.member.model.MemberVo;
-
+import com.example.member.model.UserAccount;
 import com.example.member.persistent.MemberDao;
 import com.example.member.persistent.RoleResourceDao;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,11 +42,9 @@ public class AccountService implements UserDetailsService {
 
         try {
             member = roleResourceDao.getUserById(id);
-
-            boolean state = false;
-
-            if (1 != Integer.parseInt(memberDao.SelectWithDraw(id))){
-                state = true;
+            boolean enabled = true;
+            if (1 != Integer.parseInt(member.getState())){
+                enabled = false;
             }
 
             log.info("2. AccountService getLoginUser User {}", member);
@@ -54,7 +54,6 @@ public class AccountService implements UserDetailsService {
             }
 
             List<MemberRoleVo> memberRoles = roleResourceDao.getRolesById(id);
-
             List<String> roles = new ArrayList<>();
             List<String> roleHierarchy = new ArrayList<>();
 
@@ -66,20 +65,21 @@ public class AccountService implements UserDetailsService {
                 roles.add(myRoles.replace("ROLE_",""));
             }
 
+            List<GrantedAuthority> authorities = new ArrayList(roles.size());
+
+            for (String role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
+
             log.info("=======================================================");
-            log.info("3. User id : {}", id);
-            log.info("3. User Roles : {}", roles);
-            log.info("3. member.getId() : {}", member.getId());
-            log.info("3. member.getPwd() : {}", member.getPwd());
+            log.info("1. Select id : {}", id);
+            log.info("2. User id  : {}", member.getId());
+            log.info("3. User pwd : {}", member.getPwd());
+            log.info("4. User Roles : {}", roles);
+            log.info("4. User enabled : {}", enabled);
             log.info("=======================================================");
 
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(member.getId())
-                    .password(member.getPwd())
-                    .roles(roles.toArray(new String[roles.size()])) //List<SimpleGrantedAuthority>
-                    .disabled(state)
-                    .build();
-
+            return new UserAccount(member, enabled, authorities);
 
         } catch(Exception ex) {
             log.error("failed to get LoginUser.", ex);
