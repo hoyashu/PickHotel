@@ -5,12 +5,13 @@
                 <img alt="사이트 로고" class="logo me-5" th:src="@{/img/logo.png}">
             </a>
             <ul id="menu-box">
-                <li class="dropdown">
-                    <a class="nav-link px-2 link-dark" href="#" onclick="boardListAjax('review')"  >숙소리뷰</a>
-                    <ul class="dropdown-menu text-small" id="dropdown-box-review" style="display: block;"></ul>
+                <li class="dropdown" id="dropdown-review">
+                    <a class="nav-link px-2 link-dark" href="#" onclick="boardListAjax('review')">숙소리뷰</a>
+                    <ul class="dropdown-menu-1 text-small" id="dropdown-box-review" style="display: none"></ul>
                 </li>
-                <li class="dropdown"><a class="nav-link px-2 link-dark " href="#" onclick="boardListAjax('basic')" id="dropdownBoard">숙소톡톡</a>
-                    <ul class="dropdown-menu  text-small" id="dropdown-box-basic" style="display: block;"></ul>
+                <li class="dropdown" id="dropdown-basic">
+                    <a class="nav-link px-2 link-dark" href="#" onclick="boardListAjax('basic')">숙소톡톡</a>
+                    <ul class="dropdown-menu-1  text-small" id="dropdown-box-basic" style="display: none"></ul>
                 </li>
             </ul>
             <script>
@@ -19,37 +20,39 @@
                     const getListAjax = function (type) {
                         return new Promise((resolve, reject) => {
                             $.ajax({
-                                url: '/loadboardtype',
-                                method: 'GET',
+                                url     : '/loadboardtype',
+                                method  : 'GET',
                                 dataType: 'json',
-                                data: {
+                                data    : {
                                     type: type
                                 },
-                                success: function (data) {
+                                success : function (data) {
                                     resolve(data);
                                 },
-                                error: function (e) {
+                                error   : function (e) {
                                     reject(e);
                                 }
                             });
                         });
 
                     };
+
                     async function listRequestProcess(type) {
                         try {
                             const boardList = await getListAjax(type);
                             var htmlStr = '';
                             if (boardList.length == 0) {
-                                htmlStr += `<li class='dropdown-item'>게시판이 없습니다.</li>`;
+                                htmlStr += `<li>게시판이 없습니다.</li>`;
                             } else {
                                 for (let i = 0; i < boardList.length; i++) {
-                                    htmlStr += `<li class='dropdown-item'><a href='/board/${boardList[i].boardNo}'>${boardList[i].title}</a></li>`;
+                                    htmlStr += `<li><a class='dropdown-item' href='/boardList/${boardList[i].boardNo}'>${boardList[i].title}</a></li>`;
                                 }
                             }
-                            $("#dropdown-box-"+type).html(htmlStr);
+                            $("#dropdown-box-" + type).html(htmlStr);
                         } catch (error) {
                             console.log("error : ", error);
-                        };
+                        }
+                        ;
                     };
                     listRequestProcess(type)
                 };
