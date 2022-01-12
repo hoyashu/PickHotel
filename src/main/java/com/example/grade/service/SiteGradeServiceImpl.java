@@ -1,28 +1,33 @@
 package com.example.grade.service;
 
 import com.example.grade.model.SiteGradeVo;
+import com.example.grade.persistent.SiteGradeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service("siteGradeService")
 public class SiteGradeServiceImpl implements SiteGradeService {
 
     @Autowired
-    private com.example.grade.persistent.SiteGradeDao SiteGradeDao;
+    private SiteGradeDao siteGradeDao;
 
     @Override
     public List<SiteGradeVo> retriveSiteGrade() {
-        return this.SiteGradeDao.retriveSiteGrade();
+        return this.siteGradeDao.retriveSiteGrade();
 
     }
 
     @Override
-    public void SiteGradeModify(List<SiteGradeVo> siteGrade) {
-        this.SiteGradeDao.updateSiteGrade((ArrayList<SiteGradeVo>) siteGrade);
+    public void siteGradeModify(SiteGradeVo sitegrade) {
+        this.siteGradeDao.updateSiteGrade(sitegrade);
 
+    }
+
+    @Override
+    public List<SiteGradeVo> possibleGrade(int memNo) {
+        return this.siteGradeDao.possibleGrade(memNo);
     }
 
 }

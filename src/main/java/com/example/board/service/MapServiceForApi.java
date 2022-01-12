@@ -17,19 +17,19 @@ import java.util.Map;
 @Transactional
 @Service("mapServiceForApi")
 public class MapServiceForApi {
-    private final String URI_MAPS = "http://localhost:15000/api/maps";
-    private final String URI_MAPS_MAPNO = "http://localhost:15000/api/maps/{map_no}";
-    private final String URI_MAP = "http://localhost:15000/api/map";
+    private final String URI_MAPS = "http://54.180.153.61:80/api/maps";
+    private final String URI_MAPS_MAPNO = "http://54.180.153.61:80/api/maps/{map_no}";
+    private final String URI_MAP = "http://54.180.153.61:80/api/map";
 
     private final RestTemplate restTemplate;
 
-    public MapServiceForApi(RestTemplate restTemplate){
+    public MapServiceForApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
     }
 
     // 숙소 생성
-    public String registerMap(MapVoForApi mapVoForApi) throws Exception{
+    public String registerMap(MapVoForApi mapVoForApi) throws Exception {
         URI uri = restTemplate.postForLocation(URI_MAP, mapVoForApi);
 
         return uri.toString();
@@ -44,7 +44,7 @@ public class MapServiceForApi {
         MapVoForApi mapVoForApi = new MapVoForApi();
 
         int statusCode = responseEntity.getStatusCodeValue();
-        if(statusCode == 200){
+        if (statusCode == 200) {
             mapVoForApi = responseEntity.getBody();
             System.out.println("주소 이름 : " + mapVoForApi.getAddress_name());
         }
@@ -63,7 +63,7 @@ public class MapServiceForApi {
 
     //숙소 업데이트
     public void modifyMap(MapVoForApi mapVoForApi) throws Exception {
-        restTemplate.put(URI_MAP,mapVoForApi, MapVoForApi.class);
+        restTemplate.put(URI_MAP, mapVoForApi, MapVoForApi.class);
     }
 
     // 숙소 삭제

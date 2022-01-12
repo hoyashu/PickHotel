@@ -22,8 +22,8 @@ public class PostDao {
     }
 
     // 전체 게시글 목록 조회
-    public List<PostVo> selectAllPosts(int boardNo) {
-        List<PostVo> lists = this.sqlSession.selectList("PostDao.selectAllPosts", boardNo);
+    public List<PostVo> selectPostByTag(String tag) {
+        List<PostVo> lists = this.sqlSession.selectList("PostDao.selectPostByTag", tag);
         return lists;
     }
 
@@ -37,7 +37,7 @@ public class PostDao {
 
     //총 게시글 수를 구한다.
     public int selectTotalPostCount(HashMap<String, String> map) {
-        int count = 0 ;
+        int count = 0;
         count = this.sqlSession.selectOne("PostDao.selectTotalPostCount", map);
         return count;
     }
@@ -56,8 +56,13 @@ public class PostDao {
         return this.sqlSession.selectList("PostDao.selectAllBoards");
     }
 
-    public BoardVo selectBoardForUseCheck(int boardNo){
+    public BoardVo selectBoardForUseCheck(int boardNo) {
         return this.sqlSession.selectOne("PostDao.selectBoardForUseCheck", boardNo);
+    }
+
+    // 게시글 존재 여부 조회
+    public Integer selectPostSearch(PostVo post) {
+        return this.sqlSession.selectOne("PostDao.selectPostSearch", post);
     }
 
     //게시글 번호에 해당하는 게시글 상세정보를 조회

@@ -8,6 +8,7 @@ import java.util.List;
 public interface SiteGradeService {
     List<SiteGradeVo> retriveSiteGrade();
 
-    void SiteGradeModify(List<SiteGradeVo> siteGrade);
+    void siteGradeModify(SiteGradeVo sitegrade);
 
+    List<SiteGradeVo> possibleGrade(int memNo);
 }

@@ -50,12 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<!-- 댓글 마지막 PK 조회-->
 	<select id="selectCommentMax" resultType="int">
-		SELECT MAX(co_no) FROM comment
+		SELECT IFNULL(MAX(co_no),0) FROM comment
 	</select>
 
 	<!-- 재댓글 마지막 PK 조회-->
 	<select id="selectCommentOrder" parameterType="int" resultType="int">
-		SELECT MAX(co_order) FROM comment where co_p_no = #{parents}
+		SELECT IFNULL(MAX(co_order),0) FROM comment where co_p_no = #{parents}
 	</select>
 
 	<!--댓글 추가-->

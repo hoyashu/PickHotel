@@ -6,14 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,13 +31,38 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//        /*강제 인터셉트 당했을 경우의 데이터 get*/
+//        RequestCache requestCache = new HttpSessionRequestCache();
+//        SavedRequest savedRequest = requestCache.getRequest(request, response);
+//
+//        /*로그인 버튼 눌러 접속했을 경우의 데이터 get*/
+//        String prevPage = (String) request.getSession().getAttribute("prevPage");
+//
+//        HttpSession session = request.getSession();
+//        if (session != null) {
+//            String redirectUrl = (String) session.getAttribute("url_prior_login");
+//            if (redirectUrl != null) {
+//                // we do not forget to clean this attribute from session
+//                session.removeAttribute("url_prior_login");
+//                // then we redirect
+//
+//                /*로그인 완료시 세션저장*/
+//                MemberVo member = resourceDao.getUserById(authentication.getName());
+//                session.setAttribute("member", member);
+//
+//                response.sendRedirect(redirectUrl);
+//            } else {
+//                response.sendRedirect(prevPage);
+//            }
+//        } else {
+//            response.sendRedirect(prevPage);
+//        }
 
         log.info("call failureHandler");
 
-        WebAuthenticationDetails web = (WebAuthenticationDetails) authentication.getDetails();
         MemberVo member = resourceDao.getUserById(authentication.getName());
         HttpSession session = request.getSession();
-        session.setAttribute("member",member);
+        session.setAttribute("member", member);
 
         response.sendRedirect("index");
     }
