@@ -92,7 +92,7 @@ public class BoardController {
     @ResponseBody
     @GetMapping("/board/{boardNo}/post/checkUse")
     public Map checkUse(@PathVariable("boardNo") int boardNo) {
-        BoardVo board = this.boardService.selectBoard(boardNo);
+        BoardVo board = this.boardService.retrieveBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
 
@@ -112,12 +112,22 @@ public class BoardController {
         model.addAttribute("posts", posts);
 
         //게시판 ID로 해당 게시판 정보를 가져온다
-        BoardVo board = boardService.selectBoard(boardNo);
+        BoardVo board = boardService.retrieveBoard(boardNo);
         model.addAttribute("board", board);
 
 
         return "page/post_list";
     }
+
+    // 유형별 게시판 조회
+    // retrieveBoardListByType
+    @ResponseBody
+    @GetMapping("/loadboardtype")
+    public List<BoardVo> boardListByType(@RequestParam("type") String type) {
+        List<BoardVo> boards = this.boardService.retrieveBoardListByType(type);
+        return boards;
+    }
+
 
     // 내가 작성한 게시글 목록
     @GetMapping("/member/room")
@@ -169,7 +179,7 @@ public class BoardController {
         }
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
-        BoardVo board = this.boardService.selectBoard(post.getBoardNo());
+        BoardVo board = this.boardService.retrieveBoard(post.getBoardNo());
         MapVoForApi mapVoForApi = new MapVoForApi();
 
         // tag값 배열로 셋팅
