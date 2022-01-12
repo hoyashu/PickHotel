@@ -153,7 +153,7 @@ public class FileController {
                 }
             }
         }
-        return "redirect:/post/" + postVo.getPostNo();
+        return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 
 //    private String convert(String oldStr) {

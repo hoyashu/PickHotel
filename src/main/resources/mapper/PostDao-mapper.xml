@@ -37,16 +37,16 @@
 		<result property="commont" javaType="int" column="po_comment" jdbcType="INTEGER" />
 		<result property="blind" javaType="int" column="po_isblind" jdbcType="INTEGER" />
 	</resultMap>
-	<select id="selectAllPosts" parameterType="int" resultMap="PostVoResultMap">
-		SELECT post_no, po_subject, po_mb_no, mb_nick,
-			   DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, po_comment, po_isblind
+	<select id="selectPostByTag" parameterType="string" resultMap="PostVoResultMap">
+		SELECT post_no, bo_no, po_subject, po_content, po_mb_no, mb_nick,
+			   DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, po_comment, po_tag
 		FROM post INNER JOIN member ON post.po_mb_no=member.mb_no
-		WHERE bo_no = #{boardNo}
+		WHERE concat(',',po_tag,',') like '%,'#{tag}',%' AND po_isblind = 0
 		ORDER BY writedate DESC
 	</select>
 
 	<select id="selectMyPosts" parameterType="int" resultMap="PostVoResultMap">
-		SELECT post_no, po_subject, po_mb_no, mb_nick,
+		SELECT post_no, bo_no, po_subject, po_mb_no, mb_nick,
 			   DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, po_comment, po_isblind
 		FROM post INNER JOIN member ON post.po_mb_no=member.mb_no
 		WHERE post.po_mb_no = #{MemNo}
@@ -118,7 +118,7 @@
 	<!--	board 관련-->
 
 	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
-		SELECT post_no, po_mb_no, po_subject,
+		SELECT post_no, bo_no, po_mb_no, po_subject,
 		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick
 		FROM post JOIN member ON post.po_mb_no = member.mb_no
 		WHERE bo_no = #{boardNo} and po_isblind = 0

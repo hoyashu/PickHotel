@@ -16,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,19 +142,26 @@ public class BoardController {
         return "page/member_post_list";
     }
 
+    // 게시글 태그로 전체 검색
+    @GetMapping("/postListByTagName")
+    public String retrievePostByTag(@RequestParam("encodedTagName") String encodedTagName, Model model) {
+
+        List<PostVo> posts = this.postService.retrievePostByTag(encodedTagName);
+        model.addAttribute("posts", posts);
+
+        return "page/post_list_bytag";
+    }
+
     // 게시글 상세보기
     @GetMapping("/board/{boardNo}/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo,@PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request, HttpServletResponse response) {
-
-
+    public String read(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request, HttpServletResponse response) {
         // ######### 게시글 상세정보 시작 ######### //
-
         PostVo post = null;
         PostVo test = new PostVo();
         test.setPostNo(postNo);
         test.setBoardNo(boardNo);
 
-        if(postService.retrievePostSearch(test) != null) {
+        if (postService.retrievePostSearch(test) != null) {
             post = this.postService.retrieveDetailBoard(postNo);
         }
         if (post == null) {
@@ -165,6 +171,13 @@ public class BoardController {
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         BoardVo board = this.boardService.selectBoard(post.getBoardNo());
         MapVoForApi mapVoForApi = new MapVoForApi();
+
+        // tag값 배열로 셋팅
+        String tag = post.getTag();
+        if (tag != null && tag != "") {
+            String[] tags = tag.split(",");
+            post.setTags(tags);
+        }
 
         try {
             mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
@@ -268,13 +281,13 @@ public class BoardController {
 
     // 게시글 수정폼
     @GetMapping("/board/{boardNo}/post/{postNo}/modify")
-    public String modifyFrom(@PathVariable("postNo") int postNo,@PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
+    public String modifyFrom(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
 
         PostVo test = new PostVo();
         test.setPostNo(postNo);
         test.setBoardNo(boardNo);
 
-        if(postService.retrievePostSearch(test) == null) {
+        if (postService.retrievePostSearch(test) == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
 
@@ -302,6 +315,14 @@ public class BoardController {
             ReviewVo review = this.reviewService.retrieveReview(postNo);
             List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
             MapVoForApi mapVoForApi = new MapVoForApi();
+
+            // tag값 배열로 셋팅
+            String tag = post.getTag();
+            if (tag != null && tag != "") {
+                String[] tags = tag.split(",");
+                post.setTags(tags);
+            }
+
             try {
                 model.addAttribute("mapNo", review.getRoomNo());
                 mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
@@ -314,11 +335,6 @@ public class BoardController {
                 model.addAttribute("mapVoForApi", mapVoForApi);
             }
 
-            //현존하지 않은 게시글인 경우
-            if (post == null) {
-                throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-            }
-
             if (attachVoList.size() == 0) {
                 attachVoList = null;
             }
@@ -328,48 +344,56 @@ public class BoardController {
             model.addAttribute("board", board);
             model.addAttribute("review", review);
             model.addAttribute("attachList", attachVoList);
-
             return "page/post_modify";
         }
 
     }
 
-    // 게시글 수정
-    @PostMapping("/post/update")
-    public String update(@Valid PostVo post, HttpServletRequest request) {
-        // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-
-        // 회원 id
-        int memNo = member.getMemNo();
-        int memberGrade = member.getGrade();
-
-        // 작성된 게시글 작성자 id
-        int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
-
-        // 작성자 본인이 아니고, 관리자도 아닌 경우
-        if (memNo != writerNo && memberGrade != 5) {
-            //권한 없음 페이지로 이동
-            return "redirect:/denine";
-
-        } else { // 작성자 본인인 경우
-            // 값 셋팅
-            PostVo postVo = new PostVo();
-            postVo.setPostNo(post.getPostNo());
-            postVo.setBoardNo(post.getBoardNo());
-            postVo.setSubject(post.getSubject());
-            postVo.setContent(post.getContent());
-            postVo.setTag(post.getTag());
-
-            // 수정 쿼리 실행
-            this.postService.modifyPost(postVo);
-
-            return "redirect:/post/" + post.getPostNo();
-        }
-
-    }
+//    // 게시글 수정
+//    @PostMapping("board/{boardNo}/post/update")
+//    public String update(@Valid PostVo post, @PathVariable("boardNo") int boardNo, HttpServletRequest request) {
+//
+//        PostVo test = new PostVo();
+//        test.setPostNo(post.getPostNo());
+//        test.setBoardNo(boardNo);
+//
+//        if (postService.retrievePostSearch(test) == null) {
+//            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+//        }
+//
+//        // 작성자 본인이거나 관리자 인지 권한 확인
+//        // 세션 준비
+//        HttpSession session = request.getSession();
+//        MemberVo member = (MemberVo) session.getAttribute("member");
+//
+//        // 회원 id
+//        int memNo = member.getMemNo();
+//        int memberGrade = member.getGrade();
+//
+//        // 작성된 게시글 작성자 id
+//        int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
+//
+//        // 작성자 본인이 아니고, 관리자도 아닌 경우
+//        if (memNo != writerNo && memberGrade != 5) {
+//            //권한 없음 페이지로 이동
+//            return "redirect:/denine";
+//
+//        } else { // 작성자 본인인 경우
+//            // 값 셋팅
+//            PostVo postVo = new PostVo();
+//            postVo.setPostNo(post.getPostNo());
+//            postVo.setBoardNo(post.getBoardNo());
+//            postVo.setSubject(post.getSubject());
+//            postVo.setContent(post.getContent());
+//            postVo.setTag(post.getTag());
+//
+//            // 수정 쿼리 실행
+//            this.postService.modifyPost(postVo);
+//
+//            return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
+//        }
+//
+//    }
 
     // 선택한 파일 삭제
     @ResponseBody
@@ -414,7 +438,7 @@ public class BoardController {
         test.setPostNo(postNo);
         test.setBoardNo(boardNo);
 
-        if(postService.retrievePostSearch(test) == null) {
+        if (postService.retrievePostSearch(test) == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
 
@@ -437,14 +461,11 @@ public class BoardController {
             return "redirect:/denine";
 
         } else { // 작성자 본인인 경우
-            // 해당 게시글의 board pk값 받아옴 (삭제 후 목록이로 이동하기 위함)
-            int boardNo = post.getBoardNo();
-
             // 삭제 쿼리 실행
             this.postService.removePost(postNo);
 
-                return "redirect:/board/" + boardNo;
-            }
+            return "redirect:/board/" + boardNo;
+        }
 
     }
 

@@ -32,13 +32,10 @@ public class PostService {
         return no;
     }
 
-    //게시글 전체 조회
+    //전체 게시글 태그 검색
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrieveAllPosts(int boardNo) {
-        List<PostVo> posts = this.postDao.selectAllPosts(boardNo);
-        if (posts.size() == 0) {
-            posts = null;
-        }
+    public List<PostVo> retrievePostByTag(String tag) {
+        List<PostVo> posts = this.postDao.selectPostByTag(tag);
         return posts;
     }
 
@@ -69,7 +66,8 @@ public class PostService {
         return posts;
     }
 
-    public List<PostVo> retrievePostList(PostVo params){
+    // 게시글 목록 조회
+    public List<PostVo> retrievePostList(PostVo params) {
         List<PostVo> postList = new ArrayList<PostVo>();
 
         int postCount = this.postDao.selectPostCount(params);
@@ -97,7 +95,7 @@ public class PostService {
 
     // 모든 게시판 조회 번호와 이름만
     public List<BoardVo> retrieveAllBoards() {
-       return this.postDao.selectAllBoards();
+        return this.postDao.selectAllBoards();
     }
 
     public BoardVo retrieveBoardForUseCheck(int boardNo) {
