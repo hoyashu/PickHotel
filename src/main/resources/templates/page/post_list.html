@@ -50,7 +50,7 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12">
                 <form id="postSearch" method="GET" onsubmit="return false;"
-                      th:action="@{/board/{boardNo}(boardNo=${boardNo})}">
+                      th:action="@{/boardList/{boardNo}(boardNo=${boardNo})}">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <select class="form-control select2bs4" id="searchType" name="searchType">
@@ -70,7 +70,7 @@
                             <i class="fa fa-search fa-sm"></i>
                         </button>
                         <a class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
-                           th:href="@{/board/{boardNo}(boardNo=${boardNo})}"
+                           th:href="@{/boardList/{boardNo}(boardNo=${boardNo})}"
                            th:if="${not #strings.isEmpty(params.searchKeyword)}">필터 해제</a>
                     </div>
                 </form>

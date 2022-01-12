@@ -1,10 +1,8 @@
 package com.example.member.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +11,17 @@ public class SecurityController {
 
     // 로그인 GET
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletRequest request) {
+
+        // 요청 시점의 사용자 URI 정보를 Session의 Attribute에 담아서 전달(잘 지워줘야 함)
+        // 로그인이 틀려서 다시 하면 요청 시점의 URI가 로그인 페이지가 되므로 조건문 설정
+        String uri = request.getHeader("Referer");
+        if (uri != null) {
+            if (!uri.contains("/login")) {
+                request.getSession().setAttribute("prevPage",
+                        request.getHeader("Referer"));
+            }
+        }
         return "page/member_login";
     }
 
