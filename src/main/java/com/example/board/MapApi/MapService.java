@@ -44,6 +44,8 @@ public class MapService {
 
         String url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + keyword + "&category_group_code=AD5";
 
+
+//        위보단 아래의 방식으로 만드는 것이 일반적 하지만 utf-8 처리가 안되어 한글을 인식하지 못함
 //        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
 //                .queryParam("query", keyword)
 //                .queryParam("category_group_code", "AD5")
