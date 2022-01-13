@@ -41,10 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-//    // Role Hierarchy
-//    @Autowired
-//    private RoleHierarchyService roleHierarchyService;
-
     @Autowired
     private AccountService accountService;
 

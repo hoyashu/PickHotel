@@ -41,6 +41,7 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("call successHandler");
 
+        // 로그인 방문수 카운트
         String id = authentication.getName();
 
         Cookie oldCookie = null;
@@ -54,12 +55,10 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
                 }
             }
         }
-
         if (oldCookie != null) {
             log.info("oldCookie:{}", oldCookie.getValue());
 
             if (!oldCookie.getValue().contains("[" + id + "]")) {
-
                 this.memberDao.UpdateVisitCount(id);
                 oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
                 oldCookie.setPath("/");
@@ -67,6 +66,7 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
                 response.addCookie(oldCookie);
             }
         } else {
+
             this.memberDao.UpdateVisitCount(id);
             Cookie newCookie = new Cookie("loginCount", "[" + id + "]");
             newCookie.setPath("/");
