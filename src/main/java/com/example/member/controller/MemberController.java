@@ -5,8 +5,7 @@ import com.example.member.model.*;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +50,7 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", member.getName());
         map.put("birth", member.getBirth());
+        System.out.println("ddrr" + member.getBirth());
         List<MemberVo> findIdResultList = memberService.retrieveMemberId(map);
 
         model.addAttribute("findIdResultList", findIdResultList);
@@ -214,27 +214,16 @@ public class MemberController {
 
     // 회원 정보 상세조회 + 수정 폼
     @GetMapping("/member")
-    public String memberDetail(HttpServletRequest req, Model model) {
-        HttpSession session = req.getSession();
+    public String memberDetail(@AuthenticationPrincipal UserAccount userAccount, Model model) {
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
-        // 로그인 상태인 경우
-        if (session != null && session.getAttribute("member") != null && !session.getAttribute("member").equals("")) {
+        // DB에서 회원정보 상세 가져오기
+        MemberVo memberDB = memberService.retrieveMember(memNo);
 
-            // 로그인 세션에 저장된 회원 정보 가져오기
-            int memNo = ((MemberVo) session.getAttribute("member")).getMemNo();
+        model.addAttribute("memberDetail", memberDB);
 
-            // DB에서 회원정보 상세 가져오기
-            MemberVo memberDetail = memberService.retrieveMember(memNo);
-
-            model.addAttribute("memberDetail", memberDetail);
-
-            return "page/member_modify";
-        } else { // 로그인 세션이 존재하지 않는 경우 (로그인 상태가 아닌 경우)
-
-            // 로그인 페이지로 이동
-            return "redirect:/member_loginform";
-
-        }
+        return "page/member_modify";
     }
 
     // 회원 정보 수정 작업

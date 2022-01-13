@@ -1,5 +1,6 @@
 <html layout:decorate="~{layout/user_layout}" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
 
 <div class="board-pageboard-page" id="postDetail" layout:fragment="content">
 
@@ -92,9 +93,12 @@
                     </div>
                 </div>
                 <div class="mb-3 panel-heading text-end">
-                    <a class="btn btn-secondary" onClick="editPost()">수정</a>
-                    <a class="btn btn-danger" onClick="removePost()">삭제</a>
-                    <a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>
+                    <a class="btn btn-secondary" onClick="editPost()" sec:authorize="isAuthenticated()"
+                       th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">수정</a>
+                    <a class="btn btn-danger"
+                       onClick="removePost()" sec:authorize="isAuthenticated()"
+                       th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">삭제</a>
+                    <!--<a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>-->
                     <a class="btn btn-secondary" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
                 </div>
 
@@ -147,13 +151,14 @@
                                 <div class="comment-menu">
                                     <i aria-hidden="true" class="fa fa-ellipsis-v comment-menu__btn"></i>
                                     <ul style="display:none">
-                                        <li th:if="${session.member != null && comment.memNo == session.member.memNo}">
+                                        <li sec:authorize="isAuthenticated()"
+                                            th:if="${#authentication.principal.member.memNo} == ${comment.memNo} OR ${#authentication.principal.member.grade} == '5'">
                                             <a
                                                     class="link-dark modifyFormBtn" href="#">수정</a></li>
-                                        <li th:if="${session.member != null && comment.memNo == session.member.memNo}">
-                                            <a
-                                                    class="link-dark removeBtn" href="#">삭제</a></li>
-                                        <li><a class="link-dark commentBlcokBtn" href="#">신고</a></li>
+                                        <li sec:authorize="isAuthenticated()"
+                                            th:if="${#authentication.principal.member.memNo} == ${comment.memNo} OR ${#authentication.principal.member.grade} == '5'">
+                                            <a class="link-dark removeBtn" href="#">삭제</a></li>
+                                        <!--<li><a class="link-dark commentBlcokBtn" href="#">신고</a></li>-->
                                     </ul>
                                 </div>
                                 <!-- 답글 -->
@@ -435,7 +440,7 @@
                             $(document).on("focus", "#addCmtContent", function (e) {
                                 const con = confirm(_confirmLoginTxt)
                                 if (con == true) {
-                                    location.href = _loginPage;
+                                    location.href = _loginPage + "?prevPage=" + encodeURIComponent(location.href);
                                 }
                                 $(this).blur();
                             });
@@ -686,7 +691,13 @@
                         $(document).on("click", '#addCmtBtn', function (e) {
                             e.preventDefault();
 
+                            // location.href = _loginPage + "?prevPage=" + encodeURIComponent(location.href);
+
                             const cmtContent = $('#addCmtContent').val().trim();
+                            if (cmtContent == "") {
+                                alert("댓글 내용을 작성해주세요");
+                                return false;
+                            }
                             //addComment(게시글번호, 댓글 내용, 계층, 상위댓글);
                             addComment(postNo, cmtContent, 0, 0);
                         });

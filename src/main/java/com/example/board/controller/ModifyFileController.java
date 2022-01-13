@@ -9,7 +9,9 @@ import com.example.board.service.MapServiceForApi;
 import com.example.board.service.PostService;
 import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
+import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Transactional
@@ -63,16 +64,9 @@ public class ModifyFileController {
                               @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
                               @RequestParam(value = "visitDate", required = false) String visitDate,
                               @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception {
-        // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-        System.out.println("아에이" + postNo);
-        System.out.println("아에이" + boardNo);
-        System.out.println(address_name);
-
-        // 회원 id
+                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson, @AuthenticationPrincipal UserAccount userAccount) throws Exception {
+        // 세션가져올 준비
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
 

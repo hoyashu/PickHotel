@@ -32,7 +32,7 @@ public class BoardVo extends CommonVo {
 
     private Integer useFile; // 파일 첨부 사용여부 (1 : on, 0: off)
 
-    private int useComment;  // 댓글 사용여부 (1 : on, 0: off)
+    private Integer useComment;  // 댓글 사용여부 (1 : on, 0: off)
     private String creatDatetime; // 게시판 생성 일시
     private int postCount; //게시판 내 게시글 개수
 

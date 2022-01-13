@@ -9,7 +9,9 @@ import com.example.board.service.MapServiceForApi;
 import com.example.board.service.PostService;
 import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
+import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,15 +63,17 @@ public class FileController {
                                 @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception {
+                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson, @AuthenticationPrincipal UserAccount userAccount) throws Exception {
         HttpSession session = request.getSession();
-        MemberVo memberVo = (MemberVo) session.getAttribute("member");
-        int writerNo = memberVo.getMemNo();
+
+        // 세션가져올 준비
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
         // 게시글
         String newContent = content;
         PostVo postVo = new PostVo();
-        postVo.setWriterNo(writerNo);
+        postVo.setWriterNo(memNo);
         postVo.setBoardNo(boardNo);
         postVo.setSubject(subject);
         postVo.setContent(newContent);
