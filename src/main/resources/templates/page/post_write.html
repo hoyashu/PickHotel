@@ -395,15 +395,6 @@
             var rateClean = document.getElementById("rateClean").value;
             var rateComu = document.getElementById("rateComu").value;
             var rateChip = document.getElementById("rateChip").value;
-            if(rateLoc == undefined){
-                console.log("undefined")
-            } else if(rateLoc == null){
-                console.log("널이야~")
-            } else if(rateLoc == ""){
-                console.log("비었어~")
-            } else {
-                console.log("진짜몰라")
-            }
             var content = CKEDITOR.instances['content'].getData();
             $.ajax({
                 url    : '/board/' + bordNoSelect + '/post/checkUse',
@@ -413,6 +404,11 @@
                     if (result.board.type == "review") {
                         if (!place_name.replace(/^\s+|\s+$/g, '')) {
                             alert('장소를 입력해주세요!');
+                            return false;
+                        }
+
+                        if (rateLoc == "" || rateClean == "" || rateComu == "" || rateChip == ""){
+                            alert("평가하지 않은 항목이 있습니다.");
                             return false;
                         }
 
@@ -426,12 +422,6 @@
                         alert("내용을 입력해주세요");
                         return false;
                     }
-
-                    if (rateLoc == "" || rateClean == "" || rateComu == "" || rateChip == ""){
-                        alert("평가하지 않은 항목이 있습니다.");
-                        return false;
-                    }
-
 
                     let tags = [];
                     $(".textarea_tag .tag").each(function () {
