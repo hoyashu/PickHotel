@@ -1,21 +1,21 @@
 package com.example.security;
 
-import com.example.member.model.MemberVo;
+
+import com.example.member.persistent.MemberDao;
 import com.example.member.persistent.RoleResourceDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 @Slf4j
@@ -24,6 +24,9 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     RoleResourceDao resourceDao;
+
+    @Autowired
+    MemberDao memberDao;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
@@ -34,6 +37,29 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
     //소진 - 로그인후 페이지 처리 - https://codevang.tistory.com/269
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+
+        log.info("call successHandler");
+
+        String id = authentication.getName();
+
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+
+        //request에서 넘어온 쿠키가 있는 경우
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("loginCount")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+
+        if (oldCookie != null) {
+            log.info("oldCookie:{}", oldCookie.getValue());
+
+            if (!oldCookie.getValue().contains("[" + id + "]")) {
+
         // 디폴트 URI
         String uri = "/";
 
@@ -57,11 +83,20 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
             uri = prevPage;
         }
 
-        log.info("call failureHandler");
+                this.memberDao.UpdateVisitCount(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(oldCookie);
+            }
+        } else {
 
-        MemberVo member = resourceDao.getUserById(authentication.getName());
-        HttpSession session = request.getSession();
-        session.setAttribute("member", member);
+            this.memberDao.UpdateVisitCount(id);
+            Cookie newCookie = new Cookie("loginCount", "[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(newCookie);
+        }
 
         // 세 가지 케이스에 따른 URI 주소로 리다이렉트
         response.sendRedirect(uri);
