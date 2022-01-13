@@ -36,8 +36,11 @@ public class AlarmHandler extends TextWebSocketHandler {
         //list.add(session);
 
         Integer memNo = getMemberId(session);
+        System.out.println("응ㅁ..." + memNo);
+
         if (memNo != null) {    // 로그인 값이 있는 경우만
             users.put(memNo, session);
+            System.out.println("총 몇명: " + users.toString());
             WebSocketSession targetSession = users.get(memNo);
         }
     }
@@ -64,6 +67,7 @@ public class AlarmHandler extends TextWebSocketHandler {
                 TextMessage tmpMsg = new TextMessage(msg);
                 targetSession.sendMessage(tmpMsg);
             }
+            System.out.println("메세지 보내: " + alarm.toString());
         }
     }
 
@@ -87,11 +91,6 @@ public class AlarmHandler extends TextWebSocketHandler {
     private int getMemberId(WebSocketSession session) {
         Map<String, Object> httpSession = session.getAttributes();
         MemberVo loginUser = (MemberVo) httpSession.get("member");
-        int loginUserNo = loginUser.getMemNo();
-        if (loginUser == null) {
-            throw new RuntimeException("회원만 실시간 알림을 사용할 수 있습니다.");
-        } else {
-            return loginUserNo;
-        }
+        return loginUser.getMemNo();
     }
 }

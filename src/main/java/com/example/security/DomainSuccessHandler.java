@@ -8,14 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 @Slf4j
@@ -34,7 +35,7 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
     }
 
-    //소진 - 로그인후 페이지 처리 - https://codevang.tistory.com/269
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -54,12 +55,26 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
 
-
         if (oldCookie != null) {
             log.info("oldCookie:{}", oldCookie.getValue());
 
             if (!oldCookie.getValue().contains("[" + id + "]")) {
 
+                this.memberDao.UpdateVisitCount(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(oldCookie);
+            }
+        } else {
+            this.memberDao.UpdateVisitCount(id);
+            Cookie newCookie = new Cookie("loginCount", "[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(newCookie);
+        }
+
+        //소진 - 로그인후 페이지 처리 - https://codevang.tistory.com/269
         // 디폴트 URI
         String uri = "/";
 
@@ -83,22 +98,8 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
             uri = prevPage;
         }
 
-                this.memberDao.UpdateVisitCount(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                response.addCookie(oldCookie);
-            }
-        } else {
-
-            this.memberDao.UpdateVisitCount(id);
-            Cookie newCookie = new Cookie("loginCount", "[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            response.addCookie(newCookie);
-        }
-
         // 세 가지 케이스에 따른 URI 주소로 리다이렉트
         response.sendRedirect(uri);
     }
+
 }

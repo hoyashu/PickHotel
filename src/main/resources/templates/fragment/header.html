@@ -1,8 +1,6 @@
-
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
 <header class="py-3 border-bottom">
-
     <div class="container">
         <div>
             <a class="logo" href="/">
@@ -91,8 +89,8 @@
                              width="32"><span class="user-name" sec:authentication="principal.member.nick"></span>
                     </a>
                     <ul class="dropdown-menu-1 text-small" id="dropdownUserMenuBox" style="display: none">
-                        <li><a class="dropdown-item" th:href="@{/intranet}"
-                               sec:authorize="hasRole('ROLE_ADMIN')">관리자 페이지</a></li>
+                        <li><a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')"
+                               th:href="@{/intranet}">관리자 페이지</a></li>
                         <!-- <li><a class="dropdown-item" th:href="@{/member/room?type=review}">나의 숙소 리뷰</a></li> -->
                         <li><a class="dropdown-item" th:href="@{/member/room?type=basic}">내가 쓴 게시글</a></li>
                         <li><a class="dropdown-item" th:href="@{/member/gradeup_list}">등업신청</a></li>
