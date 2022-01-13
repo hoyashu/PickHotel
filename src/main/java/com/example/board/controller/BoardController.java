@@ -222,15 +222,25 @@ public class BoardController {
             }
         }
 
+        //동일한 컴퓨터에서 다른 아이디로 로그인하여 view했을때 조회수 증가를 위한 코드추가
+        HttpSession session = request.getSession();
+        MemberVo member = (MemberVo) session.getAttribute("member");
+
+        int memNo = 0;
+        if (member != null) {
+            memNo = member.getMemNo();
+        }
+
         //게시글 조회 기록이 있는 경우 (oldCookie = 이전 게시글 조회 기록)
         if (oldCookie != null) {
             log.info("oldCookie:{}", oldCookie.getValue());
+
             //현재 조회하려는 게시글을 본 쿠키 기록이 없는 경우
-            if (!oldCookie.getValue().contains("[" + postNo + "]")) {
+            if (!oldCookie.getValue().contains("[" + memNo + "-" + postNo + "]")) {
                 //조회수를 올린다
                 postService.upHitcount(postNo);
                 // 현재 게시글을 조회했다고 쿠키에 추가한다.
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postNo + "]");
+                oldCookie.setValue(oldCookie.getValue() + "_[" + memNo + "-" + postNo + "]");
                 //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
                 oldCookie.setPath("/");
                 //하루에 한번만 조회수가 올라가게 한다.
@@ -241,7 +251,7 @@ public class BoardController {
             //조회수를 올린다.
             postService.upHitcount(postNo);
             //게시글 조회 기록 쿠키를 생성한다.
-            Cookie newCookie = new Cookie("postView", "[" + postNo + "]");
+            Cookie newCookie = new Cookie("postView", "[" + memNo + "-" + postNo + "]");
             //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
             newCookie.setPath("/");
             //하루에 한번만 조회수가 올라가게 한다.
