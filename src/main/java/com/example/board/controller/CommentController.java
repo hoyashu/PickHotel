@@ -63,6 +63,8 @@ public class CommentController {
         String alarmMsg = "";
         int alarmGetMemNo = 0;
 
+        PostVo post = this.postService.retrieveDetailBoard(comment.getPostNo());
+
         //댓글인 경우
         if (comment.getComClass() == 0) {
             //댓글 그룹내 0순위를 가진다. 프론트에서 0을 보내옴
@@ -71,7 +73,6 @@ public class CommentController {
             comment1.setParents(max + 1);
 
             //본인 글에 댓글 단 경우 알림을 발송하지 않는다.
-            PostVo post = this.postService.retrieveDetailBoard(comment.getPostNo());
             if (memNo != post.getWriterNo()) {
                 alarmSend = "true";
                 alarmType = "1";
@@ -110,7 +111,7 @@ public class CommentController {
 
         // 알림 설정
         if (alarmSend == "true") {
-            String alarmUrl = "/post/" + comment.getPostNo() + "#comment_" + comment1.getComNo();
+            String alarmUrl = "/board/" + post.getBoardNo() + "/post/" + comment.getPostNo() + "#comment_" + comment1.getComNo();
             alarm.setType(alarmType);
             alarm.setContent(alarmMsg);
             alarm.setUrl(alarmUrl);
@@ -126,7 +127,7 @@ public class CommentController {
     // 댓글 목록 ajax
     @ResponseBody
     @PostMapping("/comment/list")
-    public List<CommentVo> list(int postNo) {
+    public List<CommentVo> list(int postNo, @AuthenticationPrincipal UserAccount userAccount) {
         List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
         return comments;
     }

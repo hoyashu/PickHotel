@@ -3,20 +3,6 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
 
 <div class="board-pageboard-page" id="postDetail" layout:fragment="content">
-
-    <div th:if="${mapVoForApi != null}">
-        <div class="map_wrap">
-            <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
-            <div class="bg_white" id="menu_wrap">
-                <div class="option">
-                    <div></div>
-                </div>
-                <hr>
-                <ul id="placesList"></ul>
-                <div id="pagination"></div>
-            </div>
-        </div>
-    </div>
     <div class="col-lg-12">
         <div class="panel panel-default" th:object="${post}">
             <div class="p-sm-4 panel-heading">
@@ -33,6 +19,19 @@
                 </div>
             </div>
             <div class="panel-body post-content">
+                <div class="mb-3" th:if="${mapVoForApi != null}">
+                    <div class="map_wrap">
+                        <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
+                        <div class="bg_white" id="menu_wrap">
+                            <div class="option">
+                                <div></div>
+                            </div>
+                            <hr>
+                            <ul id="placesList"></ul>
+                            <div id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label class="visually-hidden" for="content">내용</label>
                     <div id="content" th:utext="*{content}"></div>
@@ -93,7 +92,7 @@
                     </div>
                 </div>
                 <div class="mb-3 panel-heading text-end">
-                    <a class="btn btn-secondary" onClick="editPost()" sec:authorize="isAuthenticated()"
+                    <a class="btn btn-warning" onClick="editPost()" sec:authorize="isAuthenticated()"
                        th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">수정</a>
                     <a class="btn btn-danger"
                        onClick="removePost()" sec:authorize="isAuthenticated()"
@@ -504,7 +503,7 @@
                                                 htmlStr += `<li><a href="#" class="link-dark modifyFormBtn">수정</a></li>`;
                                                 htmlStr += `<li><a href="#" class="link-dark removeBtn">삭제</a></li>`;
                                             }
-                                            htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
+                                            // htmlStr += `<li><a href="#" class="link-dark commentBlcokBtn">신고</a></li>`;
                                             htmlStr += `</ul>`;
                                             htmlStr += `</div>`;
                                             htmlStr += `<i class="fa fa-commenting" aria-hidden="true"></i><a href="#" class="btn link-dark dept2CommentOpenBtn">답글</a>`;
