@@ -2,9 +2,7 @@ package com.example.config;
 
 import com.example.member.service.AccountService;
 import com.example.member.service.RoleHierarchyService;
-import com.example.security.DomainFailureHandler;
-import com.example.security.DomainSuccessHandler;
-import com.example.security.UrlFilterInvocationSecurityMetadataSource;
+import com.example.security.*;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,7 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private DomainSuccessHandler domainSuccessHandler;
 
     @Autowired
-    private AccessDeniedHandler accessDeniedHandler;
+    private AccessDeniedHandlerImpl accessDeniedHandler;
+
+    @Autowired
+    private AuthenticationEntryPointImpl authenticationEntryPoint;
 
 
     @Bean("passwordEncoder")
@@ -79,10 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .formLogin()
                 .loginPage("/login")
