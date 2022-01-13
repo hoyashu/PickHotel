@@ -14,9 +14,18 @@ public class SiteGradeServiceImpl implements SiteGradeService {
     private SiteGradeDao siteGradeDao;
 
     @Override
-    public List<SiteGradeVo> retriveSiteGrade() {
-        return this.siteGradeDao.retriveSiteGrade();
+    public List<SiteGradeVo> retriveSiteGradeList() {
+        return this.siteGradeDao.selectSiteGradeList();
+    }
 
+    @Override
+    public List<SiteGradeVo> retriveSiteGradeToUser() {
+        return this.siteGradeDao.selectSiteGradeToUser();
+    }
+
+    @Override
+    public SiteGradeVo retriveSiteGrade(int grade) {
+        return this.siteGradeDao.selectSiteGrade(grade);
     }
 
     @Override

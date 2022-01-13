@@ -53,7 +53,7 @@ public class BoardController {
     // ########## 게시글 ########## //
     // 게시글 작성 폼
     @GetMapping("/board/{boardNo}/post/register")
-    public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request) {
+    public String writeForm(@PathVariable("boardNo") Integer boardNo, Model model, HttpServletRequest request) {
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         // 세션 준비
@@ -68,17 +68,13 @@ public class BoardController {
             defaultListNo = boardNo;
         }
 
-        List<String> boardNames = this.postService.retrieveBoardName();
-        HashMap<Integer, String> boardList = new HashMap<Integer, String>();
-        int i = 1;
-        for (String string : boardNames) {
-            boardList.put(i, string);
-            i++;
+        List<BoardVo> boards = this.postService.retrieveAllBoards();
+        Map<Integer, String> boardList = new HashMap<Integer, String>();
+
+        for (BoardVo board : boards) {
+            boardList.put(board.getBoardNo(), board.getTitle());
         }
 
-        List<RoomVo> roomList = this.roomService.retrieveRoomList();
-
-        model.addAttribute("roomList", roomList);
         // request 영역에 디폴트 게시판 정보를 저장한다.
         model.addAttribute("defaultListNo", defaultListNo);
         // request 영역에 게시판 리스트 정보를 저장한다.
@@ -92,7 +88,7 @@ public class BoardController {
     @ResponseBody
     @GetMapping("/board/{boardNo}/post/checkUse")
     public Map checkUse(@PathVariable("boardNo") int boardNo) {
-        BoardVo board = this.boardService.selectBoard(boardNo);
+        BoardVo board = this.boardService.retrieveBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
 
@@ -100,7 +96,7 @@ public class BoardController {
     }
 
     // 게시글 목록
-    @GetMapping("/board/{boardNo}")
+    @GetMapping("/boardList/{boardNo}")
     public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
                        @ModelAttribute("params") PostVo params) {
 
@@ -112,12 +108,22 @@ public class BoardController {
         model.addAttribute("posts", posts);
 
         //게시판 ID로 해당 게시판 정보를 가져온다
-        BoardVo board = boardService.selectBoard(boardNo);
+        BoardVo board = boardService.retrieveBoard(boardNo);
         model.addAttribute("board", board);
 
 
         return "page/post_list";
     }
+
+    // 유형별 게시판 조회
+    // retrieveBoardListByType
+    @ResponseBody
+    @GetMapping("/loadboardtype")
+    public List<BoardVo> boardListByType(@RequestParam("type") String type) {
+        List<BoardVo> boards = this.boardService.retrieveBoardListByType(type);
+        return boards;
+    }
+
 
     // 내가 작성한 게시글 목록
     @GetMapping("/member/room")
@@ -169,7 +175,7 @@ public class BoardController {
         }
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
-        BoardVo board = this.boardService.selectBoard(post.getBoardNo());
+        BoardVo board = this.boardService.retrieveBoard(post.getBoardNo());
         MapVoForApi mapVoForApi = new MapVoForApi();
 
         // tag값 배열로 셋팅
@@ -212,15 +218,25 @@ public class BoardController {
             }
         }
 
+        //동일한 컴퓨터에서 다른 아이디로 로그인하여 view했을때 조회수 증가를 위한 코드추가
+        HttpSession session = request.getSession();
+        MemberVo member = (MemberVo) session.getAttribute("member");
+
+        int memNo = 0;
+        if (member != null) {
+            memNo = member.getMemNo();
+        }
+
         //게시글 조회 기록이 있는 경우 (oldCookie = 이전 게시글 조회 기록)
         if (oldCookie != null) {
             log.info("oldCookie:{}", oldCookie.getValue());
+
             //현재 조회하려는 게시글을 본 쿠키 기록이 없는 경우
-            if (!oldCookie.getValue().contains("[" + postNo + "]")) {
+            if (!oldCookie.getValue().contains("[" + memNo + "-" + postNo + "]")) {
                 //조회수를 올린다
                 postService.upHitcount(postNo);
                 // 현재 게시글을 조회했다고 쿠키에 추가한다.
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postNo + "]");
+                oldCookie.setValue(oldCookie.getValue() + "_[" + memNo + "-" + postNo + "]");
                 //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
                 oldCookie.setPath("/");
                 //하루에 한번만 조회수가 올라가게 한다.
@@ -231,7 +247,7 @@ public class BoardController {
             //조회수를 올린다.
             postService.upHitcount(postNo);
             //게시글 조회 기록 쿠키를 생성한다.
-            Cookie newCookie = new Cookie("postView", "[" + postNo + "]");
+            Cookie newCookie = new Cookie("postView", "[" + memNo + "-" + postNo + "]");
             //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
             newCookie.setPath("/");
             //하루에 한번만 조회수가 올라가게 한다.
@@ -348,52 +364,6 @@ public class BoardController {
         }
 
     }
-
-//    // 게시글 수정
-//    @PostMapping("board/{boardNo}/post/update")
-//    public String update(@Valid PostVo post, @PathVariable("boardNo") int boardNo, HttpServletRequest request) {
-//
-//        PostVo test = new PostVo();
-//        test.setPostNo(post.getPostNo());
-//        test.setBoardNo(boardNo);
-//
-//        if (postService.retrievePostSearch(test) == null) {
-//            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-//        }
-//
-//        // 작성자 본인이거나 관리자 인지 권한 확인
-//        // 세션 준비
-//        HttpSession session = request.getSession();
-//        MemberVo member = (MemberVo) session.getAttribute("member");
-//
-//        // 회원 id
-//        int memNo = member.getMemNo();
-//        int memberGrade = member.getGrade();
-//
-//        // 작성된 게시글 작성자 id
-//        int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
-//
-//        // 작성자 본인이 아니고, 관리자도 아닌 경우
-//        if (memNo != writerNo && memberGrade != 5) {
-//            //권한 없음 페이지로 이동
-//            return "redirect:/denine";
-//
-//        } else { // 작성자 본인인 경우
-//            // 값 셋팅
-//            PostVo postVo = new PostVo();
-//            postVo.setPostNo(post.getPostNo());
-//            postVo.setBoardNo(post.getBoardNo());
-//            postVo.setSubject(post.getSubject());
-//            postVo.setContent(post.getContent());
-//            postVo.setTag(post.getTag());
-//
-//            // 수정 쿼리 실행
-//            this.postService.modifyPost(postVo);
-//
-//            return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
-//        }
-//
-//    }
 
     // 선택한 파일 삭제
     @ResponseBody

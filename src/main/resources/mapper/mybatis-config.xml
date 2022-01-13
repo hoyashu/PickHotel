@@ -31,6 +31,7 @@
 
 		<!-- 게시판 -->
 		<typeAlias type="com.example.board.model.BoardVo" alias="BoardVo" />
+		<typeAlias type="com.example.board.model.BoardGroupVo" alias="BoardGroupVo" />
 
 		<!-- 게시글 -->
 		<typeAlias type="com.example.board.model.AttachVo" alias="AttachVo" />
