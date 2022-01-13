@@ -1,5 +1,5 @@
 //알림 웹소켓 서버를 연결한다.
-const websocket = new WebSocket(`ws://${window.location.host}/ws/alarm`);
+const websocket = new WebSocket(`ws://${window.location.host}/member/ws/alarm`);
 
 $(document).ready(function () {
     websocket.onmessage = onMessage;
