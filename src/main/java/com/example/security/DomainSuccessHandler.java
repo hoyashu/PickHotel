@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 
 import javax.servlet.FilterChain;
@@ -40,26 +43,6 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("call successHandler");
 
-        String id = authentication.getName();
-
-        Cookie oldCookie = null;
-        Cookie[] cookies = request.getCookies();
-
-        //request에서 넘어온 쿠키가 있는 경우
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("loginCount")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-
-        if (oldCookie != null) {
-            log.info("oldCookie:{}", oldCookie.getValue());
-
-            if (!oldCookie.getValue().contains("[" + id + "]")) {
-
         // 디폴트 URI
         String uri = "/";
 
@@ -83,6 +66,27 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
             uri = prevPage;
         }
 
+
+
+
+        // 로그인 방문수 카운트
+        String id = authentication.getName();
+
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+
+        //request에서 넘어온 쿠키가 있는 경우
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("loginCount")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+        if (oldCookie != null) {
+            log.info("oldCookie:{}", oldCookie.getValue());
+
+            if (!oldCookie.getValue().contains("[" + id + "]")) {
                 this.memberDao.UpdateVisitCount(id);
                 oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
                 oldCookie.setPath("/");
