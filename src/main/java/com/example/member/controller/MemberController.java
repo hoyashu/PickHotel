@@ -146,6 +146,7 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("sendmail", count);
         System.out.println("random :::::" + random);
+
         HttpSession session = req.getSession();
         session.setAttribute("random", random);
         return map;
@@ -204,12 +205,14 @@ public class MemberController {
 
     // 회원 탈퇴(사용자)
     @GetMapping("/member/withdarw")
-    public String memberWithdarw(HttpServletRequest req) {
-        HttpSession session = req.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-        memberService.reviseMemberState(member.getMemNo(), "2");
-        session.invalidate();
-        return "redirect:/";
+    public String memberWithdarw() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAccount user = (UserAccount) authentication.getPrincipal();
+
+        memberService.reviseMemberState(user.getMember().getMemNo(), "2");
+
+        return "redirect:/logout";
     }
 
     // 회원 정보 상세조회 + 수정 폼
