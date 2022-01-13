@@ -300,7 +300,7 @@ public class BoardController {
 
     // 게시글 수정폼
     @GetMapping("/board/{boardNo}/post/{postNo}/modify")
-    public String modifyFrom(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
+    public String modifyForm(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
 
         PostVo test = new PostVo();
         test.setPostNo(postNo);
