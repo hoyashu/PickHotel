@@ -67,6 +67,7 @@ public class BoardController {
         } else {
             defaultListNo = boardNo;
         }
+        BoardVo boardForCheck = this.postService.retrieveBoardForUseCheck(boardNo);
 
         List<BoardVo> boards = this.postService.retrieveAllBoards();
         Map<Integer, String> boardList = new HashMap<Integer, String>();
@@ -79,6 +80,8 @@ public class BoardController {
         model.addAttribute("defaultListNo", defaultListNo);
         // request 영역에 게시판 리스트 정보를 저장한다.
         model.addAttribute("boardList", boardList);
+        // 게시판 타입을 저장한다.
+        model.addAttribute("boardType", boardForCheck.getType());
 
         return "page/post_write";
 
