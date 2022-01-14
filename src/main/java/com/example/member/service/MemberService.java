@@ -6,6 +6,8 @@ import com.example.member.model.MemberVo;
 import com.example.member.persistent.MemberDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -96,4 +98,11 @@ public class MemberService {
     public int retrieveMemberTotalCount(MemberVo params) {
         return this.memberDao.selectMemberTotalCount(params);
     }
+
+    //회원등급에 회원 존재여부 확인
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
+    public int checkMemberGrade(int memGrade) {
+        return this.memberDao.checkMemberGrade(memGrade);
+    }
+
 }
