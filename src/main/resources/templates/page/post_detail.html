@@ -447,6 +447,17 @@
                             $("#addCmtContent").attr("placeholder", "댓글을 입력해 주세요");
                         }
 
+                        //댓글 보이게 안보이게
+
+                        /*<![CDATA[*/
+                        var useComment = "[[${useComment}]]";
+                        /*]]>*/
+
+                        if(useComment == 0){
+                            document.getElementById("addComment").style.display = "none";
+                        }else{
+                            document.getElementById("addComment").style.display = "";
+                        }
 
                         //*****댓글 목록 조회AJAX 시작*******//
                         function init(postNo) {
