@@ -430,7 +430,7 @@ public class BoardController {
             // 삭제 쿼리 실행
             this.postService.removePost(postNo, boardNo);
 
-            return "redirect:/board/" + boardNo;
+            return "redirect:/boardList/" + boardNo;
         }
     }
 
