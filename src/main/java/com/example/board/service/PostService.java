@@ -3,6 +3,7 @@ package com.example.board.service;
 import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
+import com.example.board.persistent.BoardDao;
 import com.example.board.persistent.PostDao;
 import com.example.board.persistent.ReviewDao;
 import com.example.common.paging.PaginationInfo;
@@ -25,6 +26,9 @@ public class PostService {
 
     @Autowired
     private AttachDao attachDao;
+
+    @Autowired
+    private BoardDao boardDao;
 
     // 게시글 정보를 등록하다.
     public int registerPost(PostVo post) {
@@ -112,10 +116,11 @@ public class PostService {
         attachDao.deletePostAttach(attachNo);
     }
 
-    public void removePost(int postNo) {
+    public void removePost(int postNo, int boardNo) {
         attachDao.deleteAttachbyPost(postNo);
         reviewDao.deleteReview(postNo);
         postDao.deletePost(postNo);
+        this.boardDao.updateBoardPost(boardNo, -1);
     }
 }
 

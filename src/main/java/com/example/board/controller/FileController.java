@@ -4,10 +4,7 @@ import com.example.board.model.BoardVo;
 import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
-import com.example.board.service.FileUploadService;
-import com.example.board.service.MapServiceForApi;
-import com.example.board.service.PostService;
-import com.example.board.service.ReviewService;
+import com.example.board.service.*;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,9 @@ public class FileController {
 
     @Autowired
     private MapServiceForApi mapServiceForApi;
+
+    @Autowired
+    private BoardService boardService;
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -157,6 +157,7 @@ public class FileController {
                 }
             }
         }
+        this.boardService.reviseBoardPost(boardNo, 1);
         return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 

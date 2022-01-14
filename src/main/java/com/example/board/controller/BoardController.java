@@ -41,9 +41,6 @@ public class BoardController {
     private AttachService attachService;
 
     @Autowired
-    private RoomService roomService;
-
-    @Autowired
     private ReviewService reviewService;
 
     @Autowired
@@ -431,9 +428,9 @@ public class BoardController {
 
         } else { // 작성자 본인인 경우
             // 삭제 쿼리 실행
-            this.postService.removePost(postNo);
+            this.postService.removePost(postNo, boardNo);
 
-            return "redirect:/board/" + boardNo;
+            return "redirect:/boardList/" + boardNo;
         }
     }
 
