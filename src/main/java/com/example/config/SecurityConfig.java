@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //중요
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(accountService)
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -113,13 +113,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .permitAll()
-                .and()
-                .rememberMe()
-                .key("autoLogin")
-                .rememberMeParameter("remember-me")
-                .tokenValiditySeconds(86400 * 30)
-                .authenticationSuccessHandler(domainSuccessHandler)
-                .userDetailsService(userDetailsService)
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)

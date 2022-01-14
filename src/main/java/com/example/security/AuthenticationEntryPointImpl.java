@@ -22,22 +22,22 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        boolean isRemberMe = false;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("remember-me")) {
-                    isRemberMe = true;
-                    break;
-                }
-            }
-        }
-        if (isRemberMe) {
-            response.sendRedirect("/denine");
-        } else {
-            log.error("AuthenticationException : ", authException);
-            response.sendRedirect("/login");
-        }
-
+//        boolean isRemberMe = false;
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("remember-me")) {
+//                    isRemberMe = true;
+//                    break;
+//                }
+//            }
+//        }
+//        if (isRemberMe) {
+//            response.sendRedirect("/denine");
+//        } else {
+//            log.error("AuthenticationException : ", authException);
+//            response.sendRedirect("/login");
+//        }
+        response.sendRedirect("/login");
     }
 }
