@@ -113,6 +113,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .permitAll()
+//                .and()
+//                .rememberMe()
+//                .key("autoLogin")
+//                .rememberMeParameter("remember-me")
+//                .tokenValiditySeconds(86400 * 30)
+//                .authenticationSuccessHandler(domainSuccessHandler)
+//                .userDetailsService(accountService)
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
@@ -163,7 +170,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
-
+    
+    
+    // remember-me 중복 로그인 에러
 //    @Bean
 //    public RememberMeAuthenticationFilter authCastion(){
 //        RememberMeAuthenticationFilter authCastion = new
