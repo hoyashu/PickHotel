@@ -4,13 +4,11 @@ import com.example.board.model.BoardVo;
 import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
-import com.example.board.service.FileUploadService;
-import com.example.board.service.MapServiceForApi;
-import com.example.board.service.PostService;
-import com.example.board.service.ReviewService;
+import com.example.board.service.*;
 import com.example.member.model.MemberVo;
-import org.codehaus.groovy.transform.SourceURIASTTransformation;
+import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +35,9 @@ public class FileController {
     @Autowired
     private MapServiceForApi mapServiceForApi;
 
+    @Autowired
+    private BoardService boardService;
+
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
@@ -56,27 +57,23 @@ public class FileController {
                                 @RequestParam(value = "road_address_name", required = false, defaultValue = "noValue") String road_address_name,
                                 @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
                                 @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
-                                @RequestParam(value = "rateLoc", required = false) int rateLoc,
-                                @RequestParam(value = "rateClean", required = false) int rateClean,
-                                @RequestParam(value = "rateComu", required = false) int rateComu,
-                                @RequestParam(value = "rateChip", required = false) int rateChip,
+                                @RequestParam(value = "rateLoc", required = false, defaultValue = "0") int rateLoc,
+                                @RequestParam(value = "rateClean", required = false, defaultValue = "0") int rateClean,
+                                @RequestParam(value = "rateComu", required = false, defaultValue = "0") int rateComu,
+                                @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
                                 @RequestParam(value = "visitDate", required = false) String visitDate,
                                 @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
-        int writerNo = 1;
+                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson, @AuthenticationPrincipal UserAccount userAccount) throws Exception {
         HttpSession session = request.getSession();
-        try {
-            MemberVo memberVo = (MemberVo) session.getAttribute("member");
-            writerNo = memberVo.getMemNo();
-        } catch (Exception e) {
 
-        }
-
+        // 세션가져올 준비
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
         // 게시글
-        String newContent = convert(content);
+        String newContent = content;
         PostVo postVo = new PostVo();
-        postVo.setWriterNo(writerNo);
+        postVo.setWriterNo(memNo);
         postVo.setBoardNo(boardNo);
         postVo.setSubject(subject);
         postVo.setContent(newContent);
@@ -85,16 +82,14 @@ public class FileController {
         int postNo = postService.registerPost(postVo);
         session.setAttribute("boardNo", boardNo);
 
-
-
         BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
-        if(boardForUseCheck.getType().equals("basic")){
+        if (boardForUseCheck.getType().equals("basic")) {
 
         } else {
             // 숙소 정보, 리뷰 정보
             if (address_name.trim().equals("")) {
 
-            } else{
+            } else {
                 MapVoForApi mapVoForApi = new MapVoForApi();
                 mapVoForApi.setAddress_name(address_name);
                 mapVoForApi.setCategory_group_code(category_group_code);
@@ -110,12 +105,12 @@ public class FileController {
                 mapVoForApi.setY(y);
 
                 String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
-                String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/")+1);
+                String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/") + 1);
                 int mapNo = Integer.parseInt(strMapNo);
 
                 ReviewVo review = new ReviewVo();
 
-                if(visitDate.trim().equals("")){
+                if (visitDate.trim().equals("")) {
                     visitDate = null;
                 }
 
@@ -133,11 +128,9 @@ public class FileController {
         }
 
 
-        if(boardForUseCheck.getUsePhoto() == 1){
+        if (boardForUseCheck.getUsePhoto() == 1) {
             // 이미지
             if (images != null) {
-                System.out.println("images");
-
                 for (MultipartFile file : images) {
                     String fileName = null;
                     if (!file.getOriginalFilename().isEmpty()) {
@@ -145,17 +138,14 @@ public class FileController {
                     } else {
                         fileName = "default.jpg";
                     }
-
                 }
             }
         }
 
 
-        if(boardForUseCheck.getUseVideo() == 1){
+        if (boardForUseCheck.getUseVideo() == 1) {
             // 동영상
             if (videos != null) {
-                System.out.println("videos");
-
                 for (MultipartFile file : videos) {
                     String fileName = null;
                     if (!file.getOriginalFilename().isEmpty()) {
@@ -167,16 +157,17 @@ public class FileController {
                 }
             }
         }
-        return "redirect:/post/" + postVo.getPostNo();
+        this.boardService.reviseBoardPost(boardNo, 1);
+        return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 
-    private String convert(String oldStr) {
-        String newStr = oldStr.replace("'", "''");
-        newStr = newStr.replace("<", "&lt;");
-        newStr = newStr.replace(">", "&gt;");
-        newStr = newStr.replace("\n", "<br />");
-        return newStr;
-    }
+//    private String convert(String oldStr) {
+//        String newStr = oldStr.replace("'", "''");
+//        newStr = newStr.replace("<", "&lt;");
+//        newStr = newStr.replace(">", "&gt;");
+//        newStr = newStr.replace("\n", "<br />");
+//        return newStr;
+//    }
 }
 
 

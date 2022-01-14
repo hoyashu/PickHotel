@@ -9,7 +9,9 @@ import com.example.board.service.MapServiceForApi;
 import com.example.board.service.PostService;
 import com.example.board.service.ReviewService;
 import com.example.member.model.MemberVo;
+import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Transactional
@@ -57,115 +58,108 @@ public class ModifyFileController {
                               @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
                               @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
                               @RequestParam(value = "map_no", required = false, defaultValue = "0") Integer map_no,
-                              @RequestParam(value = "rateLoc", required = false) Integer rateLoc,
-                              @RequestParam(value = "rateClean", required = false) Integer rateClean,
-                              @RequestParam(value = "rateComu", required = false) Integer rateComu,
-                              @RequestParam(value = "rateChip", required = false) Integer rateChip,
+                              @RequestParam(value = "rateLoc", required = false, defaultValue = "0") int rateLoc,
+                              @RequestParam(value = "rateClean", required = false, defaultValue = "0") int rateClean,
+                              @RequestParam(value = "rateComu", required = false, defaultValue = "0") int rateComu,
+                              @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
                               @RequestParam(value = "visitDate", required = false) String visitDate,
                               @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson) throws Exception{
-        int writerNo = 1;
-        HttpSession session = request.getSession();
-        try {
-            MemberVo memberVo = (MemberVo) session.getAttribute("member");
-            writerNo = memberVo.getMemNo();
-        } catch (Exception e) {
+                              @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson, @AuthenticationPrincipal UserAccount userAccount) throws Exception {
+        // 세션가져올 준비
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
 
-        }
+        // 작성된 게시글 작성자 id
+        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
 
-        // 게시글
-        String newContent = convert(content);
-        PostVo postVo = new PostVo();
-        postVo.setPostNo(postNo);
-        postVo.setSubject(subject);
-        postVo.setContent(newContent);
-        postVo.setTag(tag);
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
+            //권한 없음 페이지로 이동
+            return "redirect:/denine";
 
-        this.postService.modifyPost(postVo);
-        System.out.println("숙소 정보 : " + address_name);
+        } else { // 작성자 본인인 경우
+            // 게시글
+            String newContent = content;
+            PostVo postVo = new PostVo();
+            postVo.setPostNo(postNo);
+            postVo.setSubject(subject);
+            postVo.setContent(newContent);
+            postVo.setTag(tag);
+            this.postService.modifyPost(postVo);
 
-        // 숙소 정보, 리뷰 정보
-        BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
-        if(boardForUseCheck.getType().equals("basic")){
+            // 숙소 정보, 리뷰 정보
+            BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
+            if (boardForUseCheck.getType().equals("basic")) {
 
-        } else {
-            if (address_name.trim().equals("") || map_no == 0) {
+            } else {
+                if (address_name.trim().equals("") || map_no == 0) {
 
-            } else{
-                MapVoForApi mapVoForApi = new MapVoForApi();
-                mapVoForApi.setAddress_name(address_name);
-                mapVoForApi.setCategory_group_code(category_group_code);
-                mapVoForApi.setCategory_group_name(category_group_name);
-                mapVoForApi.setCategory_name(category_name);
-                mapVoForApi.setDistance(distance);
-                mapVoForApi.setId(id);
-                mapVoForApi.setPhone(phone);
-                mapVoForApi.setPlace_name(place_name);
-                mapVoForApi.setPlace_url(place_url);
-                mapVoForApi.setRoad_address_name(road_address_name);
-                mapVoForApi.setX(x);
-                mapVoForApi.setY(y);
-                mapVoForApi.setMap_no(map_no);
-
-                this.mapServiceForApi.modifyMap(mapVoForApi);
-
-                ReviewVo review = new ReviewVo();
-
-                if(visitDate.trim().equals("")){
-                    visitDate = null;
-                }
-
-                review.setPostNo(postNo);
-                review.setRateLoc(rateLoc);
-                review.setRateClean(rateClean);
-                review.setRateComu(rateComu);
-                review.setRateChip(rateChip);
-                review.setVisitDate(visitDate);
-                review.setRecommendPlace(recommendPlace);
-                review.setNotRecommendPerson(notRecommendPerson);
-                this.reviewService.modifyReview(review);
-            }
-        }
-
-
-
-
-        // 파일
-        if (images != null) {
-            System.out.println("images");
-
-            for (MultipartFile file : images) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 1);
                 } else {
-                    fileName = "default.jpg";
+                    MapVoForApi mapVoForApi = new MapVoForApi();
+                    mapVoForApi.setAddress_name(address_name);
+                    mapVoForApi.setCategory_group_code(category_group_code);
+                    mapVoForApi.setCategory_group_name(category_group_name);
+                    mapVoForApi.setCategory_name(category_name);
+                    mapVoForApi.setDistance(distance);
+                    mapVoForApi.setId(id);
+                    mapVoForApi.setPhone(phone);
+                    mapVoForApi.setPlace_name(place_name);
+                    mapVoForApi.setPlace_url(place_url);
+                    mapVoForApi.setRoad_address_name(road_address_name);
+                    mapVoForApi.setX(x);
+                    mapVoForApi.setY(y);
+                    mapVoForApi.setMap_no(map_no);
+
+                    this.mapServiceForApi.modifyMap(mapVoForApi);
+
+                    ReviewVo review = new ReviewVo();
+
+                    if (visitDate.trim().equals("")) {
+                        visitDate = null;
+                    }
+
+                    review.setPostNo(postNo);
+                    review.setRateLoc(rateLoc);
+                    review.setRateClean(rateClean);
+                    review.setRateComu(rateComu);
+                    review.setRateChip(rateChip);
+                    review.setVisitDate(visitDate);
+                    review.setRecommendPlace(recommendPlace);
+                    review.setNotRecommendPerson(notRecommendPerson);
+                    this.reviewService.modifyReview(review);
                 }
-
             }
-        }
-        if (videos != null) {
-            System.out.println("videos");
-
-            for (MultipartFile file : videos) {
-                String fileName = null;
-                if (!file.getOriginalFilename().isEmpty()) {
-                    fileName = fileUploadService.restore(file, postNo, 2);
-                } else {
-                    fileName = "default.mp4";
+            // 파일
+            if (images != null) {
+                for (MultipartFile file : images) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 1);
+                    } else {
+                        fileName = "default.jpg";
+                    }
                 }
-
             }
+            if (videos != null) {
+                for (MultipartFile file : videos) {
+                    String fileName = null;
+                    if (!file.getOriginalFilename().isEmpty()) {
+                        fileName = fileUploadService.restore(file, postNo, 2);
+                    } else {
+                        fileName = "default.mp4";
+                    }
+                }
+            }
+            return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
         }
-
-        return "redirect:/post/" + postVo.getPostNo();
     }
 
-    private String convert(String oldStr) {
-        String newStr = oldStr.replace("'", "''");
-        newStr = newStr.replace("<", "&lt;");
-        newStr = newStr.replace(">", "&gt;");
-        newStr = newStr.replace("\n", "<br />");
-        return newStr;
-    }
+//    private String convert(String oldStr) {
+//        String newStr = oldStr.replace("'", "''");
+//        newStr = newStr.replace("<", "&lt;");
+//        newStr = newStr.replace(">", "&gt;");
+//        newStr = newStr.replace("\n", "<br />");
+//        return newStr;
+//    }
 }

@@ -1,5 +1,5 @@
 //알림 웹소켓 서버를 연결한다.
-const websocket = new WebSocket(`ws://${window.location.host}/ws/alarm`);
+const websocket = new WebSocket(`ws://${window.location.host}/member/ws/alarm`);
 
 $(document).ready(function () {
     websocket.onmessage = onMessage;
@@ -232,15 +232,11 @@ function delectAllAlarm() {
 $(document).ready(function () {
     //******토글 시작*******//
     $(document).on("click", function (e) {
-        // 게시판 메뉴
-        blurClickHide(e, "#menu-box .dropdown", "#dropdownBoardBox");
         //알림 목록
         let target = blurClickHide(e, ".alarm-area", "#alarm-box");
         if (target == "#alarm-box") {
             setAlarmCount();
         }
-        //사용자 메뉴
-        blurClickHide(e, ".private-box", "#dropdownUserMenuBox");
     });
     //알림 목록 토글
     $(document).on("click", '#dropdownAlarmList', function (e) {

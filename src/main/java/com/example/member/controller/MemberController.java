@@ -3,7 +3,11 @@ package com.example.member.controller;
 import com.example.member.CustomMailSender;
 import com.example.member.model.*;
 import com.example.member.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 public class MemberController {
 
@@ -29,11 +34,10 @@ public class MemberController {
     public CustomMailSender customMailSender;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public MemberService memberService;
 
     @Autowired
-    MemberService memberService;
-
+    private PasswordEncoder passwordEncoder;
 
     // 아이디 찾기 폼
     @GetMapping("/findIdForm")
@@ -48,6 +52,7 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", member.getName());
         map.put("birth", member.getBirth());
+        System.out.println("ddrr" + member.getBirth());
         List<MemberVo> findIdResultList = memberService.retrieveMemberId(map);
 
         model.addAttribute("findIdResultList", findIdResultList);
@@ -143,6 +148,7 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("sendmail", count);
         System.out.println("random :::::" + random);
+
         HttpSession session = req.getSession();
         session.setAttribute("random", random);
         return map;
@@ -201,37 +207,28 @@ public class MemberController {
 
     // 회원 탈퇴(사용자)
     @GetMapping("/member/withdarw")
-    public String memberWithdarw(HttpServletRequest req) {
-        HttpSession session = req.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-        memberService.reviseMemberState(member.getMemNo(), "2");
-        session.invalidate();
-        return "redirect:/";
+    public String memberWithdarw() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAccount user = (UserAccount) authentication.getPrincipal();
+
+        memberService.reviseMemberState(user.getMember().getMemNo(), "2");
+
+        return "redirect:/logout";
     }
 
     // 회원 정보 상세조회 + 수정 폼
     @GetMapping("/member")
-    public String memberDetail(HttpServletRequest req, Model model) {
-        HttpSession session = req.getSession();
+    public String memberDetail(@AuthenticationPrincipal UserAccount userAccount, Model model) {
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
-        // 로그인 상태인 경우
-        if (session != null && session.getAttribute("member") != null && !session.getAttribute("member").equals("")) {
+        // DB에서 회원정보 상세 가져오기
+        MemberVo memberDB = memberService.retrieveMember(memNo);
 
-            // 로그인 세션에 저장된 회원 정보 가져오기
-            int memNo = ((MemberVo) session.getAttribute("member")).getMemNo();
+        model.addAttribute("memberDetail", memberDB);
 
-            // DB에서 회원정보 상세 가져오기
-            MemberVo memberDetail = memberService.retrieveMember(memNo);
-
-            model.addAttribute("memberDetail", memberDetail);
-
-            return "page/member_modify";
-        } else { // 로그인 세션이 존재하지 않는 경우 (로그인 상태가 아닌 경우)
-
-            // 로그인 페이지로 이동
-            return "redirect:/member_loginform";
-
-        }
+        return "page/member_modify";
     }
 
     // 회원 정보 수정 작업

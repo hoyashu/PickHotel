@@ -48,7 +48,7 @@ public class DomainFailureHandler implements AuthenticationFailureHandler {
         } else if (exception instanceof LockedException) {
             return "계정이 잠금처리되었습니다.";
         } else {
-            return "확인된 에러가 없습니다.";
+            return "중복된 로그인 입니다.";
         }
     }
 

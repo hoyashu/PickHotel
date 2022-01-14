@@ -3,6 +3,7 @@ package com.example.board.service;
 import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
+import com.example.board.persistent.BoardDao;
 import com.example.board.persistent.PostDao;
 import com.example.board.persistent.ReviewDao;
 import com.example.common.paging.PaginationInfo;
@@ -26,19 +27,19 @@ public class PostService {
     @Autowired
     private AttachDao attachDao;
 
+    @Autowired
+    private BoardDao boardDao;
+
     // 게시글 정보를 등록하다.
     public int registerPost(PostVo post) {
         int no = this.postDao.insertPost(post);
         return no;
     }
 
-    //게시글 전체 조회
+    //전체 게시글 태그 검색
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrieveAllPosts(int boardNo) {
-        List<PostVo> posts = this.postDao.selectAllPosts(boardNo);
-        if (posts.size() == 0) {
-            posts = null;
-        }
+    public List<PostVo> retrievePostByTag(String tag) {
+        List<PostVo> posts = this.postDao.selectPostByTag(tag);
         return posts;
     }
 
@@ -55,6 +56,11 @@ public class PostService {
         return this.postDao.selectDetailPost(postNo);
     }
 
+    // 게시글 존재 여부 조회
+    public Integer retrievePostSearch(PostVo post) {
+        return this.postDao.selectPostSearch(post);
+    }
+
     //회원별 게시글 목록 조회
     public List<PostVo> retrieveMyPosts(int MemNo) {
         List<PostVo> posts = this.postDao.selectMyPosts(MemNo);
@@ -64,7 +70,8 @@ public class PostService {
         return posts;
     }
 
-    public List<PostVo> retrievePostList(PostVo params){
+    // 게시글 목록 조회
+    public List<PostVo> retrievePostList(PostVo params) {
         List<PostVo> postList = new ArrayList<PostVo>();
 
         int postCount = this.postDao.selectPostCount(params);
@@ -92,7 +99,7 @@ public class PostService {
 
     // 모든 게시판 조회 번호와 이름만
     public List<BoardVo> retrieveAllBoards() {
-       return this.postDao.selectAllBoards();
+        return this.postDao.selectAllBoards();
     }
 
     public BoardVo retrieveBoardForUseCheck(int boardNo) {
@@ -109,10 +116,11 @@ public class PostService {
         attachDao.deletePostAttach(attachNo);
     }
 
-    public void removePost(int postNo) {
+    public void removePost(int postNo, int boardNo) {
         attachDao.deleteAttachbyPost(postNo);
         reviewDao.deleteReview(postNo);
         postDao.deletePost(postNo);
+        this.boardDao.updateBoardPost(boardNo, -1);
     }
 }
 

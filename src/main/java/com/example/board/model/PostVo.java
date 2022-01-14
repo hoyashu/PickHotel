@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
@@ -27,6 +26,7 @@ public class PostVo extends CommonVo {
     private int writerNo;
     private String writerNick;
     private String tag;
+    private String[] tags;
     private int views;
     private int commont;
     private String createDate;

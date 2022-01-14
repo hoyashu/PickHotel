@@ -30,6 +30,7 @@ public class MemberVo extends CommonVo {
     private int commentCount;
     private int visitCount;
     private int grade;
+    private String gradeName;
 
     public MemberVo(int memNo, String state) {
         super();

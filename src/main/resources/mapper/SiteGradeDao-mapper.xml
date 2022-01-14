@@ -15,17 +15,21 @@
         <result property="memGradeVisit" column="mg_visit"/>
         <result property="memGradeUse" column="mg_use"/>
     </resultMap>
-    <select id="selectSiteGrade" resultMap="SiteGradeListResult">
-        SELECT mg_grade,
-               mg_name,
-               mg_type,
-               mg_board,
-               mg_com,
-               mg_visit,
-               mg_use
-        FROM membergrade
+
+    <!--    관리자에 출력되는 사이트 등급 전부-->
+    <select id="selectSiteGradeList" resultMap="SiteGradeListResult">
+        SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit, mg_use FROM membergrade
     </select>
 
+    <!--    사용자에게 안내되는 사용중인 등급-->
+    <select id="selectSiteGradeToUser" resultMap="SiteGradeListResult">
+        SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit FROM membergrade WHERE mg_use = 1
+    </select>
+
+    <!--    등급 상세 조회 -->
+    <select id="selectSiteGrade" parameterType="int" resultType="SiteGradeVo">
+        SELECT mg_grade as memGrade, mg_name as memGradeName, mg_type as memGradeType, mg_board as memGradeBoard, mg_com as memGradeComment, mg_visit as memGradeVisit FROM membergrade WHERE mg_grade=#{memGrade}
+    </select>
 
     <parameterMap id="updateSiteGradeParameter" type="SiteGradeVo">
         <parameter property="memGrade" javaType="int"

@@ -19,11 +19,6 @@ public class MemberService {
     @Autowired
     private MemberDao memberDao;
 
-    // 방문횟수 카운트
-    public void visitCount(String id) {
-        this.memberDao.UpdateVisitCount(id);
-    }
-
     // 탈퇴회원 조회
     public String checkWithDraw(String id) {
         return this.memberDao.SelectWithDraw(id);
