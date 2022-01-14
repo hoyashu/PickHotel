@@ -18,8 +18,6 @@ import java.io.IOException;
 @Configuration
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
-    @Autowired
-    AccessDeniedHandlerImpl accessDeniedHandler;
     //인증에 실패한 경우 예외처리
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
