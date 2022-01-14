@@ -253,11 +253,17 @@ public class BoardController {
         }
         // ######### 게시글 조회수 증가 끝 ######### //
 
-        // ######### 댓글 목록 시작 ######### //
-        List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+        // ######해당 게시판에서 댓글 사용 여부 판단######
+        int useComment = this.boardService.retrieveBoard(post.getBoardNo()).getUseComment();
+        model.addAttribute("useComment", useComment);
 
-        model.addAttribute("comments", comments);
-        // ######### 댓글 목록 조회 끝 ######### //
+        if (useComment != 0) {
+            // ######### 댓글 목록 시작 ######### //
+            List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+            model.addAttribute("comments", comments);
+            // ######### 댓글 목록 조회 끝 ######### //
+        }
+        // ######해당 게시판에서 댓글 사용 여부 끝 ######### //
 
         return "page/post_detail";
     }
