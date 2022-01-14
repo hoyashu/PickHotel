@@ -5,9 +5,11 @@ import com.example.board.model.*;
 import com.example.board.service.*;
 import com.example.common.exception.Constants;
 import com.example.member.model.MemberVo;
+import com.example.member.model.UserAccount;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +41,6 @@ public class BoardController {
     private AttachService attachService;
 
     @Autowired
-    private RoomService roomService;
-
-    @Autowired
     private ReviewService reviewService;
 
     @Autowired
@@ -53,12 +52,9 @@ public class BoardController {
     // ########## 게시글 ########## //
     // 게시글 작성 폼
     @GetMapping("/board/{boardNo}/post/register")
-    public String writeForm(@RequestParam(value = "boardNo", required = false) Integer boardNo, Model model, HttpServletRequest request) {
-
-        // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
+    public String writeForm(@PathVariable("boardNo") Integer boardNo, @AuthenticationPrincipal UserAccount userAccount, Model model, HttpServletRequest req, HttpServletResponse res) {
+        //비회원 접근할시 익셉션
+        checkUser(userAccount, req, res);
 
         //게시판 목록을 통해 게시글을 작성하려 할때, 유입된 게시판에 작성이 선택된다.
         int defaultListNo = 0;
@@ -67,22 +63,21 @@ public class BoardController {
         } else {
             defaultListNo = boardNo;
         }
+        BoardVo boardForCheck = this.postService.retrieveBoardForUseCheck(boardNo);
 
-        List<String> boardNames = this.postService.retrieveBoardName();
-        HashMap<Integer, String> boardList = new HashMap<Integer, String>();
-        int i = 1;
-        for (String string : boardNames) {
-            boardList.put(i, string);
-            i++;
+        List<BoardVo> boards = this.postService.retrieveAllBoards();
+        Map<Integer, String> boardList = new HashMap<Integer, String>();
+
+        for (BoardVo board : boards) {
+            boardList.put(board.getBoardNo(), board.getTitle());
         }
 
-        List<RoomVo> roomList = this.roomService.retrieveRoomList();
-
-        model.addAttribute("roomList", roomList);
         // request 영역에 디폴트 게시판 정보를 저장한다.
         model.addAttribute("defaultListNo", defaultListNo);
         // request 영역에 게시판 리스트 정보를 저장한다.
         model.addAttribute("boardList", boardList);
+        // 게시판 타입을 저장한다.
+        model.addAttribute("boardType", boardForCheck.getType());
 
         return "page/post_write";
 
@@ -91,7 +86,10 @@ public class BoardController {
     //게시글 작성 시 이미지, 동영상, 리뷰 사용 체크
     @ResponseBody
     @GetMapping("/board/{boardNo}/post/checkUse")
-    public Map checkUse(@PathVariable("boardNo") int boardNo) {
+    public Map checkUse(@PathVariable("boardNo") int boardNo, @AuthenticationPrincipal UserAccount userAccount, HttpServletRequest req, HttpServletResponse res) {
+        //비회원 접근할시 익셉션
+        checkUser(userAccount, req, res);
+
         BoardVo board = this.boardService.retrieveBoard(boardNo);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("board", board);
@@ -119,8 +117,7 @@ public class BoardController {
         return "page/post_list";
     }
 
-    // 유형별 게시판 조회
-    // retrieveBoardListByType
+    // 유형별 게시판 조회 - headr에서 사용
     @ResponseBody
     @GetMapping("/loadboardtype")
     public List<BoardVo> boardListByType(@RequestParam("type") String type) {
@@ -131,12 +128,11 @@ public class BoardController {
 
     // 내가 작성한 게시글 목록
     @GetMapping("/member/room")
-    public String myList(HttpServletRequest request, Model model) {
-        HttpSession session = request.getSession();
+    public String myList(@AuthenticationPrincipal UserAccount userAccount, Model model) {
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
-        MemberVo member = (MemberVo) session.getAttribute("member");
-        int MemNo = member.getMemNo();
-        List<PostVo> posts = this.postService.retrieveMyPosts(MemNo);
+        List<PostVo> posts = this.postService.retrieveMyPosts(memNo);
         model.addAttribute("posts", posts);
 
         return "page/member_room";
@@ -164,7 +160,7 @@ public class BoardController {
 
     // 게시글 상세보기
     @GetMapping("/board/{boardNo}/post/{postNo}")
-    public String read(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String read(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest req, HttpServletResponse response) {
         // ######### 게시글 상세정보 시작 ######### //
         PostVo post = null;
         PostVo test = new PostVo();
@@ -179,7 +175,6 @@ public class BoardController {
         }
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
-        BoardVo board = this.boardService.retrieveBoard(post.getBoardNo());
         MapVoForApi mapVoForApi = new MapVoForApi();
 
         // tag값 배열로 셋팅
@@ -209,7 +204,7 @@ public class BoardController {
         // ######### 게시글 조회수 증가 시작 ######### //
         // 조회수 중복방지는 필요한 기능이지만, 완벽하게 차단해야 할만큼 중대한 사항은 아니라고 생각, 따라서 쿠키를 사용
         Cookie oldCookie = null;
-        Cookie[] cookies = request.getCookies();
+        Cookie[] cookies = req.getCookies();
 
         //request에서 넘어온 쿠키가 있는 경우
         if (cookies != null) {
@@ -222,12 +217,10 @@ public class BoardController {
             }
         }
 
-        //동일한 컴퓨터에서 다른 아이디로 로그인하여 view했을때 조회수 증가를 위한 코드추가
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-
         int memNo = 0;
-        if (member != null) {
+        //동일한 컴퓨터에서 다른 아이디로 로그인하여 view했을때 조회수 증가를 위한 코드추가
+        if (userAccount != null) {
+            MemberVo member = userAccount.getMember();
             memNo = member.getMemNo();
         }
 
@@ -260,11 +253,17 @@ public class BoardController {
         }
         // ######### 게시글 조회수 증가 끝 ######### //
 
-        // ######### 댓글 목록 시작 ######### //
-        List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+        // ######해당 게시판에서 댓글 사용 여부 판단######
+        int useComment = this.boardService.retrieveBoard(post.getBoardNo()).getUseComment();
+        model.addAttribute("useComment", useComment);
 
-        model.addAttribute("comments", comments);
-        // ######### 댓글 목록 조회 끝 ######### //
+        if (useComment != 0) {
+            // ######### 댓글 목록 시작 ######### //
+            List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+            model.addAttribute("comments", comments);
+            // ######### 댓글 목록 조회 끝 ######### //
+        }
+        // ######해당 게시판에서 댓글 사용 여부 끝 ######### //
 
         return "page/post_detail";
     }
@@ -301,7 +300,10 @@ public class BoardController {
 
     // 게시글 수정폼
     @GetMapping("/board/{boardNo}/post/{postNo}/modify")
-    public String modifyFrom(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest request) {
+    public String modifyFrom(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest req, HttpServletResponse res) {
+
+        //비회원 접근할시 익셉션
+        checkUser(userAccount, req, res);
 
         PostVo test = new PostVo();
         test.setPostNo(postNo);
@@ -312,11 +314,7 @@ public class BoardController {
         }
 
         // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-
-        // 회원 id
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
 
@@ -369,62 +367,17 @@ public class BoardController {
 
     }
 
-//    // 게시글 수정
-//    @PostMapping("board/{boardNo}/post/update")
-//    public String update(@Valid PostVo post, @PathVariable("boardNo") int boardNo, HttpServletRequest request) {
-//
-//        PostVo test = new PostVo();
-//        test.setPostNo(post.getPostNo());
-//        test.setBoardNo(boardNo);
-//
-//        if (postService.retrievePostSearch(test) == null) {
-//            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-//        }
-//
-//        // 작성자 본인이거나 관리자 인지 권한 확인
-//        // 세션 준비
-//        HttpSession session = request.getSession();
-//        MemberVo member = (MemberVo) session.getAttribute("member");
-//
-//        // 회원 id
-//        int memNo = member.getMemNo();
-//        int memberGrade = member.getGrade();
-//
-//        // 작성된 게시글 작성자 id
-//        int writerNo = this.postService.retrieveDetailBoard(post.getPostNo()).getWriterNo();
-//
-//        // 작성자 본인이 아니고, 관리자도 아닌 경우
-//        if (memNo != writerNo && memberGrade != 5) {
-//            //권한 없음 페이지로 이동
-//            return "redirect:/denine";
-//
-//        } else { // 작성자 본인인 경우
-//            // 값 셋팅
-//            PostVo postVo = new PostVo();
-//            postVo.setPostNo(post.getPostNo());
-//            postVo.setBoardNo(post.getBoardNo());
-//            postVo.setSubject(post.getSubject());
-//            postVo.setContent(post.getContent());
-//            postVo.setTag(post.getTag());
-//
-//            // 수정 쿼리 실행
-//            this.postService.modifyPost(postVo);
-//
-//            return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
-//        }
-//
-//    }
-
     // 선택한 파일 삭제
     @ResponseBody
     @GetMapping("/attach/delete/{attachNo}")
-    public Map deleteFile(@PathVariable("attachNo") int attachNo, HttpServletRequest request) {
-        // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
+    public Map deleteFile(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("attachNo") int attachNo) {
+        //비회원 접근할시 익셉션
+        if (userAccount != null) {
+            throw new RuntimeException(Constants.ExceptionMsgClass.NOTMEMBER.getExceptionMsgClass());
+        }
 
-        // 회원 id
+        // 작성자 본인이거나 관리자 인지 권한 확인
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
 
@@ -452,7 +405,10 @@ public class BoardController {
 
     // 게시글 삭제
     @GetMapping("/board/{boardNo}/post/{postNo}/delete")
-    public String delete(@PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, HttpServletRequest request) {
+    public String delete(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, HttpServletRequest req, HttpServletResponse res) {
+
+        //비회원 접근할시 익셉션
+        checkUser(userAccount, req, res);
 
         PostVo test = new PostVo();
         test.setPostNo(postNo);
@@ -463,11 +419,7 @@ public class BoardController {
         }
 
         // 작성자 본인이거나 관리자 인지 권한 확인
-        // 세션 준비
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
-
-        // 회원 id
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
 
@@ -482,11 +434,21 @@ public class BoardController {
 
         } else { // 작성자 본인인 경우
             // 삭제 쿼리 실행
-            this.postService.removePost(postNo);
+            this.postService.removePost(postNo, boardNo);
 
             return "redirect:/boardList/" + boardNo;
         }
+    }
 
+    //비회원 접근할시 익셉션 - 계층형 시큐리티를 사용중이기에 비회원이 write이상의 액션을 취하기 위해선 회원여부를 판단해야한다.
+    private void checkUser(UserAccount userAccount, HttpServletRequest req, HttpServletResponse res) {
+        if (userAccount == null) {
+            try {
+                res.sendRedirect("/login?prevPage=" + URLEncoder.encode(req.getRequestURI(), "UTF-8"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

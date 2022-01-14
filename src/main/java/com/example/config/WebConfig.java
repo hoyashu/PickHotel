@@ -22,10 +22,10 @@ public class WebConfig implements WebMvcConfigurer {
 
 
         // 윈도우용 설정
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:///C:/upload/");
+        //registry.addResourceHandler("/upload/**").addResourceLocations("file:///C:/upload/");
 
         // 리눅스용 설정
-//        registry.addResourceHandler("/upload/**").addResourceLocations("file:///upload/");
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:///upload/");
     }
 
     //    소진 - xss처리 (https://inseok9068.github.io/springboot/springboot-xss-response/)

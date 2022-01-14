@@ -24,7 +24,7 @@
             <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" required type="text">
         </div>
 
-        <div class="mb-4 map_wrap">
+        <div class="mb-4 map_wrap" th:if="${boardType == 'review'}">
             <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
             <div class="bg_white" id="menu_wrap">
                 <div class="option">
@@ -57,36 +57,88 @@
             <div class="mb-4">
                 <label>위치</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateLoc" title="5" type="radio" value="1">
-                    <input class="star-check" name="rateLoc" title="4" type="radio" value="2">
-                    <input class="star-check" name="rateLoc" title="3" type="radio" value="3">
-                    <input class="star-check" name="rateLoc" title="2" type="radio" value="4">
-                    <input class="star-check" name="rateLoc" title="1" type="radio" value="5">
+                    <input class="star-check" name="showRateLoc" title="5" type="radio" value="5" onclick="getRateLoc()" />
+                    <input class="star-check" name="showRateLoc" title="4" type="radio" value="4" onclick="getRateLoc()" />
+                    <input class="star-check" name="showRateLoc" title="3" type="radio" value="3" onclick="getRateLoc()" />
+                    <input class="star-check" name="showRateLoc" title="2" type="radio" value="2" onclick="getRateLoc()" />
+                    <input class="star-check" name="showRateLoc" title="1" type="radio" value="1" onclick="getRateLoc()" />
                 </div>
+                <input type="hidden" id="rateLoc" name="rateLoc">
+                <script>
+                    function getRateLoc() {
+                        var rateLocNodeList = document.getElementsByName("showRateLoc");
+
+                        rateLocNodeList.forEach((node) => {
+                            if(node.checked) {
+                                document.getElementById("rateLoc").value = node.value;
+                            }
+                        })
+                    }
+                </script>
+
                 <label>위생</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateClean" title="5" type="radio" value="1">
-                    <input class="star-check" name="rateClean" title="4" type="radio" value="2">
-                    <input class="star-check" name="rateClean" title="3" type="radio" value="3">
-                    <input class="star-check" name="rateClean" title="2" type="radio" value="4">
-                    <input class="star-check" name="rateClean" title="1" type="radio" value="5">
+                    <input class="star-check" name="showRateClean" title="5" type="radio" value="5" onclick="getRateClean()" />
+                    <input class="star-check" name="showRateClean" title="4" type="radio" value="4" onclick="getRateClean()" />
+                    <input class="star-check" name="showRateClean" title="3" type="radio" value="3" onclick="getRateClean()" />
+                    <input class="star-check" name="showRateClean" title="2" type="radio" value="2" onclick="getRateClean()" />
+                    <input class="star-check" name="showRateClean" title="1" type="radio" value="1" onclick="getRateClean()" />
                 </div>
+                <input type="hidden" id="rateClean" name="rateClean">
+                <script>
+                    function getRateClean() {
+                        var rateLocNodeList = document.getElementsByName("showRateClean");
+
+                        rateLocNodeList.forEach((node) => {
+                            if(node.checked) {
+                                document.getElementById("rateClean").value = node.value;
+                            }
+                        })
+                    }
+                </script>
+
                 <label>의사소통</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateComu" title="5" type="radio" value="1">
-                    <input class="star-check" name="rateComu" title="4" type="radio" value="2">
-                    <input class="star-check" name="rateComu" title="3" type="radio" value="3">
-                    <input class="star-check" name="rateComu" title="2" type="radio" value="4">
-                    <input class="star-check" name="rateComu" title="1" type="radio" value="5">
+                    <input class="star-check" name="showRateComu" title="5" type="radio" value="5" onclick="getRateComu()" />
+                    <input class="star-check" name="showRateComu" title="4" type="radio" value="4" onclick="getRateComu()" />
+                    <input class="star-check" name="showRateComu" title="3" type="radio" value="3" onclick="getRateComu()" />
+                    <input class="star-check" name="showRateComu" title="2" type="radio" value="2" onclick="getRateComu()" />
+                    <input class="star-check" name="showRateComu" title="1" type="radio" value="1" onclick="getRateComu()" />
                 </div>
+                <input type="hidden" id="rateComu" name="rateComu">
+                <script>
+                    function getRateComu() {
+                        var rateLocNodeList = document.getElementsByName("showRateComu");
+
+                        rateLocNodeList.forEach((node) => {
+                            if(node.checked) {
+                                document.getElementById("rateComu").value = node.value;
+                            }
+                        })
+                    }
+                </script>
+
                 <label>가성비</label>
                 <div class="star-container">
-                    <input class="star-check" name="rateChip" title="5" type="radio" value="1">
-                    <input class="star-check" name="rateChip" title="4" type="radio" value="2">
-                    <input class="star-check" name="rateChip" title="3" type="radio" value="3">
-                    <input class="star-check" name="rateChip" title="2" type="radio" value="4">
-                    <input class="star-check" name="rateChip" title="1" type="radio" value="5">
+                    <input class="star-check" name="showRateChip" title="5" type="radio" value="5" onclick="getRateChip()" />
+                    <input class="star-check" name="showRateChip" title="4" type="radio" value="4" onclick="getRateChip()" />
+                    <input class="star-check" name="showRateChip" title="3" type="radio" value="3" onclick="getRateChip()" />
+                    <input class="star-check" name="showRateChip" title="2" type="radio" value="2" onclick="getRateChip()" />
+                    <input class="star-check" name="showRateChip" title="1" type="radio" value="1" onclick="getRateChip()" />
                 </div>
+                <input type="hidden" id="rateChip" name="rateChip">
+                <script>
+                    function getRateChip() {
+                        var rateLocNodeList = document.getElementsByName("showRateChip");
+
+                        rateLocNodeList.forEach((node) => {
+                            if(node.checked) {
+                                document.getElementById("rateChip").value = node.value;
+                            }
+                        })
+                    }
+                </script>
+
             </div>
             <div class="mb-4">
                 <p class="m-0"><label for="visitDate">방문 날짜<span class="chose">(선택)</span></label></p>
@@ -339,6 +391,10 @@
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
             var place_name = document.getElementById('place_name').value;
             var subject = document.getElementById('subject').value;
+            var rateLoc = document.getElementById("rateLoc").value;
+            var rateClean = document.getElementById("rateClean").value;
+            var rateComu = document.getElementById("rateComu").value;
+            var rateChip = document.getElementById("rateChip").value;
             var content = CKEDITOR.instances['content'].getData();
             $.ajax({
                 url    : '/board/' + bordNoSelect + '/post/checkUse',
@@ -348,6 +404,11 @@
                     if (result.board.type == "review") {
                         if (!place_name.replace(/^\s+|\s+$/g, '')) {
                             alert('장소를 입력해주세요!');
+                            return false;
+                        }
+
+                        if (rateLoc == "" || rateClean == "" || rateComu == "" || rateChip == ""){
+                            alert("평가하지 않은 항목이 있습니다.");
                             return false;
                         }
 
@@ -744,83 +805,6 @@
             markers = [];
         }
 
-        // // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
-        // function displayPagination(meta, page) {
-        //     var paginationEl = document.getElementById('pagination'),
-        //         fragment = document.createDocumentFragment(),
-        //         i;
-        //
-        //     // 기존에 추가된 페이지번호를 삭제합니다
-        //     while (paginationEl.hasChildNodes()) {
-        //         paginationEl.removeChild (paginationEl.lastChild);
-        //     }
-        //
-        //     var pagingNumber = 3;
-        //     if(meta.is_end == true){
-        //         pagingNumber = 2;
-        //     }
-        //
-        //     for (i=1; i<=pagingNumber; i++) {
-        //         var el = document.createElement('a');
-        //         el.href = "#";
-        //         el.innerHTML = i;
-        //
-        //         if (i===page) {
-        //             el.className = 'on';
-        //         } else {
-        //             el.onclick = (function(i) {
-        //                 return function() {
-        //                     searchPlacesForPaging(i);
-        //                 }
-        //             })(i);
-        //         }
-        //
-        //         fragment.appendChild(el);
-        //     }
-        //     paginationEl.appendChild(fragment);
-        // }
-        //
-        // // 키워드 검색을 요청하는 함수입니다
-        // function searchPlacesForPaging(i) {
-        //
-        //     var keyword = document.getElementById('keyword').value;
-        //
-        //     if (!keyword.replace(/^\s+|\s+$/g, '')) {
-        //         alert('키워드를 입력해주세요!');
-        //         return false;
-        //     }
-        //
-        //     // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다 -> 키워드를 직접 받아 처리를 해줘야함 정보가 없을경우 없다고 알림
-        //     $.ajax({
-        //         type : "GET",
-        //         url : "/map/search?query=" + keyword + "&page=" + i,
-        //         success : function(data){
-        //             var documentsList = data.mapResponse.documents;
-        //             var meta = data.mapResponse.meta;
-        //             var currentPageNumber = data.page;
-        //             var listLength = documentsList.length;
-        //             placesSearchCBForPaging(documentsList, meta, i);
-        //
-        //         },
-        //         error : function(){
-        //             alert("데이터 가져오기 실패");
-        //         }
-        //     });
-        // }
-        //
-        // // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
-        // function placesSearchCBForPaging(documentsList, meta, page) {
-        //     if(meta.is_end==true){
-        //         alert("검색 정보가 없습니다.");
-        //         return false;
-        //     }
-        //
-        //     // 검색 목록과 마커를 표출합니다
-        //     displayPlaces(documentsList);
-        //
-        //     // 페이지 번호를 표출합니다
-        //     displayPagination(meta, page);
-        // }
 
         // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
         // 인포윈도우에 장소명을 표시합니다

@@ -105,7 +105,7 @@
 	</update>
 
 	<!-- 게시판 게시글 수 수정 -->
-	<update id="updateBoardPost" >
+	<update id="updateBoardPost">
 		UPDATE board
 		SET bo_post = bo_post + #{updatepostCount}
 		WHERE bo_no = #{boardNo}

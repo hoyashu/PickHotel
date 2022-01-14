@@ -5,14 +5,14 @@ import com.example.grade.model.SiteGradeVo;
 import com.example.grade.persistent.SiteGradeDao;
 import com.example.grade.service.GradeUpService;
 import com.example.member.model.MemberVo;
+import com.example.member.model.UserAccount;
 import com.example.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -29,19 +29,11 @@ public class GradeUpController {
 
     // 등업신청목록조회(사용자)
     @GetMapping("/member/gradeup_list")
-    public String list(Model model, HttpServletRequest request) {
+    public String list(@AuthenticationPrincipal UserAccount userAccount, Model model) {
 
-        int memNo;
-        HttpSession session = request.getSession();
-        try {
-            MemberVo member = (MemberVo) session.getAttribute("member");
-            memNo = member.getMemNo();
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
-        } catch (Exception e) {
-            return "redirect:/";
-        }
-
-        GradeUpVo gradeUp = new GradeUpVo();
         List<GradeUpVo> gradeUps = this.gradeUpService.selectGradeUp(memNo);
 
         if (gradeUps.isEmpty()) {
@@ -56,11 +48,9 @@ public class GradeUpController {
     // 등업신청 가능여부 체크
     @ResponseBody
     @PostMapping("/member/gradeup_check")
-    public int gradeup_checked(HttpServletRequest request) {
+    public int gradeup_checked(@AuthenticationPrincipal UserAccount userAccount) {
 
-        HttpSession session = request.getSession();
-
-        MemberVo member = (MemberVo) session.getAttribute("member");
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
 
         int yetOk = gradeUpService.checkedGradeUp(memNo);
@@ -73,21 +63,9 @@ public class GradeUpController {
 
     // 등업신청 폼 창
     @GetMapping("/member/gradeup_write")
-    public String gradeup_write(Model model, HttpServletRequest request) {
-        int memNo = 0;
-        int grade = 0;
-        String nick = "";
-
-        HttpSession session = request.getSession();
-        try {
-            MemberVo member = (MemberVo) session.getAttribute("member");
-            memNo = member.getMemNo();
-            grade = member.getGrade();
-            nick = member.getNick();
-
-        } catch (Exception e) {
-            return "redirect:/";
-        }
+    public String gradeup_write(@AuthenticationPrincipal UserAccount userAccount, Model model) {
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
 
         // 2.가능한 등급 목록 정보 받아올것
         List<SiteGradeVo> possibleGrades = this.siteGradeDao.possibleGrade(memNo);
@@ -98,11 +76,13 @@ public class GradeUpController {
         }
 
         // 3. 현재 회원의 정보를 받아와야함
-        MemberVo member = memberService.retrieveMember(memNo);
-        int boardCount = member.getBoardCount();
-        int commentCount = member.getCommentCount();
-        int visitCount = member.getVisitCount();
-        String joinDate = member.getJoinDate();
+        MemberVo memberDB = memberService.retrieveMember(memNo);
+        int boardCount = memberDB.getBoardCount();
+        int commentCount = memberDB.getCommentCount();
+        int visitCount = memberDB.getVisitCount();
+        String nick = memberDB.getNick();
+        int grade = memberDB.getGrade();
+        String joinDate = memberDB.getJoinDate();
 
         GradeUpVo gradeUp = new GradeUpVo();
         gradeUp.setNick(nick);
@@ -114,27 +94,21 @@ public class GradeUpController {
         gradeUp.setJoinDate(joinDate);
 
         model.addAttribute("gradeUp", gradeUp);
-        try {
-            if (gradeUpService.checkedGradeUp(memNo) != 0) {
-                return "redirect:/";
-            } else {
-                return "page/member_gradeup_write";
-            }
-        } catch (Exception e) {
 
+        if (gradeUpService.checkedGradeUp(memNo) != 0) {
+            return "redirect:/";
+        } else {
+            return "page/member_gradeup_write";
         }
-
-        return "page/member_gradeup_write";
     }
 
     // 등업신청 작동 (등업 신청 버튼 누르면 실행함)
     @ResponseBody
     @PostMapping("/member/gradeup")
-    public String gradeup(@ModelAttribute("GradeUpVo") GradeUpVo gradeUp, HttpServletRequest request) {
+    public String gradeup(@ModelAttribute("GradeUpVo") GradeUpVo gradeUp, @AuthenticationPrincipal UserAccount userAccount) {
 
         // 세션 가져오기
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
         int beforegrade = member.getGrade();
 
@@ -164,10 +138,9 @@ public class GradeUpController {
     // 등업신청 삭제
     @ResponseBody
     @GetMapping("/member/gradeup_delete/{gradeno}")
-    public String gradeupdelete(@PathVariable("gradeno") int gradeno, Model model, HttpServletRequest request) {
+    public String gradeupdelete(@PathVariable("gradeno") int gradeno, @AuthenticationPrincipal UserAccount userAccount) {
         // 세션 가져오기
-        HttpSession session = request.getSession();
-        MemberVo member = (MemberVo) session.getAttribute("member");
+        MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
 
         int gradeupstate = gradeUpService.checkedGradeUp(memNo);

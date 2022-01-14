@@ -20,6 +20,7 @@
 		<typeAlias type="com.example.member.model.RoleVo" alias="RoleVo" />
 		<typeAlias type="com.example.member.model.RoleResourcesVo" alias="RoleResourcesVo" />
 
+
 		<typeAlias type="com.example.member.model.MemberStateVo" alias="MemberStateVo" />
 		<typeAlias type="com.example.member.model.MemberAndMemberStateVo" alias="MemberAndMemberStateVo" />
 

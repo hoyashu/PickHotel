@@ -41,8 +41,14 @@ public class BoardAdminController {
 
     // ######## 게시판 등록 ########
     @PostMapping("/intranet/board/add")
-    public String boardAdd(@Valid BoardVo board) {
+    public String boardAdd(@Valid BoardVo board,
+                           @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
+                           @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
+                           @RequestParam(value="useComment", defaultValue = "0") int useComment) {
 
+        board.setUsePhoto(usePhoto);
+        board.setUseVideo(useVideo);
+        board.setUseComment(useComment);
         // 게시판 정보 추가
         boardService.registerBoard(board);
 
@@ -72,8 +78,14 @@ public class BoardAdminController {
 
     // 게시판 수정하기 버튼 눌렀을때
     @PostMapping("/intranet/board/modify")
-    public String boardModify(BoardVo board) {
+    public String boardModify(BoardVo board,
+                              @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
+                              @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
+                              @RequestParam(value="useComment", defaultValue = "0") int useComment) {
 
+        board.setUsePhoto(usePhoto);
+        board.setUseVideo(useVideo);
+        board.setUseComment(useComment);
         boardService.reviseBoard(board);
 
         return "redirect:/intranet/board/list";
