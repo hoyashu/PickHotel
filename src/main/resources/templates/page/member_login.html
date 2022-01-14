@@ -19,9 +19,6 @@
 
                 <div class="form-floating">
                     <input class="form-control" id="pwd" name="pwd" type="password"><label for="pwd">비밀번호</label>
-
-                    <input id="remember-me" name="remember-me" type="checkbox"/> 로그인 상태 유지
-
                     <div class="text-center" th:if="${not #strings.isEmpty(message)}">
                         <span style="color: red;" th:text="${message}"></span>
                     </div>
