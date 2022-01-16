@@ -19,11 +19,8 @@
 					<div class="col-sm-12 col-md-6">
 						<div class="boGrade" id="boGrade"><label>게시판 접근 등급
 							<select name="boGrade" aria-controls="boGrade" class="custom-select custom-select-sm form-control form-control-sm">
-							<option value="1">1</option>
-							<option value="2">2</option>
-							<option value="3">3</option>
-							<option value="4">4</option>
-							<option value="5">5</option>
+							<option value="0">비회원</option>
+							<option th:each="useSiteGrade : ${useSiteGrades}" th:value="${useSiteGrade.memGrade}" th:text="${useSiteGrade.memGradeName}"></option>
 						</select></label></div>
 					</div>
 					<div class="col-sm-12 col-md-6">

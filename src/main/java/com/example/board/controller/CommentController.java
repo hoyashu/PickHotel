@@ -109,6 +109,9 @@ public class CommentController {
         //댓글 등록 실행
         this.commentService.registerComment(comment1);
 
+        //회원 댓글 갯수 추가
+        this.memberService.reviseCommentCount(memNo, 1);
+
         // 알림 설정
         if (alarmSend == "true") {
             String alarmUrl = "/board/" + post.getBoardNo() + "/post/" + comment.getPostNo() + "#comment_" + comment1.getComNo();
@@ -176,6 +179,9 @@ public class CommentController {
             result = "denine";
         } else { // 작성자 본인이거나 관리자인 경우
             this.commentService.removeComment(comment);
+
+            //회원 댓글 갯수 감소
+            this.memberService.reviseCommentCount(memNo, -1);
             result = "OK";
         }
         return result;

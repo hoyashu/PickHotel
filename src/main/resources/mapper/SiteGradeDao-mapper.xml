@@ -21,7 +21,7 @@
         SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit, mg_use FROM membergrade
     </select>
 
-    <!--    사용자에게 안내되는 사용중인 등급-->
+    <!--  현재 사용중인 등급 -->
     <select id="selectSiteGradeToUser" resultMap="SiteGradeListResult">
         SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit FROM membergrade WHERE mg_use = 1
     </select>

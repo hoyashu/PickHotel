@@ -24,7 +24,7 @@
 						<tr>
 							<td th:text="${post.postNo}"></td>
 							<td class="text-left"><a
-                                    th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.postNo},boardNo=${post.boardNo})}"><span
+                                    th:href="@{/member/post/{postNo}(postNo=${post.postNo})}"><span
                                     th:text="${post.subject}"></span></a>
 							</td>
 							<td><span th:text="${post.createDate}"></span></td>

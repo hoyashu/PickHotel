@@ -34,7 +34,7 @@ public class SiteGradeDaoImpl implements SiteGradeDao {
 
     //등업신청 가능한 등급
     @Override
-    public List<SiteGradeVo> possibleGrade(int memNo) {
+    public List<SiteGradeVo> selectPossibleGrade(int memNo) {
         return this.sqlSessionTemplate.selectList("SiteGradeDao.possibleGrade", memNo);
     }
 }
