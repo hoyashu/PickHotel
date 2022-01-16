@@ -28,7 +28,7 @@
                         <span th:text="${siteGrade.memGradeName}"></span>
                     </td>
                     <td class="text-left">
-                        <p class="m-0">
+                        <p class="m-0" th:if="${siteGrade.memGrade != 5}">
                             <span th:if="${siteGrade.memGradeType == 0}" th:text="자동등업"></span>
                             <span th:if="${siteGrade.memGradeType == 1}" th:text="수동등업"></span>
                             (<span>게시글 수</span>
@@ -40,6 +40,7 @@
                                 th:if="${siteGrade.memGradeType == 0}" th:text="자동등업"></span>
                             <span th:if="${siteGrade.memGradeType == 1}" th:text="수동등업"></span>)
                         </p>
+                        <p class="m-0" th:if="${siteGrade.memGrade == 5}">-</p>
                     </td>
                 </tr>
                 </tbody>
