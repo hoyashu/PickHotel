@@ -30,7 +30,7 @@ public class AccountService implements UserDetailsService {
     }
 
     protected UserDetails getLoginUser(String id) throws UsernameNotFoundException {
-        MemberVo member = null;
+        MemberVo member = new MemberVo();
         List<GrantedAuthority> authorityList = null;
 
         try {
