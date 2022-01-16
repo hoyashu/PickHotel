@@ -794,6 +794,10 @@ li[class^=pw-condition] i {
     background-position: 0 0;
 }
 
+#ListComment .commont-line.dept_0 .comment-inner:before {
+    content: none;
+}
+
 #ListComment .commont-line.quick {
     background-color: #ffff;
     -webkit-animation-name: quick; /* Chrome, Safari, Opera */
