@@ -41,7 +41,7 @@
 		SELECT post_no, bo_no, po_subject, po_content, po_mb_no, mb_nick,
 			   DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, po_comment, po_tag
 		FROM post INNER JOIN member ON post.po_mb_no=member.mb_no
-		WHERE concat(',',po_tag,',') like '%,'#{tag}',%' AND po_isblind = 0
+		WHERE concat(',',po_tag,',') like CONCAT('%',#{tag},'%') AND po_isblind = 0
 		ORDER BY writedate DESC
 	</select>
 
@@ -62,6 +62,7 @@
 					INNER JOIN board c ON a.bo_no = c.bo_no
 					INNER JOIN board_group d ON c.bo_group_no = d.bo_group_no
 		WHERE post_no = #{postNo}
+		ORDER BY writedate DESC
 	</select>
 
 	<select id="selectPostSearch" parameterMap="PostVoParameterMap" resultType="integer">
@@ -92,7 +93,7 @@
 	</resultMap>
 
 	<select id="selectAllBoards" resultType="BoardVo" resultMap="BoardVoResult">
-		SELECT bo_no, bo_name from board ORDER BY bo_no asc
+		SELECT bo_no, bo_name from board
 	</select>
 
 	<resultMap id="BoardVoResultMapForUseCheck" type="BoardVo">
@@ -119,7 +120,7 @@
 
 	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
 		SELECT post_no, bo_no, po_mb_no, po_subject,
-		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick
+		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_comment, po_views, mb_nick
 		FROM post JOIN member ON post.po_mb_no = member.mb_no
 		WHERE bo_no = #{boardNo} and po_isblind = 0
 		<if
@@ -134,7 +135,7 @@
 				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
 			and mb_nick like concat('%',#{searchKeyword},'%')
 		</if>
-		ORDER BY writedate DESC
+		ORDER BY post_no DESC
 		LIMIT
 		#{paginationInfo.firstRecordIndex}, #{recordsPerPage}
 	</select>
