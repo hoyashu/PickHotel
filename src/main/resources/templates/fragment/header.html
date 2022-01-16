@@ -62,13 +62,13 @@
                 //****** Type별 게시판 목록 조회 *******//
 
             </script>
-            <div id="login-box" sec:authorize="isAnonymous()">
+            <div id="login-box" th:if="${#authorization.expr('isAuthenticated()') == false}">
                 <button class="btn btn-outline-primary me-2" onclick="location.href='/join'"
                         type="button">회원가입
                 </button>
                 <button class="btn btn-primary" onclick="location.href='/login'" type="button">로그인</button>
             </div>
-            <div id="user-box" sec:authorize="isAuthenticated()">
+            <div id="user-box" th:if="${#authorization.expr('isAuthenticated()')}">
                 <ul class="notice-box">
                     <li class="alarm-area">
                         <a class="nav-link px-2 link-dark user-alarm" href="#" id="dropdownAlarmList">알림<span

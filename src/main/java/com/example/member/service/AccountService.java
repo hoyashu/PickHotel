@@ -37,12 +37,13 @@ public class AccountService implements UserDetailsService {
 
     protected UserDetails getLoginUser(String id) throws UsernameNotFoundException {
 
-        MemberVo member = null;
+        MemberVo member = new MemberVo();
         List<GrantedAuthority> authorityList = null;
 
         try {
             member = roleResourceDao.getUserById(id);
             boolean enabled = true;
+
             if (1 != Integer.parseInt(member.getState())){
                 enabled = false;
             }
