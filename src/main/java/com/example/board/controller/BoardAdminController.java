@@ -4,6 +4,8 @@ import com.example.board.model.BoardGroupVo;
 import com.example.board.model.BoardVo;
 import com.example.board.service.BoardGroupService;
 import com.example.board.service.BoardService;
+import com.example.grade.model.SiteGradeVo;
+import com.example.grade.service.SiteGradeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,9 @@ public class BoardAdminController {
     @Autowired
     private BoardGroupService boardGroupService;
 
+    @Autowired
+    private SiteGradeService siteGradeService;
+
     // ######## 게시판 그룹 관리 ########
     @GetMapping("/intranet/boardgroup_list")
     public String boardGroupList() {
@@ -35,6 +40,10 @@ public class BoardAdminController {
     public String boardWrite(Model model) {
         List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
         model.addAttribute("boardGroupList", boardGroupList);
+
+        //현재 사용중인 사이트 등급 목록
+        List<SiteGradeVo> useSiteGrades = siteGradeService.retriveSiteGradeToUser();
+        model.addAttribute("useSiteGrades", useSiteGrades);
 
         return "page/intranet/board_write";
     }
@@ -49,6 +58,7 @@ public class BoardAdminController {
         board.setUsePhoto(usePhoto);
         board.setUseVideo(useVideo);
         board.setUseComment(useComment);
+
         // 게시판 정보 추가
         boardService.registerBoard(board);
 
@@ -68,10 +78,14 @@ public class BoardAdminController {
     @GetMapping({"/intranet/board/{boardNo}", "/intranet/board/"})
     public String boardDetail(@PathVariable int boardNo, Model model) {
         BoardVo board = boardService.retrieveBoard(boardNo);
-        List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
-
         model.addAttribute("board", board);
+
+        List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
         model.addAttribute("boardGroupList", boardGroupList);
+
+        //현재 사용중인 사이트 등급 목록
+        List<SiteGradeVo> useSiteGrades = siteGradeService.retriveSiteGradeToUser();
+        model.addAttribute("useSiteGrades", useSiteGrades);
 
         return "page/intranet/board_modify";
     }
