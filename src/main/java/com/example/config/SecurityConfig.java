@@ -113,6 +113,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .permitAll()
+//                .and()
+//                .rememberMe()
+//                .key("autoLogin")
+//                .rememberMeParameter("remember-me")
+//                .tokenValiditySeconds(86400 * 30)
+//                .authenticationSuccessHandler(domainSuccessHandler)
+//                .userDetailsService(accountService)
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
@@ -163,32 +170,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
-
+    
+    
+    // remember-me 중복 로그인 에러
 //    @Bean
 //    public RememberMeAuthenticationFilter authCastion(){
 //        RememberMeAuthenticationFilter authCastion = new
 //                RememberMeAuthenticationFilter(authRemberMe, tokenBasedRememberMeServices());
 //        return authCastion;
-//    }
-
-    /*
-    ----------------------------------------------------------------------------
-             Role Hierarchy
-    ----------------------------------------------------------------------------
-    */
-
-//    @Bean
-//    public RoleHierarchyImpl roleHierarchy(){
-//        String allHierarchy = roleHierarchyService.findAllHierarchy();
-//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-//        roleHierarchy.setHierarchy(allHierarchy);
-//        return roleHierarchy;
-//    }
-//
-//    @Bean
-//    public AccessDecisionVoter<? extends Object> roleVoter(){
-//        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
-//        return roleHierarchyVoter;
 //    }
 
 }
