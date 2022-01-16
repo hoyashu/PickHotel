@@ -15,7 +15,7 @@
 	</parameterMap>
 	<insert id="insertPost" parameterMap="PostVoParameterMap" useGeneratedKeys="true" keyProperty="postNo">
 		INSERT INTO post (bo_no, po_mb_no, po_subject, po_content, po_tag, po_datetime, po_views, po_comment)
-		VALUES (#{boardNo}, #{writerNo}, #{subject}, #{content}, #{tag} , DATE_ADD(NOW(), INTERVAL 9 HOUR), 0, 0 )
+		VALUES (#{boardNo}, #{writerNo}, #{subject}, #{content}, #{tag} , NOW(), 0, 0 )
 	</insert>
 
 	<select id="selectLastInsertID" resultType="int">

@@ -367,12 +367,12 @@
         // 사용성 체크
         function OnChange(type) {
 
-            if (type == "click") {
-                const con = confirm("선택한 게시판의 글양식이 본문에 추가됩니다. 계속 하시겠습니까?");
-                if (con == false) {
-                    return false;
-                }
-            }
+            // if (type == "click") {
+            //     const con = confirm("선택한 게시판의 글양식이 본문에 추가됩니다. 계속 하시겠습니까?");
+            //     if (con == false) {
+            //         return false;
+            //     }
+            // }
             var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
             $.ajax({
                 url    : '/board/' + bordNoSelect + '/post/checkUse',
