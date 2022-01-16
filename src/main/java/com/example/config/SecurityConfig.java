@@ -28,15 +28,13 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private AccountService accountService;
@@ -80,6 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setForceEncoding(true);
         http.addFilterBefore(filter, CsrfFilter.class);
 
+        String message= URLEncoder.encode("새로운 사용자가 로그인 하였습니다", "UTF-8");
+
         log.info("call SecurityConfig configure");
 
         http.csrf().disable()
@@ -118,7 +118,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
-                .expiredUrl("/login?message=새로운 사용자가 로그인 하였습니다.")
+                .expiredUrl("/login?message=" + message)
                 .sessionRegistry(sessionRegistry());
 
     }

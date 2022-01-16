@@ -30,10 +30,6 @@ public class SecurityController {
             }
         }
 
-        if (message != null){
-            message = "새로운 사용자가 로그인 하였습니다.";
-        }
-
         model.addAttribute("message", message);
         return "page/member_login";
     }
