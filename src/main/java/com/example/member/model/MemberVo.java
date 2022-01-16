@@ -43,10 +43,4 @@ public class MemberVo extends CommonVo {
         this.memNo = memNo;
         this.grade = grade;
     }
-
-
-    public MemberVo(int grade) {
-        super();
-        this.grade = grade;
-    }
 }
