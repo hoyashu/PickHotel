@@ -4,7 +4,8 @@
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 작성</h1>
     </div>
-    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST" th:action="@{/uploadFile}">
+    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
+          th:action="@{/member/uploadFile}">
         <div class="mb-2">
             <select aria-label="Default select example" class="form-select" id="bordNo" name="bordNo"
                     onchange="OnChange('click');">
@@ -57,19 +58,24 @@
             <div class="mb-4">
                 <label>위치</label>
                 <div class="star-container">
-                    <input class="star-check" name="showRateLoc" title="5" type="radio" value="5" onclick="getRateLoc()" />
-                    <input class="star-check" name="showRateLoc" title="4" type="radio" value="4" onclick="getRateLoc()" />
-                    <input class="star-check" name="showRateLoc" title="3" type="radio" value="3" onclick="getRateLoc()" />
-                    <input class="star-check" name="showRateLoc" title="2" type="radio" value="2" onclick="getRateLoc()" />
-                    <input class="star-check" name="showRateLoc" title="1" type="radio" value="1" onclick="getRateLoc()" />
+                    <input class="star-check" name="showRateLoc" onclick="getRateLoc()" title="5" type="radio"
+                           value="5"/>
+                    <input class="star-check" name="showRateLoc" onclick="getRateLoc()" title="4" type="radio"
+                           value="4"/>
+                    <input class="star-check" name="showRateLoc" onclick="getRateLoc()" title="3" type="radio"
+                           value="3"/>
+                    <input class="star-check" name="showRateLoc" onclick="getRateLoc()" title="2" type="radio"
+                           value="2"/>
+                    <input class="star-check" name="showRateLoc" onclick="getRateLoc()" title="1" type="radio"
+                           value="1"/>
                 </div>
-                <input type="hidden" id="rateLoc" name="rateLoc">
+                <input id="rateLoc" name="rateLoc" type="hidden">
                 <script>
                     function getRateLoc() {
                         var rateLocNodeList = document.getElementsByName("showRateLoc");
 
                         rateLocNodeList.forEach((node) => {
-                            if(node.checked) {
+                            if (node.checked) {
                                 document.getElementById("rateLoc").value = node.value;
                             }
                         })
@@ -78,19 +84,24 @@
 
                 <label>위생</label>
                 <div class="star-container">
-                    <input class="star-check" name="showRateClean" title="5" type="radio" value="5" onclick="getRateClean()" />
-                    <input class="star-check" name="showRateClean" title="4" type="radio" value="4" onclick="getRateClean()" />
-                    <input class="star-check" name="showRateClean" title="3" type="radio" value="3" onclick="getRateClean()" />
-                    <input class="star-check" name="showRateClean" title="2" type="radio" value="2" onclick="getRateClean()" />
-                    <input class="star-check" name="showRateClean" title="1" type="radio" value="1" onclick="getRateClean()" />
+                    <input class="star-check" name="showRateClean" onclick="getRateClean()" title="5" type="radio"
+                           value="5"/>
+                    <input class="star-check" name="showRateClean" onclick="getRateClean()" title="4" type="radio"
+                           value="4"/>
+                    <input class="star-check" name="showRateClean" onclick="getRateClean()" title="3" type="radio"
+                           value="3"/>
+                    <input class="star-check" name="showRateClean" onclick="getRateClean()" title="2" type="radio"
+                           value="2"/>
+                    <input class="star-check" name="showRateClean" onclick="getRateClean()" title="1" type="radio"
+                           value="1"/>
                 </div>
-                <input type="hidden" id="rateClean" name="rateClean">
+                <input id="rateClean" name="rateClean" type="hidden">
                 <script>
                     function getRateClean() {
                         var rateLocNodeList = document.getElementsByName("showRateClean");
 
                         rateLocNodeList.forEach((node) => {
-                            if(node.checked) {
+                            if (node.checked) {
                                 document.getElementById("rateClean").value = node.value;
                             }
                         })
@@ -99,19 +110,24 @@
 
                 <label>의사소통</label>
                 <div class="star-container">
-                    <input class="star-check" name="showRateComu" title="5" type="radio" value="5" onclick="getRateComu()" />
-                    <input class="star-check" name="showRateComu" title="4" type="radio" value="4" onclick="getRateComu()" />
-                    <input class="star-check" name="showRateComu" title="3" type="radio" value="3" onclick="getRateComu()" />
-                    <input class="star-check" name="showRateComu" title="2" type="radio" value="2" onclick="getRateComu()" />
-                    <input class="star-check" name="showRateComu" title="1" type="radio" value="1" onclick="getRateComu()" />
+                    <input class="star-check" name="showRateComu" onclick="getRateComu()" title="5" type="radio"
+                           value="5"/>
+                    <input class="star-check" name="showRateComu" onclick="getRateComu()" title="4" type="radio"
+                           value="4"/>
+                    <input class="star-check" name="showRateComu" onclick="getRateComu()" title="3" type="radio"
+                           value="3"/>
+                    <input class="star-check" name="showRateComu" onclick="getRateComu()" title="2" type="radio"
+                           value="2"/>
+                    <input class="star-check" name="showRateComu" onclick="getRateComu()" title="1" type="radio"
+                           value="1"/>
                 </div>
-                <input type="hidden" id="rateComu" name="rateComu">
+                <input id="rateComu" name="rateComu" type="hidden">
                 <script>
                     function getRateComu() {
                         var rateLocNodeList = document.getElementsByName("showRateComu");
 
                         rateLocNodeList.forEach((node) => {
-                            if(node.checked) {
+                            if (node.checked) {
                                 document.getElementById("rateComu").value = node.value;
                             }
                         })
@@ -120,19 +136,24 @@
 
                 <label>가성비</label>
                 <div class="star-container">
-                    <input class="star-check" name="showRateChip" title="5" type="radio" value="5" onclick="getRateChip()" />
-                    <input class="star-check" name="showRateChip" title="4" type="radio" value="4" onclick="getRateChip()" />
-                    <input class="star-check" name="showRateChip" title="3" type="radio" value="3" onclick="getRateChip()" />
-                    <input class="star-check" name="showRateChip" title="2" type="radio" value="2" onclick="getRateChip()" />
-                    <input class="star-check" name="showRateChip" title="1" type="radio" value="1" onclick="getRateChip()" />
+                    <input class="star-check" name="showRateChip" onclick="getRateChip()" title="5" type="radio"
+                           value="5"/>
+                    <input class="star-check" name="showRateChip" onclick="getRateChip()" title="4" type="radio"
+                           value="4"/>
+                    <input class="star-check" name="showRateChip" onclick="getRateChip()" title="3" type="radio"
+                           value="3"/>
+                    <input class="star-check" name="showRateChip" onclick="getRateChip()" title="2" type="radio"
+                           value="2"/>
+                    <input class="star-check" name="showRateChip" onclick="getRateChip()" title="1" type="radio"
+                           value="1"/>
                 </div>
-                <input type="hidden" id="rateChip" name="rateChip">
+                <input id="rateChip" name="rateChip" type="hidden">
                 <script>
                     function getRateChip() {
                         var rateLocNodeList = document.getElementsByName("showRateChip");
 
                         rateLocNodeList.forEach((node) => {
-                            if(node.checked) {
+                            if (node.checked) {
                                 document.getElementById("rateChip").value = node.value;
                             }
                         })
@@ -407,7 +428,7 @@
                             return false;
                         }
 
-                        if (rateLoc == "" || rateClean == "" || rateComu == "" || rateChip == ""){
+                        if (rateLoc == "" || rateClean == "" || rateComu == "" || rateChip == "") {
                             alert("평가하지 않은 항목이 있습니다.");
                             return false;
                         }

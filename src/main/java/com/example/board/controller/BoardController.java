@@ -63,13 +63,13 @@ public class BoardController {
         } else {
             defaultListNo = boardNo;
         }
-        BoardVo boardForCheck = this.postService.retrieveBoardForUseCheck(boardNo);
+        BoardVo board = this.boardService.retrieveBoard(boardNo);
 
-        List<BoardVo> boards = this.postService.retrieveAllBoards();
+        List<BoardVo> boards = this.boardService.retrieveBoardList();
         Map<Integer, String> boardList = new HashMap<Integer, String>();
 
-        for (BoardVo board : boards) {
-            boardList.put(board.getBoardNo(), board.getTitle());
+        for (BoardVo b : boards) {
+            boardList.put(b.getBoardNo(), b.getTitle());
         }
 
         // request 영역에 디폴트 게시판 정보를 저장한다.
@@ -77,7 +77,7 @@ public class BoardController {
         // request 영역에 게시판 리스트 정보를 저장한다.
         model.addAttribute("boardList", boardList);
         // 게시판 타입을 저장한다.
-        model.addAttribute("boardType", boardForCheck.getType());
+        model.addAttribute("boardType", board.getType());
 
         return "page/post_write";
 
@@ -200,7 +200,6 @@ public class BoardController {
         model.addAttribute("review", review);
         // ######### 게시글 상세정보 끝 ######### //
 
-
         // ######### 게시글 조회수 증가 시작 ######### //
         // 조회수 중복방지는 필요한 기능이지만, 완벽하게 차단해야 할만큼 중대한 사항은 아니라고 생각, 따라서 쿠키를 사용
         Cookie oldCookie = null;
@@ -268,6 +267,120 @@ public class BoardController {
         return "page/post_detail";
     }
 
+
+    // 내가 작성한 글 보기기 - 게시판 별 접근 권한 시큐리티를 거치지 않고 접근
+    @GetMapping("/member/post/{postNo}")
+    public String myPostRead(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, Model model, HttpServletRequest req, HttpServletResponse response) {
+
+        // 작성자 본인이거나 관리자 인지 권한 확인
+        MemberVo member = userAccount.getMember();
+        int memNo = member.getMemNo();
+        int memberGrade = member.getGrade();
+
+        // 작성된 게시글 작성자 id
+        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
+
+        // 작성자 본인이 아니고, 관리자도 아닌 경우
+        if (memNo != writerNo && memberGrade != 5) {
+            //권한 없음 페이지로 이동
+            return "redirect:/denine";
+
+        } else {
+            // ######### 게시글 상세정보 시작 ######### //
+            PostVo post = this.postService.retrieveDetailBoard(postNo);
+            if (post == null) {
+                throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
+            }
+
+            List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
+            ReviewVo review = this.reviewService.retrieveReview(postNo);
+            MapVoForApi mapVoForApi = new MapVoForApi();
+
+            // tag값 배열로 셋팅
+            String tag = post.getTag();
+            if (tag != null && tag != "") {
+                String[] tags = tag.split(",");
+                post.setTags(tags);
+            }
+
+            try {
+                mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
+                model.addAttribute("mapVoForApi", mapVoForApi);
+            } catch (Exception exception) {
+
+            }
+
+            if (mapVoForApi == null) {
+                model.addAttribute("mapVoForApi", mapVoForApi);
+            }
+
+            model.addAttribute("post", post);
+            model.addAttribute("attachList", attachVoList);
+            model.addAttribute("review", review);
+            // ######### 게시글 상세정보 끝 ######### //
+
+
+            // ######### 게시글 조회수 증가 시작 ######### //
+            // 조회수 중복방지는 필요한 기능이지만, 완벽하게 차단해야 할만큼 중대한 사항은 아니라고 생각, 따라서 쿠키를 사용
+            Cookie oldCookie = null;
+            Cookie[] cookies = req.getCookies();
+
+            //request에서 넘어온 쿠키가 있는 경우
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    //이미 게시글을 1개 이상 본 기록이 있는 경우
+                    if (cookie.getName().equals("postView")) {
+                        //게시글 조회 쿠키 기록을 가져온다.
+                        oldCookie = cookie;
+                    }
+                }
+            }
+
+            //게시글 조회 기록이 있는 경우 (oldCookie = 이전 게시글 조회 기록)
+            if (oldCookie != null) {
+                log.info("oldCookie:{}", oldCookie.getValue());
+
+                //현재 조회하려는 게시글을 본 쿠키 기록이 없는 경우
+                if (!oldCookie.getValue().contains("[" + memNo + "-" + postNo + "]")) {
+                    //조회수를 올린다
+                    postService.upHitcount(postNo);
+                    // 현재 게시글을 조회했다고 쿠키에 추가한다.
+                    oldCookie.setValue(oldCookie.getValue() + "_[" + memNo + "-" + postNo + "]");
+                    //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
+                    oldCookie.setPath("/");
+                    //하루에 한번만 조회수가 올라가게 한다.
+                    oldCookie.setMaxAge(60 * 60 * 24);
+                    response.addCookie(oldCookie);
+                }
+            } else { //게시글 조회 기록이 없는 경우
+                //조회수를 올린다.
+                postService.upHitcount(postNo);
+                //게시글 조회 기록 쿠키를 생성한다.
+                Cookie newCookie = new Cookie("postView", "[" + memNo + "-" + postNo + "]");
+                //웹어플리케이션의 모든 URL 범위에서 전송할 수 있도록 Path를 설정해준다.
+                newCookie.setPath("/");
+                //하루에 한번만 조회수가 올라가게 한다.
+                newCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(newCookie);
+            }
+            // ######### 게시글 조회수 증가 끝 ######### //
+
+            // ######해당 게시판에서 댓글 사용 여부 판단######
+            int useComment = this.boardService.retrieveBoard(post.getBoardNo()).getUseComment();
+            model.addAttribute("useComment", useComment);
+
+            if (useComment != 0) {
+                // ######### 댓글 목록 시작 ######### //
+                List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+                model.addAttribute("comments", comments);
+                // ######### 댓글 목록 조회 끝 ######### //
+            }
+            // ######해당 게시판에서 댓글 사용 여부 끝 ######### //
+
+        }
+        return "page/post_detail";
+    }
+
     // 카카오 맵에 정보 전달
     @ResponseBody
     @GetMapping("/findMapInfo")
@@ -299,19 +412,11 @@ public class BoardController {
 
 
     // 게시글 수정폼
-    @GetMapping("/board/{boardNo}/post/{postNo}/modify")
-    public String modifyFrom(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, Model model, HttpServletRequest req, HttpServletResponse res) {
+    @GetMapping("/member/post/{postNo}/modify")
+    public String modifyFrom(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, Model model, HttpServletRequest req, HttpServletResponse res) {
 
         //비회원 접근할시 익셉션
         checkUser(userAccount, req, res);
-
-        PostVo test = new PostVo();
-        test.setPostNo(postNo);
-        test.setBoardNo(boardNo);
-
-        if (postService.retrievePostSearch(test) == null) {
-            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-        }
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         MemberVo member = userAccount.getMember();
@@ -329,7 +434,6 @@ public class BoardController {
         } else { // 작성자 본인인 경우
             // 게시글 정보 가져오기
             PostVo post = this.postService.retrieveDetailBoard(postNo);
-            BoardVo board = this.postService.retrieveBoardForUseCheck(post.getBoardNo());
             ReviewVo review = this.reviewService.retrieveReview(postNo);
             List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
             MapVoForApi mapVoForApi = new MapVoForApi();
@@ -364,7 +468,6 @@ public class BoardController {
 
             //게시글 정보 model셋팅
             model.addAttribute("post", post);
-            model.addAttribute("board", board);
             model.addAttribute("review", review);
             model.addAttribute("attachList", attachVoList);
             return "page/post_modify";
@@ -374,7 +477,7 @@ public class BoardController {
 
     // 선택한 파일 삭제
     @ResponseBody
-    @GetMapping("/attach/delete/{attachNo}")
+    @GetMapping("/member/attach/delete/{attachNo}")
     public Map deleteFile(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("attachNo") int attachNo) {
         //비회원 접근할시 익셉션
         if (userAccount == null) {
@@ -409,19 +512,11 @@ public class BoardController {
 
 
     // 게시글 삭제
-    @GetMapping("/board/{boardNo}/post/{postNo}/delete")
-    public String delete(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, @PathVariable("boardNo") int boardNo, HttpServletRequest req, HttpServletResponse res) {
+    @GetMapping("/member/post/{postNo}/delete")
+    public String delete(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("postNo") int postNo, HttpServletRequest req, HttpServletResponse res) {
 
         //비회원 접근할시 익셉션
         checkUser(userAccount, req, res);
-
-        PostVo test = new PostVo();
-        test.setPostNo(postNo);
-        test.setBoardNo(boardNo);
-
-        if (postService.retrievePostSearch(test) == null) {
-            throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
-        }
 
         // 작성자 본인이거나 관리자 인지 권한 확인
         MemberVo member = userAccount.getMember();
@@ -430,6 +525,7 @@ public class BoardController {
 
         // 작성된 게시글 작성자 id
         PostVo post = this.postService.retrieveDetailBoard(postNo);
+        int boardNo = post.getBoardNo();
         int writerNo = post.getWriterNo();
 
         // 작성자 본인이 아니고, 관리자도 아닌 경우

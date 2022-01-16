@@ -42,7 +42,7 @@ public class FileController {
     @Autowired
     private MemberService memberService;
 
-    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/member/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
                                 @RequestParam(value = "bordNo", required = false, defaultValue = "1") int boardNo,

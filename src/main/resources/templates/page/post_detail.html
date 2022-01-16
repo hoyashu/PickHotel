@@ -406,14 +406,14 @@
                 <script>
                     // 글 수정
                     function editPost() {
-                        location.href = "/board/" + boardNo + "/post/" + postNo + "/modify"
+                        location.href = "/member/post/" + postNo + "/modify"
                     };
 
                     // 글 삭제
                     function removePost() {
                         const con = confirm("해당 글을 삭제 하시겠습니까?\n삭제된 글은 복구할수 없습니다.");
                         if (con == true) {
-                            location.href = "/board/" + boardNo + "/post/" + postNo + "/delete"
+                            location.href = "/member/post/" + postNo + "/delete"
                         }
                     };
 

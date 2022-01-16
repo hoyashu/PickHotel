@@ -37,7 +37,7 @@ public class ModifyFileController {
     @Autowired
     private MapServiceForApi mapServiceForApi;
 
-    @RequestMapping(value = "/uploadFileForModify", method = RequestMethod.POST)
+    @RequestMapping(value = "/member/uploadFileForModify", method = RequestMethod.POST)
     public String modifyFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                               @RequestParam(value = "postNo", required = false) int postNo,
                               @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
