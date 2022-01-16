@@ -180,26 +180,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        return authCastion;
 //    }
 
-    /*
-    ----------------------------------------------------------------------------
-             Role Hierarchy
-    ----------------------------------------------------------------------------
-    */
-
-//    @Bean
-//    public RoleHierarchyImpl roleHierarchy(){
-//        String allHierarchy = roleHierarchyService.findAllHierarchy();
-//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-//        roleHierarchy.setHierarchy(allHierarchy);
-//        return roleHierarchy;
-//    }
-//
-//    @Bean
-//    public AccessDecisionVoter<? extends Object> roleVoter(){
-//        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
-//        return roleHierarchyVoter;
-//    }
-
 }
 
 
