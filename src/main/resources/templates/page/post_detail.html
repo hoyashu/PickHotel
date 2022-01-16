@@ -19,8 +19,8 @@
                 </div>
             </div>
             <div class="panel-body post-content">
-                <div class="mb-3" th:if="${mapVoForApi != null}">
-                    <div class="map_wrap">
+                <div class="mb-3 p-sm-4">
+                    <div class="map_wrap" th:if="${mapVoForApi != null}">
                         <div id="map" style="width:50%;height:100%;position:relative;overflow:hidden;"></div>
                         <div class="bg_white" id="menu_wrap">
                             <div class="option">
@@ -31,21 +31,20 @@
                             <div id="pagination"></div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label class="visually-hidden" for="content">내용</label>
-                    <div id="content" th:utext="*{content}"></div>
-                </div>
-                <div th:if="${attachList != null}">
-                    <div class="photos">
-                        <div id="images">
-                            <img th:each="attach : ${attachList}" th:if="${attach.fileType == 1}"
-                                 th:src="'/upload/' + ${attach.systemFileName}"/>
-                        </div>
+                    <div class="mb-3">
+                        <label class="visually-hidden" for="content">내용</label>
+                        <div id="content" th:utext="*{content}"></div>
                     </div>
-                    <div class="videos">
-                        <div class="mb-3">
-                            <div id="videos" th:each="attach : ${attachList}">
+                    <div th:if="${attachList != null}">
+                        <div class="photos">
+                            <div id="images">
+                                <img th:each="attach : ${attachList}" th:if="${attach.fileType == 1}"
+                                     th:src="'/upload/' + ${attach.systemFileName}"/>
+                            </div>
+                        </div>
+                        <div class="videos">
+                            <div class="mb-3">
+                                <div id="videos" th:each="attach : ${attachList}">
                                 <span th:if="${attach.fileType == 2}">
                                     <video controls>
                                         <source th:src="'/upload/' + ${attach.systemFileName}" type="video/mp4"/>
@@ -53,56 +52,57 @@
                                         <source th:src="'/upload/' + ${attach.systemFileName}" type="video/ogg"/>
                                     </video>
                                 </span>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+
+                    <div class="review" th:if="${review != null}">
+                        <div class="mb-3">
+                            <label for="rateLoc">위치</label>
+                            <span id="rateLoc" th:text="${review.rateLoc}"></span>
+                            <label for="rateClean">위생</label>
+                            <span id="rateClean" th:text="${review.rateClean}"></span>
+                            <label for="rateComu">의사소통</label>
+                            <span id="rateComu" th:text="${review.rateComu}"></span>
+                            <label for="rateChip">가성비</label>
+                            <span id="rateChip" th:text="${review.rateChip}"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="visitDate">방문 날짜</label>
+                            <span id="visitDate" th:text="${review.visitDate}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recommendPlace">주변 맛집과 관광지를 추천</label>
+                            <span id="recommendPlace" th:text="${review.recommendPlace}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notRecommendPerson">이런분들께는 비추에요</label>
+                            <span id="notRecommendPerson" th:text="${review.notRecommendPerson}"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 tag-box" th:if="${post.tag != null && post.tag != ''}">
+                        <div id="tag">
+                            <a th:each="tag : ${post.tags}" th:href="@{/postListByTagName(encodedTagName=${tag})}"><span
+                                    th:text="${'#'+tag}"></span></a>
+                        </div>
+                    </div>
+                    <div class="mb-3 panel-heading text-end">
+                        <a class="btn btn-warning" onClick="editPost()" sec:authorize="isAuthenticated()"
+                           th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">수정</a>
+                        <a class="btn btn-danger"
+                           onClick="removePost()" sec:authorize="isAuthenticated()"
+                           th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">삭제</a>
+                        <!--<a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>-->
+                        <a class="btn btn-secondary" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
+                    </div>
+
+                    <input id="postNo" name="postNo" th:value="*{postNo}" type="hidden">
+                    <input id="boardNo" name="postNo" th:value="*{boardNo}" type="hidden">
                 </div>
-
-
-                <div class="review" th:if="${review != null}">
-                    <div class="mb-3">
-                        <label for="rateLoc">위치</label>
-                        <span id="rateLoc" th:text="${review.rateLoc}"></span>
-                        <label for="rateClean">위생</label>
-                        <span id="rateClean" th:text="${review.rateClean}"></span>
-                        <label for="rateComu">의사소통</label>
-                        <span id="rateComu" th:text="${review.rateComu}"></span>
-                        <label for="rateChip">가성비</label>
-                        <span id="rateChip" th:text="${review.rateChip}"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="visitDate">방문 날짜</label>
-                        <span id="visitDate" th:text="${review.visitDate}"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="recommendPlace">주변 맛집과 관광지를 추천</label>
-                        <span id="recommendPlace" th:text="${review.recommendPlace}"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="notRecommendPerson">이런분들께는 비추에요</label>
-                        <span id="notRecommendPerson" th:text="${review.notRecommendPerson}"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3 tag-box" th:if="${post.tag != null && post.tag != ''}">
-                    <div id="tag">
-                        <a th:each="tag : ${post.tags}" th:href="@{/postListByTagName(encodedTagName=${tag})}"><span
-                                th:text="${'#'+tag}"></span></a>
-                    </div>
-                </div>
-                <div class="mb-3 panel-heading text-end">
-                    <a class="btn btn-warning" onClick="editPost()" sec:authorize="isAuthenticated()"
-                       th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">수정</a>
-                    <a class="btn btn-danger"
-                       onClick="removePost()" sec:authorize="isAuthenticated()"
-                       th:if="${#authentication.principal.member.memNo} == ${post.writerNo} OR ${#authentication.principal.member.grade} == '5'">삭제</a>
-                    <!--<a class="btn btn-warning" th:href="@{/post/block/{boardNo}(boardNo=*{boardNo})}">신고</a>-->
-                    <a class="btn btn-secondary" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}">목록보기</a>
-                </div>
-
-                <input id="postNo" name="postNo" th:value="*{postNo}" type="hidden">
-                <input id="boardNo" name="postNo" th:value="*{boardNo}" type="hidden">
             </div>
 
             <!-- 댓글시작 -->
@@ -453,9 +453,9 @@
                         var useComment = "[[${useComment}]]";
                         /*]]>*/
 
-                        if(useComment == 0){
+                        if (useComment == 0) {
                             document.getElementById("addComment").style.display = "none";
-                        }else{
+                        } else {
                             document.getElementById("addComment").style.display = "";
                         }
 

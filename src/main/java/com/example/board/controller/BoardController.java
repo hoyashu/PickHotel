@@ -113,7 +113,6 @@ public class BoardController {
         BoardVo board = boardService.retrieveBoard(boardNo);
         model.addAttribute("board", board);
 
-
         return "page/post_list";
     }
 
@@ -173,6 +172,7 @@ public class BoardController {
         if (post == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
+
         List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
         ReviewVo review = this.reviewService.retrieveReview(postNo);
         MapVoForApi mapVoForApi = new MapVoForApi();
@@ -334,6 +334,11 @@ public class BoardController {
             List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
             MapVoForApi mapVoForApi = new MapVoForApi();
 
+            // 게시글 셋팅
+            String content = post.getContent();
+            content = content.replaceAll("\"", "\'");
+            post.setContent(content);
+
             // tag값 배열로 셋팅
             String tag = post.getTag();
             if (tag != null && tag != "") {
@@ -372,7 +377,7 @@ public class BoardController {
     @GetMapping("/attach/delete/{attachNo}")
     public Map deleteFile(@AuthenticationPrincipal UserAccount userAccount, @PathVariable("attachNo") int attachNo) {
         //비회원 접근할시 익셉션
-        if (userAccount != null) {
+        if (userAccount == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTMEMBER.getExceptionMsgClass());
         }
 
@@ -435,6 +440,9 @@ public class BoardController {
         } else { // 작성자 본인인 경우
             // 삭제 쿼리 실행
             this.postService.removePost(postNo, boardNo);
+
+            //회원 게시글 갯수 감소
+            this.memberService.reviseBoardCount(memNo, -1);
 
             return "redirect:/boardList/" + boardNo;
         }

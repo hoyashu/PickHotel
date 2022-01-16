@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service("cityService")
 public class MemberService {
-    
+
     @Autowired
     private MemberDao memberDao;
 
@@ -38,7 +38,9 @@ public class MemberService {
     }
 
     // 회원가입 Role 추가
-    public void registerRole(String id) { this.memberDao.insertRole(id); }
+    public void registerRole(String id) {
+        this.memberDao.insertRole(id);
+    }
 
     // 아이디 중복체크
     public String retrieveIdCheck(String id) {
@@ -87,8 +89,19 @@ public class MemberService {
         return memberList;
     }
 
-    // 회원 수 조회
-    public int retrieveMemberTotalCount(MemberVo params) {
-        return this.memberDao.selectMemberTotalCount(params);
+    // 회원 게시글 갯수 증감
+    public void reviseBoardCount(int memNo, int updateCount) {
+        this.memberDao.updateBoardPost(memNo, updateCount);
     }
+
+    // 방문횟수 카운트+1
+    public int reviseVisitCount(int memNo) {
+        return this.memberDao.updateVisitCount(memNo);
+    }
+
+    // 회원 댓글수 증감
+    public void reviseCommentCount(int memNo, int updateCount) {
+        this.memberDao.updateCommentCount(memNo, updateCount);
+    }
+
 }

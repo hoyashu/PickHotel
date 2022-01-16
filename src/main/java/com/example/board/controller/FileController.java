@@ -7,6 +7,7 @@ import com.example.board.model.ReviewVo;
 import com.example.board.service.*;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
+import com.example.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,9 @@ public class FileController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private MemberService memberService;
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -158,6 +162,10 @@ public class FileController {
             }
         }
         this.boardService.reviseBoardPost(boardNo, 1);
+
+        //회원 게시글 갯수 증가
+        this.memberService.reviseBoardCount(memNo, 1);
+
         return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 
