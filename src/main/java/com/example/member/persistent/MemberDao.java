@@ -91,4 +91,9 @@ public class MemberDao {
         MemberVo memberVo = new MemberVo(memNo, grade);
         this.sqlSessionTemplate.update("MemberDao.updateMemberGrade", memberVo);
     }
+
+    //회원등급에 회원 존재여부 확인
+    public int checkMemberGrade(int memGrade) {
+        return this.sqlSessionTemplate.selectOne("MemberDao.checkMemberGrade", memGrade);
+    }
 }
