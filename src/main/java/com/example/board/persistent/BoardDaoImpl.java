@@ -42,7 +42,6 @@ public class BoardDaoImpl implements BoardDao {
         return this.sqlSessionTemplate.selectList("BoardDao.selectBoardListByType", type);
     }
 
-
     //게시판 총 개수
     @Override
     public int selectBoardTotalCount(int params) {
@@ -59,6 +58,11 @@ public class BoardDaoImpl implements BoardDao {
     @Override
     public int selectPageBoardTotalCount(BoardVo params) {
         return this.sqlSessionTemplate.selectOne("BoardDao.selectPageBoardCount", params);
+    }
+
+    //게시판 타입 조회
+    public BoardVo selectBoardType(int boardNo) {
+        return this.sqlSessionTemplate.selectOne("BoardDao.selectBoardType", boardNo);
     }
 
     //게시판 수정

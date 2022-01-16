@@ -3,11 +3,8 @@ package com.example.member.service;
 import com.example.member.model.MemberRoleVo;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
-import com.example.member.persistent.MemberDao;
 import com.example.member.persistent.RoleResourceDao;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,9 +23,6 @@ public class AccountService implements UserDetailsService {
     @Autowired
     private RoleResourceDao roleResourceDao;
 
-    @Autowired
-    private MemberDao memberDao;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("1. AccountService loadUserByUsername {}", username);
@@ -36,14 +30,13 @@ public class AccountService implements UserDetailsService {
     }
 
     protected UserDetails getLoginUser(String id) throws UsernameNotFoundException {
-
         MemberVo member = null;
         List<GrantedAuthority> authorityList = null;
 
         try {
             member = roleResourceDao.getUserById(id);
             boolean enabled = true;
-            if (1 != Integer.parseInt(member.getState())){
+            if (1 != Integer.parseInt(member.getState())) {
                 enabled = false;
             }
 
@@ -62,7 +55,7 @@ public class AccountService implements UserDetailsService {
             }
 
             for (String myRoles : roleHierarchy) {
-                roles.add(myRoles.replace("ROLE_",""));
+                roles.add(myRoles.replace("ROLE_", ""));
             }
 
             List<GrantedAuthority> authorities = new ArrayList(roles.size());
@@ -81,12 +74,12 @@ public class AccountService implements UserDetailsService {
 
             return new UserAccount(member, enabled, authorities);
 
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             log.error("failed to get LoginUser.", ex);
 
-            if(ex instanceof UsernameNotFoundException) {
+            if (ex instanceof UsernameNotFoundException) {
                 log.error("failed to get LoginUser.", ex);
-                UsernameNotFoundException e = (UsernameNotFoundException)ex;
+                UsernameNotFoundException e = (UsernameNotFoundException) ex;
                 throw e;
             }
             throw new UsernameNotFoundException("could not select user.", ex);

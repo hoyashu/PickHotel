@@ -1,6 +1,5 @@
 package com.example.board.service;
 
-import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
 import com.example.board.persistent.BoardDao;
@@ -90,24 +89,13 @@ public class PostService {
         this.postDao.upHitcount(postNo);
     }
 
-    // 모든 게시판 조회 번호와 이름만
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<BoardVo> retrieveAllBoards() {
-        return this.postDao.selectAllBoards();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public BoardVo retrieveBoardForUseCheck(int boardNo) {
-        return this.postDao.selectBoardForUseCheck(boardNo);
-    }
-
-
     //게시글 정보를 변경하다.
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void modifyPost(PostVo post) {
         this.postDao.updatePost(post);
     }
 
+    //게시글 조회
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void removePost(int postNo, int boardNo) {
         attachDao.deleteAttachbyPost(postNo);

@@ -42,9 +42,9 @@ public class BoardAdminController {
     // ######## 게시판 등록 ########
     @PostMapping("/intranet/board/add")
     public String boardAdd(@Valid BoardVo board,
-                           @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
-                           @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
-                           @RequestParam(value="useComment", defaultValue = "0") int useComment) {
+                           @RequestParam(value = "usePhoto", defaultValue = "0") int usePhoto,
+                           @RequestParam(value = "useVideo", defaultValue = "0") int useVideo,
+                           @RequestParam(value = "useComment", defaultValue = "0") int useComment) {
 
         board.setUsePhoto(usePhoto);
         board.setUseVideo(useVideo);
@@ -79,9 +79,9 @@ public class BoardAdminController {
     // 게시판 수정하기 버튼 눌렀을때
     @PostMapping("/intranet/board/modify")
     public String boardModify(BoardVo board,
-                              @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
-                              @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
-                              @RequestParam(value="useComment", defaultValue = "0") int useComment) {
+                              @RequestParam(value = "usePhoto", defaultValue = "0") int usePhoto,
+                              @RequestParam(value = "useVideo", defaultValue = "0") int useVideo,
+                              @RequestParam(value = "useComment", defaultValue = "0") int useComment) {
 
         board.setUsePhoto(usePhoto);
         board.setUseVideo(useVideo);
@@ -138,8 +138,6 @@ public class BoardAdminController {
         }
         // DB에 없으니까 여기서 게시판 그룹에 속한 게시판 개수 세줌
         model.addAttribute("boardGroupList", boardGroupList);
-        System.out.println("작성하고 넘어오기");
-
 
         return "page/intranet/board_group_list";
     }

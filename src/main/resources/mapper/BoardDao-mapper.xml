@@ -83,6 +83,12 @@
 		SELECT COUNT(*) FROM board WHERE bo_group_no = #{groupNo}
 	</select>
 
+	<!--게시판 타입 조회 -->
+	<select id="selectBoardType" parameterType="int" resultMap="BoardVoResult">
+		select bo_type
+		from board where bo_no = #{boardNo}
+	</select>
+
 	<!-- 게시판 수정 -->
 	<parameterMap type="BoardVo" id="updateBoardParameter">
 		<parameter property="boardNo" javaType="int" jdbcType="INTEGER" mode="IN"/>

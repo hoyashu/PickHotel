@@ -14,5 +14,5 @@ public interface SiteGradeDao {
 
     void updateSiteGrade(SiteGradeVo sitegrade);
 
-    List<SiteGradeVo> possibleGrade(int memNos);
+    List<SiteGradeVo> selectPossibleGrade(int memNos);
 }
