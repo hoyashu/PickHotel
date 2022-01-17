@@ -103,6 +103,12 @@ public class MemberService {
         return memberList;
     }
 
+    //회원등급에 회원 존재여부 확인
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
+    public int checkMemberGrade(int memGrade) {
+        return this.memberDao.checkMemberGrade(memGrade);
+    }
+
     // 회원 게시글 갯수 증감
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void reviseBoardCount(int memNo, int updateCount) {

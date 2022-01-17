@@ -218,6 +218,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 	</select>
 
+	<!-- 회원등급에 회원 존재 여부 -->
+	<select id="checkMemberGrade" parameterType="int"
+			resultType="int">
+		SELECT
+			COUNT(mb_grade)
+		FROM
+			member
+		where mb_grade = #{grade}
+	</select>
+
 	<!-- 회원 등록 -->
 	<parameterMap id="insertMemberParameter" type="MemberVo">
 		<parameter property="id" javaType="string"

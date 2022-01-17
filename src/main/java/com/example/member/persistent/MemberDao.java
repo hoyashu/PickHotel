@@ -52,6 +52,11 @@ public class MemberDao {
         return this.sqlSessionTemplate.selectOne("MemberDao.selectNickCheck", nick);
     }
 
+    //회원등급에 회원 존재여부 확인
+    public int checkMemberGrade(int memGrade) {
+        return this.sqlSessionTemplate.selectOne("MemberDao.checkMemberGrade", memGrade);
+    }
+
     // 회원 목록을 조회한다
     public List<MemberVo> selectMemberList(MemberVo params) {
         return this.sqlSessionTemplate.selectList("MemberDao.selectMemberList", params);

@@ -241,4 +241,16 @@ public class MemberController {
         return "redirect:/member";
     }
 
+    //회원등급에 회원 존재 여부 확인
+    @ResponseBody
+    @PostMapping("/intranet/grade/list/memgrade_check")
+    public String memberGradeCheck(int memGrade) {
+        int checkgrade = memberService.checkMemberGrade(memGrade);
+
+        if (checkgrade != 0) {
+            return "false";
+        } else {
+            return "success";
+        }
+    }
 }
