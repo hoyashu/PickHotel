@@ -73,7 +73,7 @@
                  LEFT JOIN member
                            ON mb_board >= mg_board AND mb_visit >= mg_visit AND mb_comment >= mg_com
         <![CDATA[
-        WHERE mb_grade < mg_grade AND mg_grade != 5
+        WHERE mb_grade < mg_grade AND mg_grade != 5 AND mg_use != 0
           AND mb_no = ${memNo}
         ]]>
     </select>
