@@ -68,7 +68,7 @@ public class GradeUpController {
         int memNo = member.getMemNo();
 
         // 2.가능한 등급 목록 정보 받아올것
-        List<SiteGradeVo> possibleGrades = this.siteGradeDao.possibleGrade(memNo);
+        List<SiteGradeVo> possibleGrades = this.siteGradeDao.selectPossibleGrade(memNo);
         if (possibleGrades.isEmpty()) {
             model.addAttribute("possibleGrades", "NoData");
         } else {
@@ -117,7 +117,7 @@ public class GradeUpController {
 
         // 신청 가능한 등급인지 확인 할 것
         int result = 0;
-        List<SiteGradeVo> possibleGrades = this.siteGradeDao.possibleGrade(memNo);
+        List<SiteGradeVo> possibleGrades = this.siteGradeDao.selectPossibleGrade(memNo);
         for (SiteGradeVo possibleGrade : possibleGrades) {
             int grade = possibleGrade.getMemGrade();
             if (grade == aftergrade) {

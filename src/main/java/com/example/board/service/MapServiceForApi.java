@@ -6,6 +6,7 @@ import com.example.board.model.MapVoForApi;
 import com.example.config.RestTemplateResponseErrorHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +30,7 @@ public class MapServiceForApi {
     }
 
     // 숙소 생성
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public String registerMap(MapVoForApi mapVoForApi) throws Exception {
         URI uri = restTemplate.postForLocation(URI_MAP, mapVoForApi);
 
@@ -36,6 +38,7 @@ public class MapServiceForApi {
     }
 
     // 숙소 1개 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public MapVoForApi retrieveMap(int map_no) throws Exception {
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("map_no", map_no);
@@ -46,12 +49,12 @@ public class MapServiceForApi {
         int statusCode = responseEntity.getStatusCodeValue();
         if (statusCode == 200) {
             mapVoForApi = responseEntity.getBody();
-            System.out.println("주소 이름 : " + mapVoForApi.getAddress_name());
         }
         return mapVoForApi;
     }
 
     // 숙소 모두 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public MapResponseForApi retrieveAllMaps() throws Exception {
         ResponseEntity<MapResponseForApi> responseEntity = restTemplate.getForEntity(URI_MAPS, MapResponseForApi.class);
         MapResponseForApi mapResponseForApi = responseEntity.getBody();
@@ -62,13 +65,14 @@ public class MapServiceForApi {
     }
 
     //숙소 업데이트
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void modifyMap(MapVoForApi mapVoForApi) throws Exception {
         restTemplate.put(URI_MAP, mapVoForApi, MapVoForApi.class);
     }
 
     // 숙소 삭제
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void removeMap(int map_no) throws Exception {
-
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("map_no", map_no);
 

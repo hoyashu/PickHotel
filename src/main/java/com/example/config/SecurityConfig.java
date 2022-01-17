@@ -1,20 +1,15 @@
 package com.example.config;
 
 import com.example.member.service.AccountService;
-import com.example.member.service.RoleHierarchyService;
 import com.example.security.*;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,27 +17,24 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private AccountService accountService;
@@ -68,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //중요
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(accountService)
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -80,17 +72,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter, CsrfFilter.class);
+
+        String message= URLEncoder.encode("새로운 사용자가 로그인 하였습니다", "UTF-8");
+
         log.info("call SecurityConfig configure");
 
-        http
-                .csrf().disable()
+        http.csrf().disable()
                 .authorizeRequests()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -108,20 +102,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .permitAll()
+//                .and()
+//                .rememberMe()
+//                .key("autoLogin")
+//                .rememberMeParameter("remember-me")
+//                .tokenValiditySeconds(86400 * 30)
+//                .authenticationSuccessHandler(domainSuccessHandler)
+//                .userDetailsService(accountService)
                 .and()
-                .rememberMe()
-                .key("autoLogin")
-                .rememberMeParameter("remember-me")
-                .tokenValiditySeconds(86400 * 30)
-                .authenticationSuccessHandler(domainSuccessHandler)
-                .userDetailsService(accountService)
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
-
         http.sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
-                .expiredUrl("/login");
+                .expiredUrl("/login?message=" + message)
+                .sessionRegistry(sessionRegistry());
 
     }
 
@@ -157,31 +155,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // logout 후 login할 때 정상동작을 위함
     @Bean
-    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
-        return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
-
-    /*
-    ----------------------------------------------------------------------------
-             Role Hierarchy
-    ----------------------------------------------------------------------------
-    */
-
+    // remember-me 중복 로그인 에러
 //    @Bean
-//    public RoleHierarchyImpl roleHierarchy(){
-//        String allHierarchy = roleHierarchyService.findAllHierarchy();
-//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-//        roleHierarchy.setHierarchy(allHierarchy);
-//        return roleHierarchy;
+//    public RememberMeAuthenticationFilter authCastion(){
+//        RememberMeAuthenticationFilter authCastion = new
+//                RememberMeAuthenticationFilter(authRemberMe, tokenBasedRememberMeServices());
+//        return authCastion;
 //    }
-//
-//    @Bean
-//    public AccessDecisionVoter<? extends Object> roleVoter(){
-//        RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
-//        return roleHierarchyVoter;
-//    }
-
 }
 
 

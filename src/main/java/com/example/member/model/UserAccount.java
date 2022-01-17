@@ -9,10 +9,8 @@ import java.util.Collection;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of= {"userCd"})
 public class UserAccount extends org.springframework.security.core.userdetails.User {
 
-    private String userCd;
     private MemberVo member;
 
     public UserAccount(MemberVo member, boolean enabled, Collection<? extends GrantedAuthority> authorities) {

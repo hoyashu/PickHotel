@@ -4,10 +4,7 @@ import com.example.board.model.BoardVo;
 import com.example.board.model.MapVoForApi;
 import com.example.board.model.PostVo;
 import com.example.board.model.ReviewVo;
-import com.example.board.service.FileUploadService;
-import com.example.board.service.MapServiceForApi;
-import com.example.board.service.PostService;
-import com.example.board.service.ReviewService;
+import com.example.board.service.*;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,9 @@ import java.util.List;
 @Controller
 public class ModifyFileController {
     @Autowired
+    private BoardService boardService;
+
+    @Autowired
     private PostService postService;
 
     @Autowired
@@ -37,7 +37,7 @@ public class ModifyFileController {
     @Autowired
     private MapServiceForApi mapServiceForApi;
 
-    @RequestMapping(value = "/uploadFileForModify", method = RequestMethod.POST)
+    @RequestMapping(value = "/member/uploadFileForModify", method = RequestMethod.POST)
     public String modifyFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                               @RequestParam(value = "postNo", required = false) int postNo,
                               @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
@@ -89,7 +89,7 @@ public class ModifyFileController {
             this.postService.modifyPost(postVo);
 
             // 숙소 정보, 리뷰 정보
-            BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
+            BoardVo boardForUseCheck = this.boardService.retrieveBoardType(boardNo);
             if (boardForUseCheck.getType().equals("basic")) {
 
             } else {

@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 
 @Slf4j
@@ -28,9 +29,8 @@ public class DomainFailureHandler implements AuthenticationFailureHandler {
         String message = getExceptionMessage(exception);
         log.info("Login error : " + message);
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/login");
-        request.setAttribute("message",message);
-        dispatcher.forward(request, response);
+        message= URLEncoder.encode(message, "UTF-8");
+        response.sendRedirect("/login?message=" + message);
 
     }
 

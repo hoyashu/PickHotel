@@ -7,6 +7,7 @@ import com.example.board.model.ReviewVo;
 import com.example.board.service.*;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
+import com.example.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ import java.util.List;
 @Controller
 public class FileController {
     @Autowired
+    private BoardService boardService;
+
+    @Autowired
     private PostService postService;
 
     @Autowired
@@ -36,9 +40,9 @@ public class FileController {
     private MapServiceForApi mapServiceForApi;
 
     @Autowired
-    private BoardService boardService;
+    private MemberService memberService;
 
-    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/member/uploadFile", method = RequestMethod.POST)
     public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
                                 @RequestParam(value = "bordNo", required = false, defaultValue = "1") int boardNo,
@@ -82,8 +86,8 @@ public class FileController {
         int postNo = postService.registerPost(postVo);
         session.setAttribute("boardNo", boardNo);
 
-        BoardVo boardForUseCheck = this.postService.retrieveBoardForUseCheck(boardNo);
-        if (boardForUseCheck.getType().equals("basic")) {
+        BoardVo board = this.boardService.retrieveBoard(boardNo);
+        if (board.getType().equals("basic")) {
 
         } else {
             // 숙소 정보, 리뷰 정보
@@ -128,7 +132,7 @@ public class FileController {
         }
 
 
-        if (boardForUseCheck.getUsePhoto() == 1) {
+        if (board.getUsePhoto() == 1) {
             // 이미지
             if (images != null) {
                 for (MultipartFile file : images) {
@@ -143,7 +147,7 @@ public class FileController {
         }
 
 
-        if (boardForUseCheck.getUseVideo() == 1) {
+        if (board.getUseVideo() == 1) {
             // 동영상
             if (videos != null) {
                 for (MultipartFile file : videos) {
@@ -158,6 +162,10 @@ public class FileController {
             }
         }
         this.boardService.reviseBoardPost(boardNo, 1);
+
+        //회원 게시글 갯수 증가
+        this.memberService.reviseBoardCount(memNo, 1);
+
         return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
     }
 

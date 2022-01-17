@@ -41,7 +41,7 @@
 		SELECT post_no, bo_no, po_subject, po_content, po_mb_no, mb_nick,
 			   DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, po_comment, po_tag
 		FROM post INNER JOIN member ON post.po_mb_no=member.mb_no
-		WHERE concat(',',po_tag,',') like '%,'#{tag}',%' AND po_isblind = 0
+		WHERE concat(',',po_tag,',') like CONCAT('%',#{tag},'%') AND po_isblind = 0
 		ORDER BY writedate DESC
 	</select>
 
@@ -62,6 +62,7 @@
 					INNER JOIN board c ON a.bo_no = c.bo_no
 					INNER JOIN board_group d ON c.bo_group_no = d.bo_group_no
 		WHERE post_no = #{postNo}
+		ORDER BY writedate DESC
 	</select>
 
 	<select id="selectPostSearch" parameterMap="PostVoParameterMap" resultType="integer">
@@ -77,49 +78,9 @@
 		WHERE bo_no = #{boardNo} AND post_no = #{postNo})
 	</select>
 
-<!--	board 관련 -->
-	<select id="selectBoardNo" resultType="int">
-		SELECT bo_no FROM board;
-	</select>
-
-	<select id="selectBoardName" resultType="string">
-		SELECT bo_name FROM board;
-	</select>
-
-	<resultMap id="BoardVoResult" type="BoardVo">
-		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
-		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
-	</resultMap>
-
-	<select id="selectAllBoards" resultType="BoardVo" resultMap="BoardVoResult">
-		SELECT bo_no, bo_name from board ORDER BY bo_no asc
-	</select>
-
-	<resultMap id="BoardVoResultMapForUseCheck" type="BoardVo">
-		<result property="boardNo" javaType="int" column="bo_no" jdbcType="INTEGER" />
-		<result property="groupNo" javaType="int" column="bo_group_no" jdbcType="INTEGER"/>
-		<result property="groupName" javaType="string" column="bo_group_name" jdbcType="VARCHAR"/>
-		<result property="title" javaType="string" column="bo_name" jdbcType="VARCHAR" />
-		<result property="type" javaType="string" column="bo_type" jdbcType="VARCHAR" />
-		<result property="boGrade" javaType="int" column="bo_grade" jdbcType="INTEGER" />
-		<result property="usePhoto" javaType="int" column="bo_use_photo" jdbcType="INTEGER" />
-		<result property="useVideo" javaType="int" column="bo_use_video" jdbcType="INTEGER" />
-		<result property="useFile" javaType="int" column="bo_use_fupdown" jdbcType="INTEGER" />
-		<result property="useComment" javaType="int" column="bo_use_comment" jdbcType="INTEGER" />
-		<result property="creatDatetime" javaType="string" column="bo_datetime" jdbcType="VARCHAR" />
-		<result property="postCount" javaType="int" column="bo_post" jdbcType="INTEGER" />
-	</resultMap>
-
-	<select id="selectBoardForUseCheck" parameterType="int" resultMap="BoardVoResultMapForUseCheck">
-		select bo_no, bo_group_no, bo_name, bo_type, bo_grade,
-			   bo_use_photo, bo_use_video, bo_use_fupdown, bo_use_comment, bo_datetime, bo_post
-		from board where bo_no = #{boardNo}
-	</select>
-	<!--	board 관련-->
-
 	<select id="selectPostList" parameterType="PostVo" resultMap="PostVoResultMap">
 		SELECT post_no, bo_no, po_mb_no, po_subject,
-		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_views, mb_nick
+		DATE_FORMAT(po_datetime, '%Y/%m/%d %H:%i:%s') as writedate, po_comment, po_views, mb_nick
 		FROM post JOIN member ON post.po_mb_no = member.mb_no
 		WHERE bo_no = #{boardNo} and po_isblind = 0
 		<if
@@ -134,7 +95,7 @@
 				test='searchKeyword !=null  and searchType.equalsIgnoreCase("nick")'>
 			and mb_nick like concat('%',#{searchKeyword},'%')
 		</if>
-		ORDER BY writedate DESC
+		ORDER BY post_no DESC
 		LIMIT
 		#{paginationInfo.firstRecordIndex}, #{recordsPerPage}
 	</select>

@@ -21,7 +21,7 @@
         SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit, mg_use FROM membergrade
     </select>
 
-    <!--    사용자에게 안내되는 사용중인 등급-->
+    <!--  현재 사용중인 등급 -->
     <select id="selectSiteGradeToUser" resultMap="SiteGradeListResult">
         SELECT mg_grade, mg_name, mg_type, mg_board, mg_com, mg_visit FROM membergrade WHERE mg_use = 1
     </select>
@@ -61,7 +61,7 @@
 
     </update>
 
-    <!-- 등업신청 가능 등급 조회 -->
+    <!-- 등업신청 가능 등급 조회 (회원은 관리자 등급에 신청이 불가능함) -->
     <resultMap id="possibleGradeVoResult" type="SiteGradeVo">
         <result property="memGrade" javaType="int" column="mg_grade" jdbcType="INTEGER"/>
         <result property="memGradeName" javaType="string" column="mg_name" jdbcType="VARCHAR"/>
@@ -73,7 +73,7 @@
                  LEFT JOIN member
                            ON mb_board >= mg_board AND mb_visit >= mg_visit AND mb_comment >= mg_com
         <![CDATA[
-        WHERE mb_grade < mg_grade
+        WHERE mb_grade < mg_grade AND mg_grade != 5
           AND mb_no = ${memNo}
         ]]>
     </select>

@@ -4,10 +4,12 @@
     <div class="row" id="page-title">
         <h1 class="text-center">게시글 수정</h1>
     </div>
-    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST" th:action="@{/uploadFileForModify}">
+    <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
+          th:action="@{/member/uploadFileForModify}">
         <div class="mb-2">
             <label class="visually-hidden" for="subject">제목</label>
-            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" th:value="${post.subject}" type="text">
+            <input class="form-control" id="subject" name="subject" placeholder="제목을 입력하세요" th:value="${post.subject}"
+                   type="text">
         </div>
 
         <div class="mb-4 map_wrap" th:if="${mapVoForApi != null}">
@@ -188,8 +190,8 @@
                 </div>
             </div>
         </div>
-        <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden" />
-        <input id="bordNo" name="bordNo" th:value="${post.boardNo}" type="hidden" />
+        <input id="postNo" name="postNo" th:value="${post.postNo}" type="hidden"/>
+        <input id="bordNo" name="bordNo" th:value="${post.boardNo}" type="hidden"/>
         <div class="text-center">
             <button class="btn btn-primary btn-lg" id="saveBtn" onclick="submitCheck();" type="button">수정</button>
         </div>
@@ -600,7 +602,7 @@
 
             $.ajax({
                 type   : 'GET',
-                url    : '/attach/delete/' + attachNo,
+                url    : '/member/attach/delete/' + attachNo,
                 success: function (data) {
                     if (data.success == 'success') {
                         console.log("삭제 성공");

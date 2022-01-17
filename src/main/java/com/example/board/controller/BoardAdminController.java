@@ -4,6 +4,8 @@ import com.example.board.model.BoardGroupVo;
 import com.example.board.model.BoardVo;
 import com.example.board.service.BoardGroupService;
 import com.example.board.service.BoardService;
+import com.example.grade.model.SiteGradeVo;
+import com.example.grade.service.SiteGradeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,9 @@ public class BoardAdminController {
     @Autowired
     private BoardGroupService boardGroupService;
 
+    @Autowired
+    private SiteGradeService siteGradeService;
+
     // ######## 게시판 그룹 관리 ########
     @GetMapping("/intranet/boardgroup_list")
     public String boardGroupList() {
@@ -36,19 +41,24 @@ public class BoardAdminController {
         List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
         model.addAttribute("boardGroupList", boardGroupList);
 
+        //현재 사용중인 사이트 등급 목록
+        List<SiteGradeVo> useSiteGrades = siteGradeService.retriveSiteGradeToUser();
+        model.addAttribute("useSiteGrades", useSiteGrades);
+
         return "page/intranet/board_write";
     }
 
     // ######## 게시판 등록 ########
     @PostMapping("/intranet/board/add")
     public String boardAdd(@Valid BoardVo board,
-                           @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
-                           @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
-                           @RequestParam(value="useComment", defaultValue = "0") int useComment) {
+                           @RequestParam(value = "usePhoto", defaultValue = "0") int usePhoto,
+                           @RequestParam(value = "useVideo", defaultValue = "0") int useVideo,
+                           @RequestParam(value = "useComment", defaultValue = "0") int useComment) {
 
         board.setUsePhoto(usePhoto);
         board.setUseVideo(useVideo);
         board.setUseComment(useComment);
+
         // 게시판 정보 추가
         boardService.registerBoard(board);
 
@@ -68,10 +78,14 @@ public class BoardAdminController {
     @GetMapping({"/intranet/board/{boardNo}", "/intranet/board/"})
     public String boardDetail(@PathVariable int boardNo, Model model) {
         BoardVo board = boardService.retrieveBoard(boardNo);
-        List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
-
         model.addAttribute("board", board);
+
+        List<BoardGroupVo> boardGroupList = boardGroupService.retrieveBoardGroupList();
         model.addAttribute("boardGroupList", boardGroupList);
+
+        //현재 사용중인 사이트 등급 목록
+        List<SiteGradeVo> useSiteGrades = siteGradeService.retriveSiteGradeToUser();
+        model.addAttribute("useSiteGrades", useSiteGrades);
 
         return "page/intranet/board_modify";
     }
@@ -79,9 +93,9 @@ public class BoardAdminController {
     // 게시판 수정하기 버튼 눌렀을때
     @PostMapping("/intranet/board/modify")
     public String boardModify(BoardVo board,
-                              @RequestParam(value="usePhoto", defaultValue = "0") int usePhoto,
-                              @RequestParam(value="useVideo", defaultValue = "0") int useVideo,
-                              @RequestParam(value="useComment", defaultValue = "0") int useComment) {
+                              @RequestParam(value = "usePhoto", defaultValue = "0") int usePhoto,
+                              @RequestParam(value = "useVideo", defaultValue = "0") int useVideo,
+                              @RequestParam(value = "useComment", defaultValue = "0") int useComment) {
 
         board.setUsePhoto(usePhoto);
         board.setUseVideo(useVideo);
@@ -138,8 +152,6 @@ public class BoardAdminController {
         }
         // DB에 없으니까 여기서 게시판 그룹에 속한 게시판 개수 세줌
         model.addAttribute("boardGroupList", boardGroupList);
-        System.out.println("작성하고 넘어오기");
-
 
         return "page/intranet/board_group_list";
     }
