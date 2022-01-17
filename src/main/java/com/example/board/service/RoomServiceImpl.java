@@ -7,6 +7,8 @@ import com.example.board.persistent.RoomDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -31,9 +33,9 @@ public class RoomServiceImpl implements RoomService {
         return this.roomDao.selectRoomList();
     }
 
-
-    //방 목록 조회
+    //숙소 목록 조회
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public RoomResponse retrieveRooms() {
         ResponseEntity<RoomResponse> responseEntity = restTemplate.getForEntity(URI_ROOMS, RoomResponse.class);
         RoomResponse roomResponse = responseEntity.getBody();
@@ -63,7 +65,9 @@ public class RoomServiceImpl implements RoomService {
         return roomResponse;
     }
 
+    //숙소 상세조회
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public RoomVo retrieveRoom(int roomNo) {
 
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -92,8 +96,9 @@ public class RoomServiceImpl implements RoomService {
         return room;
     }
 
-    //방 생성
+    //숙소 생성
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public String registerRoom(RoomVo room) {
 
         URI uri = restTemplate.postForLocation(URI_ROOM, room);
@@ -103,21 +108,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
 
-    //방 삭제
+    //숙소 삭제
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void removeRoom(int roomNo) {
-
-
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("roomNo", roomNo);
 
         restTemplate.delete(URI_ROOMS_ROOMNO, params);
     }
 
-    //방 업데이트
+    //숙소 업데이트
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void updateRoom(RoomVo room) {
-
         restTemplate.put(URI_ROOM, room, RoomVo.class);
     }
 }

@@ -42,22 +42,8 @@ public class PostDao {
         return count;
     }
 
-    public List<Integer> selectBoardNo() {
-        List<Integer> list = this.sqlSession.selectList("PostDao.selectBoardNo");
-        return list;
-    }
-
-    public List<String> selectBoardName() {
-        List<String> list = this.sqlSession.selectList("PostDao.selectBoardName");
-        return list;
-    }
-
     public List<BoardVo> selectAllBoards() {
         return this.sqlSession.selectList("PostDao.selectAllBoards");
-    }
-
-    public BoardVo selectBoardForUseCheck(int boardNo) {
-        return this.sqlSession.selectOne("PostDao.selectBoardForUseCheck", boardNo);
     }
 
     // 게시글 존재 여부 조회

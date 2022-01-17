@@ -30,7 +30,6 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     // 댓글 목록 조회
-
     @Override
     public CommentVo selectComment(int comNo) {
         CommentVo comment = new CommentVo();
@@ -59,7 +58,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
 
-    // 댓글삭제
+    // 댓글 블라인드 처리
     @Override
     public void blindComment(int comNo, int isblind) {
     }

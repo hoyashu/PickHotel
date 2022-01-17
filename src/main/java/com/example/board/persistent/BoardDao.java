@@ -26,6 +26,9 @@ public interface BoardDao {
     //게시판 총 개수-page
     int selectPageBoardTotalCount(BoardVo params);
 
+    //게시판 타입 조회
+    BoardVo selectBoardType(int boardNo);
+
     // 게시판 수정
     void updateBoard(BoardVo Board);
 

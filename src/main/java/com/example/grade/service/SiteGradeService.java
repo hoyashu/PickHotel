@@ -14,5 +14,5 @@ public interface SiteGradeService {
 
     void siteGradeModify(SiteGradeVo sitegrade);
 
-    List<SiteGradeVo> possibleGrade(int memNo);
+    List<SiteGradeVo> retrivePossibleGrade(int memNo);
 }

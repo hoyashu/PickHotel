@@ -1,12 +1,14 @@
 package com.example.security;
 
 
-import com.example.member.persistent.MemberDao;
+import com.example.member.model.UserAccount;
 import com.example.member.persistent.RoleResourceDao;
+import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -27,7 +29,7 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
     RoleResourceDao resourceDao;
 
     @Autowired
-    MemberDao memberDao;
+    MemberService memberService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
@@ -42,7 +44,9 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
         log.info("call successHandler");
 
         // 로그인 방문수 카운트
-        String id = authentication.getName();
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAccount member = (UserAccount) authentication.getPrincipal();
+        int memNo = member.getMember().getMemNo();
 
         Cookie oldCookie = null;
         Cookie[] cookies = request.getCookies();
@@ -58,17 +62,16 @@ public class DomainSuccessHandler implements AuthenticationSuccessHandler {
         if (oldCookie != null) {
             log.info("oldCookie:{}", oldCookie.getValue());
 
-            if (!oldCookie.getValue().contains("[" + id + "]")) {
-                this.memberDao.UpdateVisitCount(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+            if (!oldCookie.getValue().contains("[" + memNo + "]")) {
+                this.memberService.reviseVisitCount(memNo);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + memNo + "]");
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(60 * 60 * 24);
                 response.addCookie(oldCookie);
             }
         } else {
-
-            this.memberDao.UpdateVisitCount(id);
-            Cookie newCookie = new Cookie("loginCount", "[" + id + "]");
+            this.memberService.reviseVisitCount(memNo);
+            Cookie newCookie = new Cookie("loginCount", "[" + memNo + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(newCookie);

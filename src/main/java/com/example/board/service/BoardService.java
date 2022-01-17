@@ -1,6 +1,7 @@
 package com.example.board.service;
 
 import com.example.board.model.BoardVo;
+
 import java.util.List;
 
 public interface BoardService {
@@ -25,6 +26,9 @@ public interface BoardService {
 
     //게시판 게시글 갯수 수정
     int reviseBoardPost(int boardNo, int postCount);
+
+    //게시판 타입 조회
+    BoardVo retrieveBoardType(int boardNo);
 
     //게시판 수정
     void reviseBoard(BoardVo board);

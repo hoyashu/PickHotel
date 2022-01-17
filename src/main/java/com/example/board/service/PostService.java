@@ -1,6 +1,5 @@
 package com.example.board.service;
 
-import com.example.board.model.BoardVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
 import com.example.board.persistent.BoardDao;
@@ -31,6 +30,7 @@ public class PostService {
     private BoardDao boardDao;
 
     // 게시글 정보를 등록하다.
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public int registerPost(PostVo post) {
         int no = this.postDao.insertPost(post);
         return no;
@@ -43,25 +43,20 @@ public class PostService {
         return posts;
     }
 
-    public List<Integer> retrieveBoardNo() {
-        return this.postDao.selectBoardNo();
-    }
-
-    public List<String> retrieveBoardName() {
-        return this.postDao.selectBoardName();
-    }
-
     // 게시글 상세정보 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public PostVo retrieveDetailBoard(int postNo) {
         return this.postDao.selectDetailPost(postNo);
     }
 
     // 게시글 존재 여부 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public Integer retrievePostSearch(PostVo post) {
         return this.postDao.selectPostSearch(post);
     }
 
     //회원별 게시글 목록 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public List<PostVo> retrieveMyPosts(int MemNo) {
         List<PostVo> posts = this.postDao.selectMyPosts(MemNo);
         if (posts.size() == 0) {
@@ -71,6 +66,7 @@ public class PostService {
     }
 
     // 게시글 목록 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public List<PostVo> retrievePostList(PostVo params) {
         List<PostVo> postList = new ArrayList<PostVo>();
 
@@ -87,35 +83,20 @@ public class PostService {
         return postList;
     }
 
-    public int retrievePostCount(PostVo params) {
-        return this.postDao.selectPostCount(params);
-    }
-
-
     // 게시글 조회수 증가
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void upHitcount(int postNo) {
         this.postDao.upHitcount(postNo);
     }
 
-    // 모든 게시판 조회 번호와 이름만
-    public List<BoardVo> retrieveAllBoards() {
-        return this.postDao.selectAllBoards();
-    }
-
-    public BoardVo retrieveBoardForUseCheck(int boardNo) {
-        return this.postDao.selectBoardForUseCheck(boardNo);
-    }
-
-
     //게시글 정보를 변경하다.
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void modifyPost(PostVo post) {
         this.postDao.updatePost(post);
     }
 
-    public void removePostAttach(int attachNo) {
-        attachDao.deletePostAttach(attachNo);
-    }
-
+    //게시글 조회
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void removePost(int postNo, int boardNo) {
         attachDao.deleteAttachbyPost(postNo);
         reviewDao.deleteReview(postNo);
