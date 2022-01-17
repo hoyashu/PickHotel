@@ -27,8 +27,23 @@ public class NoteService {
         }
     }
 
+    // 멤버 아이디로 멤버 번호찾기
     public int retrieveMbNo(String mbId){
         return this.noteDao.selectMbNo(mbId);
+    }
+
+    public List<Integer> retrieveMbNos(int noteNo){
+        return this.noteDao.selectMbNos(noteNo);
+    }
+
+    // 받은 사람 1명만
+    public int retrieveOneGetMbNo(int mbNo, int noteNo){
+        return this.noteDao.selectOneGetMbNo(mbNo, noteNo);
+    }
+
+    // 받은 사람 모두 다
+    public List<Integer> retrieveAllGetMbNo(int mbNo, int noteNo){
+        return this.noteDao.selectAllGetMbNo(mbNo, noteNo);
     }
 
     // 쪽지 상세 조회

@@ -8,10 +8,10 @@
 
 		<form id="noteState">
 			<button class="btn btn-danger" id="removeBtn" disabled="disabled" type="submit">삭제</button>
-			<button class="btn btn-success" id="saveBtn" disabled="disabled" type="submit">보관</button>
+<!--			<button class="btn btn-success" id="saveBtn" disabled="disabled" type="submit" >보관</button>-->
 			<span><a th:href="@{/member/note/Receivelist}">받은 쪽지</a></span>
 			<span><a th:href="@{/member/note/Sendlist}">보낸 쪽지</a></span>
-			<span><a th:href="@{/member/note/Savelist}">보관함</a></span>
+<!--			<span><a th:href="@{/member/note/Savelist}">보관함</a></span>-->
 			<table class="table table-bordered table-striped table-condensed flip-content post-list-table">
 				<thead>
 				<tr>
@@ -49,10 +49,10 @@
 				console.log(chk_arr);
 				if(chk_arr.length != 0){
 					$('#removeBtn').attr('disabled', false);
-					$('#saveBtn').attr('disabled', false);
+					// $('#saveBtn').attr('disabled', false);
 				} else if (chk_arr.length == 0) {
 					$('#removeBtn').attr('disabled', true);
-					$('#saveBtn').attr('disabled', true);
+					// $('#saveBtn').attr('disabled', true);
 				}
 
 			}
@@ -64,11 +64,11 @@
 					$('#noteState').submit();
 				});
 
-				$('#saveBtn').on('click', function () {
-					$('#noteState').attr('action', '/member/note/save');
-					$('#noteState').attr('method', 'post');
-					$('#noteState').submit();
-				});
+				// $('#saveBtn').on('click', function () {
+				// 	$('#noteState').attr('action', '/member/note/save');
+				// 	$('#noteState').attr('method', 'post');
+				// 	$('#noteState').submit();
+				// });
 			});
 		</script>
 		<div class="row">
