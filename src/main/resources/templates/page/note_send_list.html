@@ -4,14 +4,16 @@
 <div layout:fragment="content">
 	<div id="page-title" class="row">
 		<h1 class="text-center">발신 쪽지 목록</h1>
-		<span><a th:href="@{/member/note/Writenote}"><button class="btn btn-primary" type="button">쪽지 쓰기</button></a></span>
+
 
 		<form id="noteState">
-			<button class="btn btn-danger" id="removeBtn" disabled="disabled" type="submit">삭제</button>
+			<span><a th:href="@{/member/note/Writenote}"><button class="btn btn-primary" type="button">쪽지 쓰기</button></a></span>&nbsp;
+			<button class="btn btn-danger" id="removeBtn" disabled="disabled" type="submit">삭제</button>&nbsp;
 <!--			<button class="btn btn-success" id="saveBtn" disabled="disabled" type="submit" >보관</button>-->
-			<span><a th:href="@{/member/note/Receivelist}">받은 쪽지</a></span>
-			<span><a th:href="@{/member/note/Sendlist}">보낸 쪽지</a></span>
+			<span><a th:href="@{/member/note/Receivelist}">받은 쪽지</a></span>&nbsp;
+			<span><a th:href="@{/member/note/Sendlist}">보낸 쪽지</a></span><br><br>
 <!--			<span><a th:href="@{/member/note/Savelist}">보관함</a></span>-->
+
 			<table class="table table-bordered table-striped table-condensed flip-content post-list-table">
 				<thead>
 				<tr>

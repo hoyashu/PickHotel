@@ -39,6 +39,9 @@ public class NoteController {
             for (NoteVo note : noteList) {
                 String getMbNick = (this.memberService.retrieveMember(note.getNoteGetMbNo())).getId();
                 String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getId();
+                if(note.getNoteCon().length() > 10){
+                    note.setNoteCon(note.getNoteCon().substring(0,10) + "...");
+                }
                 note.setNoteGetMbNick(getMbNick);
                 note.setNoteSendMbNick(sendMbNick);
             }
@@ -62,6 +65,9 @@ public class NoteController {
                 int getMbNo = this.noteService.retrieveOneGetMbNo(memNo, note.getNoteNo());
                 String getMbNick = (this.memberService.retrieveMember(getMbNo)).getId();
                 String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getId();
+                if(note.getNoteCon().length() > 10){
+                    note.setNoteCon(note.getNoteCon().substring(0,10) + "...");
+                }
                 note.setNoteGetMbNick(getMbNick);
                 note.setNoteSendMbNick(sendMbNick);
             }
