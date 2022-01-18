@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		m.mb_no, s.ms_no,
 		s.ms_reason,
 		s.ms_datetime, IF(m.mb_state =
-		2,"-","가입불가") as mb_state
+		3,"가입불가","-") as mb_state
 		FROM
 		memberstate as s Left JOIN member
 		as m on
@@ -86,8 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		m.mb_no,
 		s.ms_no,
 		s.ms_reason,
-		s.ms_datetime, IF(m.mb_state =
-		2,"-","가입불가") as
+		s.ms_datetime, IF(m.mb_state = 3,"가입불가","-") as
 		mb_state
 		FROM memberstate
 		as s Left JOIN member
