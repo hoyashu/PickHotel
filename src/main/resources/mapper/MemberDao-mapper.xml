@@ -277,7 +277,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<parameter property="state" javaType="string"
 			jdbcType="VARCHAR" mode="IN" />
 	</parameterMap>
-	<insert id="updateMember" parameterMap="updateMemberParameter">
+	<update id="updateMember" parameterMap="updateMemberParameter">
+		UPDATE member SET
+		<if test="pwd != null and pwd != ''">
+			mb_pwd = #{pwd},
+		</if>
+		mb_name = #{name}, mb_nick = #{nick}, mb_gender = #{gender}, mb_hp =
+		#{hp}, mb_birth = #{birth}, mb_grade = #{grade}
+		WHERE mb_no = #{memNo}
+	</update>
+	<update id="updateMemberAdmin" parameterMap="updateMemberParameter">
 		UPDATE member SET
 		<if test="pwd != null and pwd != ''">
 			mb_pwd = #{pwd},
@@ -285,8 +294,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		mb_name = #{name}, mb_nick = #{nick}, mb_gender = #{gender}, mb_hp =
 		#{hp}, mb_birth = #{birth}, mb_grade = #{grade}, mb_state = #{state}
 		WHERE mb_no = #{memNo}
-	</insert>
-
+	</update>
 	<!-- 회원 등급 변경 시작 -->
 	<parameterMap id="updateMemberGradeParameter"
 		type="MemberVo">

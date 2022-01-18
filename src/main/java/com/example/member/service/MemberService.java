@@ -67,6 +67,12 @@ public class MemberService {
         this.memberDao.updateMember(member);
     }
 
+    // 회원 수정
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
+    public void reviseMemberAdmin(MemberJoinVo member) {
+        this.memberDao.updateMemberAdmin(member);
+    }
+
     // 회원 상태 변경
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void reviseMemberState(int memNo, String state) {

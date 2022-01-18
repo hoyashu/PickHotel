@@ -43,7 +43,7 @@ public class MemberAdminController {
     // 회원정보 수정하기
     @PostMapping("/intranet/member/modify")
     public String memberModify(@ModelAttribute("member") MemberJoinVo member) {
-        memberService.reviseMember(member);
+        memberService.reviseMemberAdmin(member);
 
         return "redirect:/intranet/member/" + member.getMemNo();
     }

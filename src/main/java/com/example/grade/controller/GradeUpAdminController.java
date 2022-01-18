@@ -97,7 +97,7 @@ public class GradeUpAdminController {
             alarm.setResult("OK");
 
             //알림 db저장
-            this.alarmService.registerAlarm(alarm);
+            //this.alarmService.registerAlarm(alarm);
 
             alarms.add(alarm);
         }
