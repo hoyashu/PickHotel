@@ -39,6 +39,28 @@ public class NoteDao {
         return this.sqlSession.selectOne("NoteDao.selectMbNo", mbId);
     }
 
+    public List<Integer> selectMbNos(int noteNo){
+        return this.sqlSession.selectList("NoteDao.selectGetMoNos", noteNo);
+    }
+
+    // 받은 사람 1명만
+    public int selectOneGetMbNo(int mbNo, int noteNo){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("mbNo", mbNo);
+        map.put("noteNo", noteNo);
+
+        return this.sqlSession.selectOne("NoteDao.selectOneGetMbNo", map);
+    }
+
+    // 받은 사람 모두 다
+    public List<Integer> selectAllGetMbNo(int mbNo, int noteNo){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("mbNo", mbNo);
+        map.put("noteNo", noteNo);
+
+        return this.sqlSession.selectList("NoteDao.selectOneGetMbNo", map);
+    }
+
     // 쪽지 상세 조회
     public String selectDetailNote(int noteNo){
         return this.sqlSession.selectOne("NoteDao.selectDetailNote", noteNo);

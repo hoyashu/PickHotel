@@ -37,8 +37,11 @@ public class NoteController {
             noteList = null;
         } else {
             for (NoteVo note : noteList) {
-                String getMbNick = (this.memberService.retrieveMember(note.getNoteGetMbNo())).getNick();
-                String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getNick();
+                String getMbNick = (this.memberService.retrieveMember(note.getNoteGetMbNo())).getId();
+                String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getId();
+                if(note.getNoteCon().length() > 10){
+                    note.setNoteCon(note.getNoteCon().substring(0,10) + "...");
+                }
                 note.setNoteGetMbNick(getMbNick);
                 note.setNoteSendMbNick(sendMbNick);
             }
@@ -59,8 +62,12 @@ public class NoteController {
             noteList = null;
         } else {
             for (NoteVo note : noteList){
-                String getMbNick = (this.memberService.retrieveMember(note.getNoteGetMbNo())).getNick();
-                String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getNick();
+                int getMbNo = this.noteService.retrieveOneGetMbNo(memNo, note.getNoteNo());
+                String getMbNick = (this.memberService.retrieveMember(getMbNo)).getId();
+                String sendMbNick = (this.memberService.retrieveMember(note.getNoteSendMbNo())).getId();
+                if(note.getNoteCon().length() > 10){
+                    note.setNoteCon(note.getNoteCon().substring(0,10) + "...");
+                }
                 note.setNoteGetMbNick(getMbNick);
                 note.setNoteSendMbNick(sendMbNick);
             }
@@ -98,15 +105,27 @@ public class NoteController {
     @GetMapping("/member/note/Detailnote/{noteNo}/{noteGetMbNick}/{noteSendMbNick}/{noteDateTime}/{noteType}")
     public String noteDetail(@PathVariable("noteNo") Integer noteNo, @PathVariable("noteGetMbNick") String noteGetMbNick,
             @PathVariable("noteSendMbNick") String noteSendMbNick,
-            @PathVariable("noteDateTime") String noteDateTime,@PathVariable("noteType") int noteType ,Model model){
+            @PathVariable("noteDateTime") String noteDateTime,@PathVariable("noteType") int noteType ,
+            @AuthenticationPrincipal UserAccount userAccount,Model model){
         NoteVo note = new NoteVo();
         note.setNoteNo(noteNo);
+
+        List<Integer> getMemberNos = this.noteService.retrieveMbNos(noteNo);
+        List<String> memberIds = new ArrayList<>();
+
+        for(Integer i : getMemberNos){
+            memberIds.add(this.memberService.retrieveMember(i).getId());
+        }
+        String arr[] = memberIds.toArray(new String[0]);
+        String str = String.join(", ", arr);
+
         note.setNoteCon(this.noteService.retrieveDetailNote(noteNo));
         note.setNoteGetMbNick(noteGetMbNick);
         note.setNoteSendMbNick(noteSendMbNick);
         note.setNoteDateTime(noteDateTime);
         model.addAttribute("note", note);
         model.addAttribute("noteType", noteType);
+        model.addAttribute("str", str);
         return "page/note_detail";
     }
 
