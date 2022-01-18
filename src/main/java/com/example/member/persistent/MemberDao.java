@@ -78,6 +78,11 @@ public class MemberDao {
         this.sqlSessionTemplate.update("MemberDao.updateMember", member);
     }
 
+    // 회원 수정-관리자
+    public void updateMemberAdmin(MemberJoinVo member) {
+        this.sqlSessionTemplate.update("MemberDao.updateMemberAdmin", member);
+    }
+
     // 회원 상태 변경
     public void updateMemberState(int memNo, String state) {
         MemberVo memberVo = new MemberVo(memNo, state);
