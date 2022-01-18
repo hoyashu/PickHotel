@@ -82,7 +82,7 @@ public class MemberController {
         map.put("pwd", passwordEncoder.encode(member.getPwd()));
         this.memberService.modifyPw(map);
 
-        return "page/index";
+        return "redirect:/";
     }
 
 
