@@ -85,7 +85,7 @@
                                        type="radio" value="1"/>
                             </div>
                         </div>
-                        <input id="rateLoc" name="rateLoc" type="hidden">
+                        <input id="rateLoc" name="rateLoc" type="hidden" th:value="${review.rateLoc}">
                         <script>
                             function getRateLoc() {
                                 var rateLocNodeList = document.getElementsByName("showRateLoc");
@@ -101,7 +101,6 @@
                     <li>
                         <label>위생</label>
                         <div class="star-box">
-                            <input id="rateClean" name="rateClean" type="hidden">
                             <div class="star-container">
                                 <input class="star-check" name="showRateClean" onclick="getRateClean()"
                                        th:checked="${review.rateClean == 5}"
@@ -125,6 +124,7 @@
                                        type="radio" value="1"/>
                             </div>
                         </div>
+                        <input id="rateClean" name="rateClean" type="hidden" th:value="${review.rateClean}">
                         <script>
                             function getRateClean() {
                                 var rateLocNodeList = document.getElementsByName("showRateClean");
@@ -163,7 +163,7 @@
                                        type="radio" value="1"/>
                             </div>
                         </div>
-                        <input id="rateComu" name="rateComu" type="hidden">
+                        <input id="rateComu" name="rateComu" type="hidden" th:value="${review.rateComu}">
                         <script>
                             function getRateComu() {
                                 var rateLocNodeList = document.getElementsByName("showRateComu");
@@ -202,7 +202,7 @@
                                        type="radio" value="1"/>
                             </div>
                         </div>
-                        <input id="rateChip" name="rateChip" type="hidden">
+                        <input id="rateChip" name="rateChip" type="hidden" th:value="${review.rateChip}">
                         <script>
                             function getRateChip() {
                                 var rateLocNodeList = document.getElementsByName("showRateChip");
