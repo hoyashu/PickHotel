@@ -112,7 +112,7 @@
                                                    th:value="${member.stateNo}" type="checkbox">
                                         </td>
                                         <td>
-                                            <a th:href="@{/intranet/member/}+${member.stateNo}">
+                                            <a th:href="@{/intranet/member/}+${member.memNo}">
                                                 <span th:text="${member.nick} + '(' + ${member.id} + ')'"></span>
                                             </a>
                                             <input class="nick" th:value="${member.nick}" type="hidden">
