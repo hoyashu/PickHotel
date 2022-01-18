@@ -5,7 +5,7 @@
         <h1 class="text-center">게시글 작성</h1>
     </div>
     <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
-          th:action="@{/member/uploadFile}">
+          onsubmit="return false" th:action="@{/member/uploadFile}">
         <div class="mb-2">
             <select aria-label="Default select example" class="form-select" id="bordNo" name="bordNo"
                     onchange="OnChange('click');">
