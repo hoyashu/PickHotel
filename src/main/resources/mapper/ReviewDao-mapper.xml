@@ -13,45 +13,47 @@
 		<parameter property="rateChip" javaType="int" jdbcType="INTEGER" />
 		<parameter property="visitDate" javaType="string" jdbcType="DATE" />
 		<parameter property="recommendPlace" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="recommendPlace" javaType="string" jdbcType="VARCHAR" />
 		<parameter property="notRecommendPerson" javaType="string" jdbcType="VARCHAR" />
 	</parameterMap>
 	<insert id="insertReview" parameterType="ReviewVo" parameterMap="ReviewParameterMap">
 		INSERT INTO review (post_no,roo_no, re_rate_loc, re_rate_clean,
-							re_rate_comu, re_rate_chip, re_vsdate, re_push_pl, re_push_npl )
+		re_rate_comu, re_rate_chip, re_vsdate, re_push_pl, re_push_npl )
 		VALUES (#{postNo},#{roomNo}, #{rateLoc}, #{rateClean}, #{rateComu},
-				#{rateChip}, #{visitDate}, #{recommendPlace}, #{notRecommendPerson})
+		#{rateChip}, #{visitDate}, #{recommendPlace}, #{notRecommendPerson})
 	</insert>
 
+	<!--리뷰를 조회하다.-->
+	<select id="selectReview" parameterType="int" resultType="ReviewVo">
+		SELECT post_no, roo_no as roomNo, re_rate_loc as rateLoc, re_rate_clean as rateClean, re_rate_comu as rateComu, re_rate_chip as rateChip,
+		re_vsdate as visitDate, re_push_pl as recommendPlace, re_push_npl as notRecommendPerson
+		FROM review WHERE post_no = #{postNo}
+	</select>
+
+	<!--숙소 리뷰 갯수를 조회하다.-->
+	<select id="selectReviewCountByRoom" parameterType="int" resultType="int">
+		SELECT count(*) as reviewCount FROM review WHERE roo_no = #{roomNo}
+	</select>
+
+	<!-- 숙소 리뷰 평점를 조회하다.-->
+	<select id="selectReviewRateByRoom" parameterType="int" resultType="float">
+		SELECT ifnull(round((avg(re_rate_loc) + avg(re_rate_clean) + avg(re_rate_comu) + avg(re_rate_chip)) / 4, 1), 0) as reviewRate FROM review WHERE roo_no = #{roomNo}
+	</select>
+
+	<!-- 리뷰를 업데이트하다.-->
 	<update id="updateReview" parameterType="ReviewVo" parameterMap="ReviewParameterMap">
-		UPDATE review SET re_rate_loc=#{rateLoc}, re_rate_clean=#{rateClean}, re_rate_comu=#{rateComu}, re_rate_chip=#{rateChip},
-						  re_vsdate=#{visitDate}, re_push_pl=#{recommendPlace}, re_push_npl=#{notRecommendPerson}
+		UPDATE review SET re_rate_loc = #{rateLoc}, re_rate_clean = #{rateClean}, re_rate_comu = #{rateComu}, re_rate_chip = #{rateChip},
+		re_vsdate = #{visitDate}, re_push_pl = #{recommendPlace}, re_push_npl = #{notRecommendPerson}
 		WHERE post_no = #{postNo}
 	</update>
 
+	<!-- 리뷰를 삭제한다.-->
 	<delete id="deleteReview" parameterType="int">
-		DELETE from review where post_no=#{postNo}
+		DELETE from review where post_no = #{postNo}
 	</delete>
 
-	<resultMap id="ReviewVoResultMap" type="ReviewVo">
-		<result property="postNo" column="post_no" />
-		<result property="roomNo" column="roo_no" />
-		<result property="rateLoc" column="re_rate_loc" />
-		<result property="rateClean" column="re_rate_clean" />
-		<result property="rateComu" column="re_rate_comu" />
-		<result property="rateChip" column="re_rate_chip" />
-		<result property="visitDate" column="re_vsdate" />
-		<result property="recommendPlace" column="re_push_pl" />
-		<result property="notRecommendPerson" column="re_push_npl" />
-	</resultMap>
-
-	<select id="selectReview" parameterType="int" resultMap="ReviewVoResultMap">
-		SELECT post_no, roo_no, re_rate_loc, re_rate_clean, re_rate_comu, re_rate_chip,
-			   re_vsdate, re_push_pl, re_push_npl
-		FROM review WHERE post_no=#{postNo}
-	</select>
-
-
 </mapper>
+
 
 
 

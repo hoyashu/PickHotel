@@ -13,11 +13,12 @@ public class MapVo {
     String category_group_name;
     String category_name;
     String distance;
-    String id;
+    int id;
     String phone;
     String place_name;
     String place_url;
     String road_address_name;
     String x;
     String y;
+    String place_img;
 }

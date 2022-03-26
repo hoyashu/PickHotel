@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /*
 작성자 : 김소진
-작성일 : 2022-01-05
+작성일 : 2022-03-26
 내용 : 사용자&관리자 공통 CSS
 */
 @font-face {
@@ -85,6 +85,7 @@ header .container {
 header #menu-box {
     position: absolute;
     left: 150px;
+    top: 10px;
 }
 
 header #menu-box > li {

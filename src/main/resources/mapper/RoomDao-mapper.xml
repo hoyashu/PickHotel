@@ -40,11 +40,11 @@
 
 
 	<update id="updateRoom" parameterMap="insertRoomVoParameterMap">
-		UPDATE room SET roo_name=#{roomName}, roo_dec=#{roomDeco}, roo_address=[#{roomAddress}], roo_sysname, roo_realname)
-			systemFileName=#{systemFileName}, originalFileName=#{originalFileName} WHERE roo_no = #{no}
+		UPDATE room SET roo_name = #{roomName}, roo_dec = #{roomDeco}, roo_address=[#{roomAddress}], roo_sysname, roo_realname)
+			systemFileName = #{systemFileName}, originalFileName = #{originalFileName} WHERE roo_no = #{no}
 	</update>
 
 	<delete id="deleteRoom" parameterType="int">
-		DELETE FROM room WHERE roo_no=#{roomNo}
+		DELETE FROM room WHERE roo_no = #{roomNo}
 	</delete>
 </mapper>

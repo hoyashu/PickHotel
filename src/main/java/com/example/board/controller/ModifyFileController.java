@@ -50,14 +50,13 @@ public class ModifyFileController {
                               @RequestParam(value = "category_group_name", required = false, defaultValue = "noValue") String category_group_name,
                               @RequestParam(value = "category_name", required = false, defaultValue = "noValue") String category_name,
                               @RequestParam(value = "distance", required = false, defaultValue = "noValue") String distance,
-                              @RequestParam(value = "id", required = false, defaultValue = "noValue") String id,
+                              @RequestParam(value = "id", required = false, defaultValue = "noValue") int id,
                               @RequestParam(value = "phone", required = false, defaultValue = "noValue") String phone,
                               @RequestParam(value = "place_name", required = false, defaultValue = "noValue") String place_name,
                               @RequestParam(value = "place_url", required = false, defaultValue = "noValue") String place_url,
                               @RequestParam(value = "road_address_name", required = false, defaultValue = "noValue") String road_address_name,
                               @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
                               @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
-                              @RequestParam(value = "map_no", required = false, defaultValue = "0") Integer map_no,
                               @RequestParam(value = "rateLoc", required = false, defaultValue = "0") int rateLoc,
                               @RequestParam(value = "rateClean", required = false, defaultValue = "0") int rateClean,
                               @RequestParam(value = "rateComu", required = false, defaultValue = "0") int rateComu,
@@ -93,23 +92,22 @@ public class ModifyFileController {
             if (boardForUseCheck.getType().equals("basic")) {
 
             } else {
-                if (address_name.trim().equals("") || map_no == 0) {
+                if (address_name.trim().equals("") || id == 0) {
 
                 } else {
                     MapVoForApi mapVoForApi = new MapVoForApi();
-                    mapVoForApi.setAddress_name(address_name);
-                    mapVoForApi.setCategory_group_code(category_group_code);
-                    mapVoForApi.setCategory_group_name(category_group_name);
-                    mapVoForApi.setCategory_name(category_name);
+                    mapVoForApi.setAddressName(address_name);
+                    mapVoForApi.setCategoryGroupCode(category_group_code);
+                    mapVoForApi.setCategoryGroupName(category_group_name);
+                    mapVoForApi.setCategoryName(category_name);
                     mapVoForApi.setDistance(distance);
                     mapVoForApi.setId(id);
                     mapVoForApi.setPhone(phone);
-                    mapVoForApi.setPlace_name(place_name);
-                    mapVoForApi.setPlace_url(place_url);
-                    mapVoForApi.setRoad_address_name(road_address_name);
+                    mapVoForApi.setPlaceName(place_name);
+                    mapVoForApi.setPlaceUrl(place_url);
+                    mapVoForApi.setRoad_addressName(road_address_name);
                     mapVoForApi.setX(x);
                     mapVoForApi.setY(y);
-                    mapVoForApi.setMap_no(map_no);
 
                     this.mapServiceForApi.modifyMap(mapVoForApi);
 

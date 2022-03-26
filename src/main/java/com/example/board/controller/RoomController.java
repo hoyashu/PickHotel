@@ -63,7 +63,7 @@ public class RoomController {
         return mv;
     }
 
-    //방 목록 조회
+    //방 전체 조회
     @GetMapping("/room/list")
     public ModelAndView roomList() {
 

@@ -61,7 +61,7 @@ footer .visit-count li p {
 }
 
 img.logo {
-    width: 100px;
+    width: 80px;
 }
 
 .form-small {
@@ -443,6 +443,167 @@ li[class^=pw-condition] i {
     color: #777;
 }
  */
+
+
+/* 리뷰 지도보기 */
+#mapPage {
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    min-width: 1200px;
+    position: relative;
+    height: calc(100% - 75px);
+}
+
+#mapPage #mapArea {
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    position: relative;
+}
+
+#mapPage .map_wrap {
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+#mapPage #menu_wrap {
+    width: 500px;
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: scroll;
+}
+
+#mapPage #menu_wrap #placesList {
+    margin: 0;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100% - 56px);
+}
+
+#mapPage .sroll-mask {
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#mapPage .sroll-mask2 {
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    height: 100%;
+}
+
+
+#mapPage #placesList .item .thumb + .info {
+    padding-left: 14px;
+}
+
+#mapPage #placesList .item .thumb {
+    display: inline-block;
+    float: left;
+}
+
+#mapPage #placesList .item .thumb img {
+    width: 230px;
+}
+
+#mapPage #placesList .item .rate {
+    font-size: 12px;
+}
+
+#mapPage #placesList .item .rate span {
+    display: initial;
+}
+
+#mapPage #placesList .item .rate .star img {
+    width: 12px;
+    vertical-align: middle;
+    margin-right: 4px;
+    margin-top: -2px;
+}
+
+#mapPage #placesList .item .rate .review {
+    margin-left: 2px;
+    font-size: 10px;
+    color: #696969;
+}
+
+/* 리뷰 지도보기 __ 지도위 인포 박스 */
+.marker__info-box {
+    width: 250px;
+    max-height: 260px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 1);
+    z-index: 1;
+    box-shadow: 0 0 5px 0 rgb(0 0 0 / 20%), 5px 0 15px 0 rgb(0 0 0 / 10%);
+    border-radius: 9px;
+    font-size: 13px;
+    position: absolute;
+    left: 0;
+    transform: translateY(10px);
+    /* bottom: -270px; */
+    margin-left: -115px;
+}
+
+.marker__info-box .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #888;
+    width: 17px;
+    height: 17px;
+    z-index: 1;
+    background: url('/img/ico-x.png');
+}
+
+.marker__info-box .info {
+    padding: 5px 10px 12px;
+}
+
+.marker__info-box h5 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.marker__info-box .thumb img {
+    width: 100%;
+}
+
+.marker__info-box .rate img {
+    width: 15px;
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 4px;
+}
+
+.marker__info-box .review {
+    font-size: 12px;
+    color: #696969;
+}
+
+.marker__info-box .info > span {
+    font-size: 14px;
+    display: block;
+}
+
 
 /* 게시글 작성 */
 #postWrite {

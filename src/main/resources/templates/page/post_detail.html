@@ -209,7 +209,7 @@
                     const postNo = $("#postNo").val();
                     const boardNo = $("#boardNo").val();
                 </script>
-                <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"
+                <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a8edf3a83107522729d97cbe81e5e44&libraries=services"
                         th:if="${mapVoForApi != null}"
                         type="text/javascript"></script>
                 <script th:if="${mapVoForApi != null}">
@@ -217,15 +217,15 @@
                     // 페이지 로드 후 카카오 지도에 등록된 정보를 넣어준다.
                     window.onload = function () {
                         $.ajax({
-                            type   : "GET",
-                            url    : "/findMapInfo?postNo=" + postNo,
+                            type: "GET",
+                            url: "/findMapInfo?postNo=" + postNo,
                             success: function (data) {
                                 var documentsList = data.documents;
                                 var meta = data.meta;
                                 placesSearchCB(documentsList, meta);
                                 console.log("작동")
                             },
-                            error  : function () {
+                            error: function () {
                                 alert("정보 가져오기 실패");
                             }
                         });
@@ -239,7 +239,7 @@
                     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
                         mapOption = {
                             center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                            level : 3 // 지도의 확대 레벨
+                            level: 3 // 지도의 확대 레벨
                         }
 
                     // 지도 생성
@@ -272,15 +272,15 @@
 
                         // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다 -> 키워드를 직접 받아 처리를 해줘야함 정보가 없을경우 없다고 알림
                         $.ajax({
-                            type   : "GET",
-                            url    : "/map/search?query=" + keyword,
+                            type: "GET",
+                            url: "/map/search?query=" + keyword,
                             success: function (data) {
                                 var documentsList = data.mapResponse.documents;
                                 var meta = data.mapResponse.meta;
                                 placesSearchCB(documentsList, meta);
 
                             },
-                            error  : function () {
+                            error: function () {
                                 alert("데이터 가져오기 실패");
                             }
                         });
@@ -365,17 +365,17 @@
                         var el = document.createElement('li'),
                             itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
                                 '<div class="info">' +
-                                '   <h5>' + places.place_name + '</h5>';
+                                '   <h5>' + places.placeName + '</h5>';
 
-                        if (places.road_address_name) {
-                            itemStr += '    <span>' + places.road_address_name + '</span>' +
-                                '   <span class="jibun gray">' + places.address_name + '</span>';
+                        if (places.roadAddressName) {
+                            itemStr += '    <span>' + places.roadAddressName + '</span>' +
+                                '   <span class="jibun gray">' + places.addressName + '</span>';
                         } else {
-                            itemStr += '    <span>' + places.address_name + '</span>';
+                            itemStr += '    <span>' + places.addressName + '</span>';
                         }
 
                         itemStr += '</div>';
-                        itemStr += '<a href="' + places.place_url + '" target="_blank"><button>상세보기</a></button>';
+                        itemStr += '<a href="' + places.placeUrl + '" target="_blank"><button>상세보기</a></button>';
 
                         el.innerHTML = itemStr;
                         el.className = 'item';
@@ -388,14 +388,14 @@
                         var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
                             imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
                             imgOptions = {
-                                spriteSize  : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                                spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
                                 spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-                                offset      : new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                                offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
                             },
                             markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
                             marker = new kakao.maps.Marker({
                                 position: position, // 마커의 위치
-                                image   : markerImage
+                                image: markerImage
                             });
 
                         marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -502,16 +502,16 @@
                             const getAjax = function (url, postNo) {
                                 return new Promise((resolve, reject) => {
                                     $.ajax({
-                                        url     : url,
-                                        method  : 'POST',
+                                        url: url,
+                                        method: 'POST',
                                         dataType: 'json',
-                                        data    : {
+                                        data: {
                                             postNo: postNo
                                         },
-                                        success : function (data) {
+                                        success: function (data) {
                                             resolve(data);
                                         },
-                                        error   : function (e) {
+                                        error: function (e) {
                                             reject(e);
                                         }
                                     });
@@ -579,19 +579,19 @@
                             const getAjax = function (url, postNo, cmtContent, comClass, parents, parentMemNo) {
                                 return new Promise((resolve, reject) => {
                                     $.ajax({
-                                        url    : url,
-                                        method : 'POST',
-                                        data   : {
-                                            postNo     : postNo,
-                                            content    : cmtContent,
-                                            comClass   : comClass,
-                                            parents    : parents,
+                                        url: url,
+                                        method: 'POST',
+                                        data: {
+                                            postNo: postNo,
+                                            content: cmtContent,
+                                            comClass: comClass,
+                                            parents: parents,
                                             parentMemNo: parentMemNo
                                         },
                                         success: function (data) {
                                             resolve(data);
                                         },
-                                        error  : function (e) {
+                                        error: function (e) {
                                             reject(e);
                                         }
                                     });
@@ -634,16 +634,16 @@
                             const getAjax = function (url, cmtContent, comNo) {
                                 return new Promise((resolve, reject) => {
                                     $.ajax({
-                                        url    : url,
-                                        method : 'POST',
-                                        data   : {
+                                        url: url,
+                                        method: 'POST',
+                                        data: {
                                             content: cmtContent,
-                                            comNo  : comNo
+                                            comNo: comNo
                                         },
                                         success: function (data) {
                                             resolve(data);
                                         },
-                                        error  : function (e) {
+                                        error: function (e) {
                                             reject(e);
                                         }
                                     });
@@ -680,16 +680,16 @@
                             const getAjax = function (url, comNo) {
                                 return new Promise((resolve, reject) => {
                                     $.ajax({
-                                        url    : url,
-                                        method : 'POST',
-                                        data   : {
+                                        url: url,
+                                        method: 'POST',
+                                        data: {
                                             postNo: postNo,
-                                            comNo : comNo
+                                            comNo: comNo
                                         },
                                         success: function (data) {
                                             resolve(data);
                                         },
-                                        error  : function (e) {
+                                        error: function (e) {
                                             reject(e);
                                         }
                                     });

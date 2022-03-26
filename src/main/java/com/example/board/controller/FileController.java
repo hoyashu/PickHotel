@@ -8,6 +8,7 @@ import com.example.board.service.*;
 import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
 import com.example.member.service.MemberService;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Transactional
 @Controller
+@Log
 public class FileController {
     @Autowired
     private BoardService boardService;
@@ -54,7 +56,7 @@ public class FileController {
                                 @RequestParam(value = "category_group_name", required = false, defaultValue = "noValue") String category_group_name,
                                 @RequestParam(value = "category_name", required = false, defaultValue = "noValue") String category_name,
                                 @RequestParam(value = "distance", required = false, defaultValue = "noValue") String distance,
-                                @RequestParam(value = "id", required = false, defaultValue = "noValue") String id,
+                                @RequestParam(value = "id", required = false, defaultValue = "noValue") int id,
                                 @RequestParam(value = "phone", required = false, defaultValue = "noValue") String phone,
                                 @RequestParam(value = "place_name", required = false, defaultValue = "noValue") String place_name,
                                 @RequestParam(value = "place_url", required = false, defaultValue = "noValue") String place_url,
@@ -95,22 +97,24 @@ public class FileController {
 
             } else {
                 MapVoForApi mapVoForApi = new MapVoForApi();
-                mapVoForApi.setAddress_name(address_name);
-                mapVoForApi.setCategory_group_code(category_group_code);
-                mapVoForApi.setCategory_group_name(category_group_name);
-                mapVoForApi.setCategory_name(category_name);
+                mapVoForApi.setAddressName(address_name);
+                mapVoForApi.setCategoryGroupCode(category_group_code);
+                mapVoForApi.setCategoryGroupName(category_group_name);
+                mapVoForApi.setCategoryName(category_name);
                 mapVoForApi.setDistance(distance);
                 mapVoForApi.setId(id);
                 mapVoForApi.setPhone(phone);
-                mapVoForApi.setPlace_name(place_name);
-                mapVoForApi.setPlace_url(place_url);
-                mapVoForApi.setRoad_address_name(road_address_name);
+                mapVoForApi.setPlaceName(place_name);
+                mapVoForApi.setPlaceUrl(place_url);
+                mapVoForApi.setRoad_addressName(road_address_name);
                 mapVoForApi.setX(x);
                 mapVoForApi.setY(y);
 
-                String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
-                String strMapNo = registerMapUri.substring(registerMapUri.lastIndexOf("/") + 1);
-                int mapNo = Integer.parseInt(strMapNo);
+                MapVoForApi searchMap = this.mapServiceForApi.retrieveMap(id);
+                //신규 숙소인 경우
+                if (searchMap.getId() == 0) {
+                    String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
+                }
 
                 ReviewVo review = new ReviewVo();
 
@@ -119,7 +123,7 @@ public class FileController {
                 }
 
                 review.setPostNo(postNo);
-                review.setRoomNo(mapNo);
+                review.setRoomNo(id);
                 review.setRateLoc(rateLoc);
                 review.setRateClean(rateClean);
                 review.setRateComu(rateComu);

@@ -105,7 +105,7 @@
 
 	<update id="updateBoard" parameterMap="updateBoardParameter">
 		UPDATE board SET
-		bo_group_no=#{groupNo}, bo_name = #{title}, bo_grade = #{boGrade}, bo_use_photo = #{usePhoto},
+		bo_group_no = #{groupNo}, bo_name = #{title}, bo_grade = #{boGrade}, bo_use_photo = #{usePhoto},
 		bo_type = #{type}, bo_use_video = #{useVideo}, bo_use_fupdown = #{useFile}, bo_use_comment = #{useComment}
 		WHERE bo_no = #{boardNo}
 	</update>

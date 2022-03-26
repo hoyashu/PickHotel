@@ -12,7 +12,7 @@ public class ReviewService {
     @Autowired
     private ReviewDao reviewDao;
 
-    //리뷰 추가
+    //리뷰 등록
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void registerReview(ReviewVo review) {
         this.reviewDao.insertReview(review);
@@ -22,6 +22,18 @@ public class ReviewService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public ReviewVo retrieveReview(int postNo) {
         return this.reviewDao.selectReview(postNo);
+    }
+
+    //숙소 리뷰 갯수 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
+    public int retrieveReviewCountByRoom(int roomNo) {
+        return this.reviewDao.selectReviewCountByRoom(roomNo);
+    }
+
+    //숙소 리뷰 평점 조회
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
+    public float retrieveReviewRateByRoom(int roomNo) {
+        return this.reviewDao.selectReviewRateByRoom(roomNo);
     }
 
     //리뷰 수정

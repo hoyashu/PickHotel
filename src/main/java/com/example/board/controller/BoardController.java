@@ -451,7 +451,7 @@ public class BoardController {
             }
 
             try {
-                model.addAttribute("mapNo", review.getRoomNo());
+                model.addAttribute("mapId", review.getRoomNo());
                 mapVoForApi = this.mapServiceForApi.retrieveMap(review.getRoomNo());
                 model.addAttribute("mapVoForApi", mapVoForApi);
             } catch (Exception e) {

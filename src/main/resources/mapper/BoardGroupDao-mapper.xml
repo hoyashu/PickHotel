@@ -72,7 +72,7 @@
     <!-- 게시판 그룹 수정 -->
     <update id="updateBoardGroup" parameterType="BoardGroupVo">
         UPDATE board_group SET
-                               bo_group_no=#{groupNo}, bo_group_name = #{groupName}
+                               bo_group_no = #{groupNo}, bo_group_name = #{groupName}
         WHERE bo_group_no = #{groupNo}
     </update>
 

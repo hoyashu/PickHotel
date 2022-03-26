@@ -51,7 +51,6 @@
             <input id="x" name="x" type="hidden">
             <input id="y" name="y" type="hidden">
         </div>
-        <span th:if="${mapNo != null}"><input id="map_no" name="map_no" th:value="${mapNo}" type="hidden"></span>
 
         <div class="review" th:if="${review != null}">
             <div class="mb-5">
@@ -301,7 +300,7 @@
         </div>
     </form>
     <script th:src="@{/js/ckeditor/ckeditor.js}"></script>
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a9a9c523810d54958387638605f8fcf&libraries=services"
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a8edf3a83107522729d97cbe81e5e44&libraries=services"
             type="text/javascript"></script>
     <script>
         //태그 JS시작

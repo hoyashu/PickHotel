@@ -18,9 +18,9 @@ import java.util.Map;
 
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
-    private final String URI_ROOMS = "http://localhost:15000/api/rooms";
-    private final String URI_ROOMS_ROOMNO = "http://localhost:15000/api/rooms/{roomNo}";
-    private final String URI_ROOM = "http://localhost:15000/api/room";
+    private final String URI_ROOMS = "http://01f0-180-224-208-18.ngrok.io:80/api/rooms";
+    private final String URI_ROOMS_ROOMNO = "http://01f0-180-224-208-18.ngrok.io:80/api/rooms/{roomNo}";
+    private final String URI_ROOM = "http://01f0-180-224-208-18.ngrok.io:80/api/room";
 
     @Autowired
     private RestTemplate restTemplate;

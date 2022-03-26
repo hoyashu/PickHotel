@@ -1,0 +1,140 @@
+<html layout:decorate="~{layout/user_layout_wide}"
+      xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div id="mapPage" layout:fragment="content">
+    <div class="map_wrap">
+        <div id="menu_wrap">
+            <div class="sroll-mask">
+                <div class="sroll-mask2">
+                    <ul id="placesList"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="mapArea">
+            <div id="map" style="width:100%;height:100%;"></div>
+        </div>
+    </div>
+
+
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a8edf3a83107522729d97cbe81e5e44&libraries=clusterer"
+            type="text/javascript"></script>
+    <script>
+
+        var map = new kakao.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
+            center: new kakao.maps.LatLng(37.5683, 127.6358), // 지도의 중심좌표
+            level: 11 // 지도의 확대 레벨
+        });
+
+        // 마커 클러스터러를 생성합니다
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 10 // 클러스터 할 최소 지도 레벨
+        });
+
+        // 인포윈도우를 생성합니다
+        var overlay = new kakao.maps.CustomOverlay({
+            map: map,
+            zIndex: 2
+        });
+
+        // 지도에 표시될 데이터 가져오기
+        function loadMarkers() {
+            var markers; // 전역변수 선언
+            $.ajax({
+                type: "get",
+                url: "/map/list",
+                async: false, // 이 한줄만 추가해주시면 됩니다.
+                dataType: "json",
+                success: function (data) {
+                    markers = $(data.content).map(function (i, position) {
+                        var pos = new kakao.maps.LatLng(position.y, position.x);
+                        var infoPos = new kakao.maps.LatLng(position.y, position.x);
+                        var marker = new kakao.maps.Marker({
+                            position: pos
+                        });
+                        // 마커에 클릭이벤트를 등록합니다
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            // 마커를 클릭했을 때 마커 위에 표시할 인포윈도우를 생성합니다
+                            const iwContent = `<div class="marker__info-box">
+                            <div class="close" onclick="closeOverlay()" title="닫기"></div>
+                            <div class="thumb"><img src="${position.placeImg}"></div>
+                            <div class="info">
+                                <div class="rate">
+                                    <span class="star"><img src="/img/rate_star.png"></span>${position.reviewRate}점
+                                    <span class="review">(${position.reviewCount})</span>
+                                </div>
+                                <h5>${position.placeName}</h5>
+                                <span>${position.addressName}</span>
+                            </div></div>
+                            `;
+                            // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+                            overlay.setContent(iwContent);
+                            overlay.setPosition(infoPos);
+                            // 마커 위에 인포윈도우를 표시합니다
+                            overlay.setMap(map);
+                        });
+                        return marker;
+                    });
+                }
+            });
+            return markers;
+        };
+
+        // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
+        function closeOverlay() {
+            overlay.setMap(null);
+        }
+
+        let markers = loadMarkers();
+        // 클러스터러에 마커들을 추가합니다
+        clusterer.addMarkers(markers);
+        getMapOverlay(map);
+
+        // 현재 지도에서 보이는 마크의 정보 가져오기
+        function getMapOverlay(map) {
+            const bounds = map.getBounds();
+            const focusMarkers = [];
+            const markersOb = markers.prevObject
+            for (const idx in markersOb) {
+                var x = markersOb[idx].x;
+                var y = markersOb[idx].y;
+                var pos = new kakao.maps.LatLng(y, x);
+                if (bounds.contain(pos)) {
+                    focusMarkers.push(markersOb[idx]);
+                }
+            }
+            showList(focusMarkers);
+        };
+
+        function showList(position) {
+            const mapForceListBox = document.querySelector("#menu_wrap ul");
+            mapForceListBox.innerHTML = "";
+
+            let htmlstr = "";
+            if (position.length > 0) {
+                for (const idx in position) {
+                    htmlstr +=
+                        `<li class="item">
+                        <div class="thumb"><img src="${position[idx].placeImg}"></div>
+                        <div class="info">
+                            <h5>${position[idx].placeName}</h5>
+                            <div class="rate"><span class="star"><img src="/img/rate_star.png"></span>${position[idx].reviewRate}점<span class="review">(${position[idx].reviewCount})</span></div>
+                            <span>${position[idx].addressName}</span>
+                            <span class="tel">${position[idx].phone}</span>
+                            <p class="review_comment">서울에서 힐링하기 가장 좋은 곳</p>
+                        </div>
+                    </li>`;
+                }
+            } else {
+                htmlstr += `<li class="item empty-item"><h3>검색 결과 없음</h3><p>더 많은 검색 결과를 보려면 위치를 변경하여 검색해보세요</p></li>`;
+            }
+            mapForceListBox.innerHTML += htmlstr;
+        }
+
+        kakao.maps.event.addListener(map, "idle", function () {
+            getMapOverlay(map);
+        });
+    </script>
+</div>
+</div>

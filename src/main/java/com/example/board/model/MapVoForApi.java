@@ -10,18 +10,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MapVoForApi {
-    int map_no;
-    String address_name;
-    String category_group_code;
-    String category_group_name;
-    String category_name;
+    String addressName;
+    String categoryGroupCode;
+    String categoryGroupName;
+    String categoryName;
     String distance;
-    String id;
+    int id;
     String phone;
-    String place_name;
-    String place_url;
-    String road_address_name;
+    String placeName;
+    String placeUrl;
+    String road_addressName;
     String x;
     String y;
+    String placeImg;
+    float reviewRate;
+    int reviewCount;
+    String reviewComment;
     List<Link> links;
 }
