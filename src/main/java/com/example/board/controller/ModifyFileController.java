@@ -70,7 +70,7 @@ public class ModifyFileController {
         int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
-        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
+        int writerNo = this.postService.findPostByNo(postNo).getWriterNo();
 
         // 작성자 본인이 아니고, 관리자도 아닌 경우
         if (memNo != writerNo && memberGrade != 5) {

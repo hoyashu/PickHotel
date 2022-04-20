@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@Service("cityService")
+@Service("memberService")
 public class MemberService {
 
     @Autowired

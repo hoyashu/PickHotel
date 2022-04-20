@@ -28,7 +28,7 @@ public class CommentServiceImpl implements CommentService {
     //	댓글 추가
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
-    public void registerComment(CommentVo comment) {
+    public void addComment(CommentVo comment) {
         //댓글 추가
         this.commentDao.insertComment(comment);
 
@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
     //	게시글 댓글 목록 조회
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<CommentVo> retrieveCommentList(int postNo) {
+    public List<CommentVo> findCommentListByPostNo(int postNo) {
         List<CommentVo> comments = new ArrayList<CommentVo>();
         comments = this.commentDao.selectCommentList(postNo);
         for (CommentVo comment : comments) {
@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     //	게시글 댓글 조회
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public CommentVo retrieveComment(int comNo) {
+    public CommentVo findCommentByComNo(int comNo) {
         CommentVo comment = new CommentVo();
         comment = this.commentDao.selectComment(comNo);
         return comment;
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
     // 마지막 댓글 pk조회
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public int retrieveCommentMax() {
+    public int findCommentMax() {
         int max = this.commentDao.selectCommentMax();
         return max;
     }
@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     // 댓글 그룹내 순서 조회
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public int retrieveCommentOrder(int parents) {
+    public int findCommentOrder(int parents) {
         int order = this.commentDao.selectCommentOrder(parents);
         return order;
     }
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
     //	댓글 내용 수정
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
-    public void reviseComment(CommentVo comment) {
+    public void modifyComment(CommentVo comment) {
         this.commentDao.updateComment(comment);
     }
 
@@ -97,7 +97,6 @@ public class CommentServiceImpl implements CommentService {
         this.commentDao.deleteComment(comment.getComNo());
 
         //게시글 댓글 개수 감소
-        System.out.println("간다");
         PostUpdateCommentVo updateComment = new PostUpdateCommentVo(comment.getPostNo(), -1);
         this.postDao.upCommentcount(updateComment);
     }

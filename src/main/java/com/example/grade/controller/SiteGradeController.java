@@ -37,6 +37,7 @@ public class SiteGradeController {
     //사용자 - 사이트 등급 안내
     @GetMapping("/member/site_grade")
     public String memberModity(@AuthenticationPrincipal UserAccount userAccount, HttpServletRequest req, Model model) {
+
         MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
 

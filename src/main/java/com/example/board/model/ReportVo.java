@@ -1,14 +1,14 @@
 package com.example.board.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ReportVo {
     private int no; //신고 번호
     private int reporterNo; //신고한 회원 번호

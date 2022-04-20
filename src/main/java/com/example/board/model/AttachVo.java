@@ -1,5 +1,10 @@
 package com.example.board.model;
 
+/*
+    작성자 : 김소진
+    작성일 : 2022-04-19
+    내용 : 게시글의 첨부파일
+*/
 public class AttachVo {
     private int no;
     private int postNo;

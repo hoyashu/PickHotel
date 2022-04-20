@@ -21,11 +21,16 @@
 <!-- [content] 영역 끝 -->
 
 <!-- [footer] 영역 시작 -->
-<th:block layout:fragment="footer" th:include="@{/fragment/footer}"></th:block>
+<footer th:replace="fragment/footer :: footerFragment"></footer>
 <!-- [footer] 영역 끝 -->
-</body>
+
+<!-- 공통 스크립트 삽입 -->
 <th:block layout:fragment="live_alarm" sec:authorize="isAuthenticated()"
           th:include="@{/fragment/live_alarm}"></th:block>
 <th:block layout:fragment="script" th:include="@{/fragment/script}"></th:block>
+
+<!-- 사용자 스크립트 -->
 <script th:src="@{/js/user.js}" type="text/javascript"></script>
+</body>
+
 </html>

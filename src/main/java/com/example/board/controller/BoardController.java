@@ -100,10 +100,10 @@ public class BoardController {
     // 게시글 목록
     @GetMapping("/boardList/{boardNo}")
     public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
-                       @ModelAttribute("params") PostVo params) {
+                       @ModelAttribute("params") PostSummaryVo params) {
 
         //게시판 ID로 해당 게시판 내 게시글 목록을 가져온다.
-        List<PostVo> posts = this.postService.retrievePostList(params);
+        List<PostSummaryVo> posts = this.postService.findPostList(params);
         if (posts.size() == 0) {
             posts = null;
         }
@@ -131,7 +131,7 @@ public class BoardController {
         MemberVo member = userAccount.getMember();
         int memNo = member.getMemNo();
 
-        List<PostVo> posts = this.postService.retrieveMyPosts(memNo);
+        List<PostSummaryVo> posts = this.postService.findPostListByMemNo(memNo);
         model.addAttribute("posts", posts);
 
         return "page/member_room";
@@ -141,7 +141,7 @@ public class BoardController {
     @GetMapping("/member/{memNo}")
     public String memberWriteList(@PathVariable("memNo") int memNo, Model model) {
 
-        List<PostVo> posts = this.postService.retrieveMyPosts(memNo);
+        List<PostSummaryVo> posts = this.postService.findPostListByMemNo(memNo);
         model.addAttribute("posts", posts);
 
         return "page/member_post_list";
@@ -151,7 +151,7 @@ public class BoardController {
     @GetMapping("/postListByTagName")
     public String retrievePostByTag(@RequestParam("encodedTagName") String encodedTagName, Model model) {
 
-        List<PostVo> posts = this.postService.retrievePostByTag(encodedTagName);
+        List<PostSummaryVo> posts = this.postService.findPostListByTag(encodedTagName);
         model.addAttribute("posts", posts);
 
         return "page/post_list_bytag";
@@ -166,8 +166,8 @@ public class BoardController {
         test.setPostNo(postNo);
         test.setBoardNo(boardNo);
 
-        if (postService.retrievePostSearch(test) != null) {
-            post = this.postService.retrieveDetailBoard(postNo);
+        if (postService.findPostCountByExisetence(test) != null) {
+            post = this.postService.findPostByNo(postNo);
         }
         if (post == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
@@ -258,7 +258,7 @@ public class BoardController {
 
         if (useComment != 0) {
             // ######### 댓글 목록 시작 ######### //
-            List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+            List<CommentVo> comments = this.commentService.findCommentListByPostNo(postNo);
             model.addAttribute("comments", comments);
             // ######### 댓글 목록 조회 끝 ######### //
         }
@@ -278,7 +278,7 @@ public class BoardController {
         int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
-        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
+        int writerNo = this.postService.findPostByNo(postNo).getWriterNo();
 
         // 작성자 본인이 아니고, 관리자도 아닌 경우
         if (memNo != writerNo && memberGrade != 5) {
@@ -287,7 +287,7 @@ public class BoardController {
 
         } else {
             // ######### 게시글 상세정보 시작 ######### //
-            PostVo post = this.postService.retrieveDetailBoard(postNo);
+            PostVo post = this.postService.findPostByNo(postNo);
             if (post == null) {
                 throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
             }
@@ -371,7 +371,7 @@ public class BoardController {
 
             if (useComment != 0) {
                 // ######### 댓글 목록 시작 ######### //
-                List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+                List<CommentVo> comments = this.commentService.findCommentListByPostNo(postNo);
                 model.addAttribute("comments", comments);
                 // ######### 댓글 목록 조회 끝 ######### //
             }
@@ -387,7 +387,7 @@ public class BoardController {
     public Map giveMapinfo(@RequestParam(value = "postNo") int postNo) throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        PostVo post = this.postService.retrieveDetailBoard(postNo);
+        PostVo post = this.postService.findPostByNo(postNo);
         if (post == null) {
             throw new RuntimeException(Constants.ExceptionMsgClass.NOTPOST.getExceptionMsgClass());
         }
@@ -424,7 +424,7 @@ public class BoardController {
         int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
-        int writerNo = this.postService.retrieveDetailBoard(postNo).getWriterNo();
+        int writerNo = this.postService.findPostByNo(postNo).getWriterNo();
 
         // 작성자 본인이 아니고, 관리자도 아닌 경우
         if (memNo != writerNo && memberGrade != 5) {
@@ -433,7 +433,7 @@ public class BoardController {
 
         } else { // 작성자 본인인 경우
             // 게시글 정보 가져오기
-            PostVo post = this.postService.retrieveDetailBoard(postNo);
+            PostVo post = this.postService.findPostByNo(postNo);
             ReviewVo review = this.reviewService.retrieveReview(postNo);
             List<AttachVo> attachVoList = this.attachService.retrievePostAttach(postNo);
             MapVoForApi mapVoForApi = new MapVoForApi();
@@ -491,7 +491,7 @@ public class BoardController {
 
         // 작성된 게시글 작성자 id
         AttachVo attach = this.attachService.retrievePostAttachByAtNo(attachNo);
-        int writerNo = this.postService.retrieveDetailBoard(attach.getPostNo()).getWriterNo();
+        int writerNo = this.postService.findPostByNo(attach.getPostNo()).getWriterNo();
 
         Map<String, String> map = new HashMap<String, String>();
         String success = "fail";
@@ -524,7 +524,7 @@ public class BoardController {
         int memberGrade = member.getGrade();
 
         // 작성된 게시글 작성자 id
-        PostVo post = this.postService.retrieveDetailBoard(postNo);
+        PostVo post = this.postService.findPostByNo(postNo);
         int boardNo = post.getBoardNo();
         int writerNo = post.getWriterNo();
 

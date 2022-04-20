@@ -1,15 +1,15 @@
 package com.example.member.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
 @Getter
 @Setter
-public class UserAccount extends org.springframework.security.core.userdetails.User {
+public class UserAccount extends User {
 
     private MemberVo member;
 

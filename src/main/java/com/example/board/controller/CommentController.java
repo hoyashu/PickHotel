@@ -54,7 +54,7 @@ public class CommentController {
         comment1.setParentMemNo(comment.getParentMemNo());
 
         //인덱스 번호 셋팅
-        int max = this.commentService.retrieveCommentMax();
+        int max = this.commentService.findCommentMax();
         comment1.setComNo(max + 1);
 
         //알람 기본 값 설정
@@ -63,7 +63,7 @@ public class CommentController {
         String alarmMsg = "";
         int alarmGetMemNo = 0;
 
-        PostVo post = this.postService.retrieveDetailBoard(comment.getPostNo());
+        PostVo post = this.postService.findPostByNo(comment.getPostNo());
 
         //댓글인 경우
         if (comment.getComClass() == 0) {
@@ -77,12 +77,12 @@ public class CommentController {
                 alarmSend = "true";
                 alarmType = "1";
                 alarmMsg = AlarmMsg.COMMENT_DEP1.getValue();
-                alarmGetMemNo = this.postService.retrieveDetailBoard(comment.getPostNo()).getWriterNo();
+                alarmGetMemNo = this.postService.findPostByNo(comment.getPostNo()).getWriterNo();
             }
         } else { //댓글에 댓글을 달 경우
 
             //댓글 그룹내 마지막 순서를 가져온다
-            int order = this.commentService.retrieveCommentOrder(comment.getParents());
+            int order = this.commentService.findCommentOrder(comment.getParents());
             comment1.setOrder(order + 1);
 
             //댓글 그룹은 댓글의 pk값을 받아온다.
@@ -97,7 +97,7 @@ public class CommentController {
                     alarmGetMemNo = comment.getParentMemNo();
                 }
             } else { //재댓글을 단 경우
-                CommentVo parentsComment = this.commentService.retrieveComment(comment.getParents());
+                CommentVo parentsComment = this.commentService.findCommentByComNo(comment.getParents());
                 if (memNo != parentsComment.getMemNo()) { //본인 댓글에 글을 남기는 게 아닌 경우
                     alarmSend = "true";
                     alarmMsg = AlarmMsg.COMMENT_DEP2.getValue();
@@ -107,7 +107,7 @@ public class CommentController {
         }
 
         //댓글 등록 실행
-        this.commentService.registerComment(comment1);
+        this.commentService.addComment(comment1);
 
         //회원 댓글 갯수 추가
         this.memberService.reviseCommentCount(memNo, 1);
@@ -131,7 +131,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/comment/list")
     public List<CommentVo> list(int postNo, @AuthenticationPrincipal UserAccount userAccount) {
-        List<CommentVo> comments = this.commentService.retrieveCommentList(postNo);
+        List<CommentVo> comments = this.commentService.findCommentListByPostNo(postNo);
         return comments;
     }
 
@@ -149,12 +149,12 @@ public class CommentController {
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
         // 작성된 댓글 작성자 id
-        int writerNo = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
+        int writerNo = this.commentService.findCommentByComNo(comment.getComNo()).getMemNo();
         // 작성자 본인이나 관리자가 아닌 경우
         if (memNo != writerNo && memberGrade != 5) {
             result = "denine";
         } else { // 작성자 본인이거나 관리자인 경우
-            this.commentService.reviseComment(comment);
+            this.commentService.modifyComment(comment);
             result = "OK";
         }
         return result;
@@ -173,7 +173,7 @@ public class CommentController {
         int memNo = member.getMemNo();
         int memberGrade = member.getGrade();
         // 작성된 댓글 작성자 id
-        int writerNo = this.commentService.retrieveComment(comment.getComNo()).getMemNo();
+        int writerNo = this.commentService.findCommentByComNo(comment.getComNo()).getMemNo();
         // 작성자 본인이나 관리자가 아닌 경우
         if (memNo != writerNo && memberGrade != 5) {
             result = "denine";

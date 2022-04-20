@@ -55,8 +55,9 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
             req.setAttribute("msg", "관리자 접근권한 없는 사용자입니다.");
             //권한 없음 페이지로 이동
             req.getRequestDispatcher("/denine").forward(req, res);
-        } else {//등급이 부족하여 접근하지 못하는 페이지인 경우(게시판)
-            System.out.println("응?");
+        } else { //등급이 부족하여 접근하지 못하는 페이지인 경우(게시판)
+            System.out.println("등급이 부족하여, 사이트 등급안내 페이지로 이동");
+
             //Role이름에서 숫자만 추출해서 해당 게시판에 접근 가능한 등급을 가져옴, 예) ROLE_GRADE4 -> 4
             int boardGrade = Integer.parseInt(roleName.replaceAll("[^0-9]", ""));
 
@@ -65,7 +66,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
             req.setAttribute("boardGradeName", siteGrade.getMemGradeName());
 
             req.setAttribute("msg", "게시판 접근 권한이 없습니다.");
-
             //게시판 접근 등급 페이지로 이동
             req.getRequestDispatcher("/member/site_grade").forward(req, res);
         }

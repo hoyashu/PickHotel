@@ -1,10 +1,20 @@
 package com.example.board.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+    작성자 : 김소진
+    작성일 : 2022-04-19
+    내용 : 게시글 댓글
+*/
+
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentVo {
     private int comNo;
     private int postNo;

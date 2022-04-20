@@ -1,6 +1,7 @@
 package com.example.board.persistent;
 
 import com.example.board.model.BoardVo;
+import com.example.board.model.PostSummaryVo;
 import com.example.board.model.PostUpdateCommentVo;
 import com.example.board.model.PostVo;
 import org.apache.ibatis.session.SqlSession;
@@ -22,16 +23,16 @@ public class PostDao {
     }
 
     // 전체 게시글 목록 조회
-    public List<PostVo> selectPostByTag(String tag) {
-        List<PostVo> lists = this.sqlSession.selectList("PostDao.selectPostByTag", tag);
+    public List<PostSummaryVo> selectPostByTag(String tag) {
+        List<PostSummaryVo> lists = this.sqlSession.selectList("PostDao.selectPostByTag", tag);
         return lists;
     }
 
-    public List<PostVo> selectPostList(PostVo params) {
+    public List<PostSummaryVo> selectPostList(PostSummaryVo params) {
         return this.sqlSession.selectList("PostDao.selectPostList", params);
     }
 
-    public int selectPostCount(PostVo params) {
+    public int selectPostCount(PostSummaryVo params) {
         return this.sqlSession.selectOne("PostDao.selectPostCount", params);
     }
 
@@ -57,7 +58,7 @@ public class PostDao {
     }
 
     //내가 작성한 게시글 조회
-    public List<PostVo> selectMyPosts(int MemNo) {
+    public List<PostSummaryVo> selectMyPosts(int MemNo) {
         return this.sqlSession.selectList("PostDao.selectMyPosts", MemNo);
     }
 

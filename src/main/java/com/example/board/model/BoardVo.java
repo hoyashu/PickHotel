@@ -1,17 +1,25 @@
 package com.example.board.model;
 
 import com.example.common.paging.CommonVo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+/*
+    작성자 : 김소진
+    작성일 : 2022-04-19
+    내용 : 게시글
+*/
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Builder
 public class BoardVo extends CommonVo {
     private int boardNo;  // 게시판 번호
     private String groupName;  // 속할 게시판 그룹명

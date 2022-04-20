@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("accountService")
 public class AccountService implements UserDetailsService {
 
     @Autowired
@@ -48,11 +48,13 @@ public class AccountService implements UserDetailsService {
                 throw new UsernameNotFoundException("no user found [email=" + id + "]");
             }
 
+            //로그인 한 회원의 role정보를 가져온다.
             List<MemberRoleVo> memberRoles = roleResourceDao.getRolesById(id);
 
             List<String> roles = new ArrayList<>();
             List<String> roleHierarchy = new ArrayList<>();
 
+            //로그인한 회원의 role_desc를 가져온다.
             for (MemberRoleVo memberRole : memberRoles) {
                 roleHierarchy = roleResourceDao.roleHierarchy(memberRole.getRoleDesc());
             }

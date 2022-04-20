@@ -1,5 +1,6 @@
 package com.example.board.service;
 
+import com.example.board.model.PostSummaryVo;
 import com.example.board.model.PostVo;
 import com.example.board.persistent.AttachDao;
 import com.example.board.persistent.BoardDao;
@@ -31,34 +32,34 @@ public class PostService {
 
     // 게시글 정보를 등록하다.
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
-    public int registerPost(PostVo post) {
+    public int addPost(PostVo post) {
         int no = this.postDao.insertPost(post);
         return no;
     }
 
     //전체 게시글 태그 검색
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrievePostByTag(String tag) {
-        List<PostVo> posts = this.postDao.selectPostByTag(tag);
+    public List<PostSummaryVo> findPostListByTag(String tag) {
+        List<PostSummaryVo> posts = this.postDao.selectPostByTag(tag);
         return posts;
     }
 
     // 게시글 상세정보 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public PostVo retrieveDetailBoard(int postNo) {
+    public PostVo findPostByNo(int postNo) {
         return this.postDao.selectDetailPost(postNo);
     }
 
     // 게시글 존재 여부 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public Integer retrievePostSearch(PostVo post) {
+    public Integer findPostCountByExisetence(PostVo post) {
         return this.postDao.selectPostSearch(post);
     }
 
     //회원별 게시글 목록 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrieveMyPosts(int MemNo) {
-        List<PostVo> posts = this.postDao.selectMyPosts(MemNo);
+    public List<PostSummaryVo> findPostListByMemNo(int MemNo) {
+        List<PostSummaryVo> posts = this.postDao.selectMyPosts(MemNo);
         if (posts.size() == 0) {
             posts = null;
         }
@@ -67,8 +68,8 @@ public class PostService {
 
     // 게시글 목록 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public List<PostVo> retrievePostList(PostVo params) {
-        List<PostVo> postList = new ArrayList<PostVo>();
+    public List<PostSummaryVo> findPostList(PostSummaryVo params) {
+        List<PostSummaryVo> postList = new ArrayList<PostSummaryVo>();
 
         int postCount = this.postDao.selectPostCount(params);
         PaginationInfo paginationInfo = new PaginationInfo(params);

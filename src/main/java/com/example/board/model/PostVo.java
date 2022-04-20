@@ -1,15 +1,25 @@
 package com.example.board.model;
 
-import com.example.common.paging.CommonVo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/*
+    작성자 : 김소진
+    작성일 : 2022-04-19
+    내용 : 게시글
+*/
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class PostVo extends CommonVo {
+@Builder
+public class PostVo {
     @NotNull(message = "[개발자] 게시글 번호가 누락되었습니다.")
     private int postNo;
     private String groupName;
@@ -29,6 +39,9 @@ public class PostVo extends CommonVo {
     private String[] tags;
     private int views;
     private int commont;
+    private List<CommentVo> commentVoList;
     private String createDate;
     private int blind;
+
+    private boolean open; //ready, open
 }

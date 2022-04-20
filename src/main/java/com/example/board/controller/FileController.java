@@ -85,7 +85,7 @@ public class FileController {
         postVo.setContent(newContent);
         postVo.setTag(tag);
 
-        int postNo = postService.registerPost(postVo);
+        int postNo = postService.addPost(postVo);
         session.setAttribute("boardNo", boardNo);
 
         BoardVo board = this.boardService.retrieveBoard(boardNo);

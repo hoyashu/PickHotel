@@ -5,6 +5,12 @@ import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 
+/*
+    작성자 : 김소진
+    작성일 : 2022-04-19
+    내용 : 게시판 그룹
+*/
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
