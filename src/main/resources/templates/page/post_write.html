@@ -7,7 +7,7 @@
     <form accept-charset="UTF-8" enctype="multipart/form-data" id="saveAll" method="POST"
           onsubmit="return false" th:action="@{/member/uploadFile}">
         <div class="mb-2">
-            <select aria-label="Default select example" class="form-select" id="bordNo" name="bordNo"
+            <select aria-label="Default select example" class="form-select" id="boardNo" name="boardNo"
                     onchange="OnChange('click');">
                 <div th:each="board : ${boardList}">
 					<span th:if="${board.key}==${defaultListNo}">
@@ -50,18 +50,18 @@
             });
         </script>
         <div class="mb-4 mapInfo">
-            <input id="place_name" name="place_name" readonly type="hidden">
-            <input id="road_address_name" name="road_address_name" readonly type="hidden">
-            <input id="address_name" name="address_name" type="hidden">
-            <input id="category_group_code" name="category_group_code" type="hidden">
-            <input id="category_group_name" name="category_group_name" type="hidden">
-            <input id="category_name" name="category_name" type="hidden">
-            <input id="distance" name="distance" type="hidden">
-            <input id="id" name="id" type="hidden">
-            <input id="phone" name="phone" type="hidden">
-            <input id="place_url" name="place_url" type="hidden">
-            <input id="x" name="x" type="hidden">
-            <input id="y" name="y" type="hidden">
+            <input id="place_name" name="place_name" readonly type="hidden" value="undifined">
+            <input id="road_address_name" name="road_address_name" readonly type="hidden" value="undefined">
+            <input id="address_name" name="address_name" type="hidden" value="undefined">
+            <input id="category_group_code" name="category_group_code" type="hidden" value="undefined">
+            <input id="category_group_name" name="category_group_name" type="hidden" value="undefined">
+            <input id="category_name" name="category_name" type="hidden" value="undefined">
+            <input id="distance" name="distance" type="hidden" value="undefined">
+            <input id="id" name="id" type="hidden" value="0">
+            <input id="phone" name="phone" type="hidden" value="undefined">
+            <input id="place_url" name="place_url" type="hidden" value="undefined">
+            <input id="x" name="x" type="hidden" value="undefined">
+            <input id="y" name="y" type="hidden" value="undefined">
         </div>
         <div class="review">
             <div class="mb-5">
@@ -90,7 +90,7 @@
                                        value="1"/>
                             </div>
                         </div>
-                        <input id="rateLoc" name="rateLoc" type="hidden">
+                        <input id="rateLoc" name="rateLoc" type="hidden" value="0">
                         <script>
                             function getRateLoc() {
                                 var rateLocNodeList = document.getElementsByName("showRateLoc");
@@ -106,7 +106,6 @@
                     <li>
                         <label>위생</label>
                         <div class="star-box">
-                            <input id="rateClean" name="rateClean" type="hidden">
                             <div class="star-container">
                                 <input class="star-check" name="showRateClean" onclick="getRateClean()" title="5"
                                        type="radio"
@@ -124,6 +123,7 @@
                                        type="radio"
                                        value="1"/>
                             </div>
+                            <input id="rateClean" name="rateClean" type="hidden" value="0">
                         </div>
                         <script>
                             function getRateClean() {
@@ -158,7 +158,7 @@
                                        value="1"/>
                             </div>
                         </div>
-                        <input id="rateComu" name="rateComu" type="hidden">
+                        <input id="rateComu" name="rateComu" type="hidden" value="0">
                         <script>
                             function getRateComu() {
                                 var rateLocNodeList = document.getElementsByName("showRateComu");
@@ -192,7 +192,7 @@
                                        value="1"/>
                             </div>
                         </div>
-                        <input id="rateChip" name="rateChip" type="hidden">
+                        <input id="rateChip" name="rateChip" type="hidden" value="0">
                         <script>
                             function getRateChip() {
                                 var rateLocNodeList = document.getElementsByName("showRateChip");
@@ -424,10 +424,10 @@
             //         return false;
             //     }
             // }
-            var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+            var boardNoSelect = document.getElementById("boardNo").options[document.getElementById("boardNo").selectedIndex].value;
             $.ajax({
-                url    : '/board/' + bordNoSelect + '/post/checkUse',
-                type   : 'GET',
+                url: '/board/' + boardNoSelect + '/post/checkUse',
+                type: 'GET',
                 success: function (data) {
                     const result = data;
                     if (result.board.usePhoto == 1) {
@@ -453,14 +453,14 @@
                         $('.map_wrap').hide();
                     }
                 },
-                error  : function () {
+                error: function () {
                     console.log("failed");
                 }
             });
         }
 
         function submitCheck() {
-            var bordNoSelect = document.getElementById("bordNo").options[document.getElementById("bordNo").selectedIndex].value;
+            var boardNoSelect = document.getElementById("boardNo").options[document.getElementById("boardNo").selectedIndex].value;
             var place_name = document.getElementById('place_name').value;
             var subject = document.getElementById('subject').value;
             var rateLoc = document.getElementById("rateLoc").value;
@@ -469,8 +469,8 @@
             var rateChip = document.getElementById("rateChip").value;
             var content = CKEDITOR.instances['content'].getData();
             $.ajax({
-                url    : '/board/' + bordNoSelect + '/post/checkUse',
-                type   : 'GET',
+                url: '/board/' + boardNoSelect + '/post/checkUse',
+                type: 'GET',
                 success: function (data) {
                     var result = data;
                     if (result.board.type == "review") {
@@ -503,7 +503,7 @@
                     document.getElementById('content').value = content;
                     document.getElementById('saveAll').submit();
                 },
-                error  : function () {
+                error: function () {
                     console.log("failed");
                 }
             });
@@ -638,7 +638,7 @@
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div
             mapOption = {
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level : 3 // 지도의 확대 레벨
+                level: 3 // 지도의 확대 레벨
             }
 
         // 지도 생성
@@ -671,15 +671,15 @@
 
             // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다 -> 키워드를 직접 받아 처리를 해줘야함 정보가 없을경우 없다고 알림
             $.ajax({
-                type   : "GET",
-                url    : "/map/search?query=" + keyword,
+                type: "GET",
+                url: "/map/search?query=" + keyword,
                 success: function (data) {
                     var documentsList = data.mapResponse.documents;
                     var meta = data.mapResponse.meta;
                     placesSearchCB(documentsList, meta);
 
                 },
-                error  : function () {
+                error: function () {
                     alert("데이터 가져오기 실패");
                 }
             });
@@ -863,14 +863,14 @@
             var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
                 imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
                 imgOptions = {
-                    spriteSize  : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                    spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
                     spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-                    offset      : new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
                 },
                 markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
                 marker = new kakao.maps.Marker({
                     position: position, // 마커의 위치
-                    image   : markerImage
+                    image: markerImage
                 });
 
             marker.setMap(map); // 지도 위에 마커를 표출합니다

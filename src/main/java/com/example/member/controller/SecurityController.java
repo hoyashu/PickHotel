@@ -13,7 +13,7 @@ public class SecurityController {
 
     // 로그인 GET
     @GetMapping("/login")
-    public String login(@RequestParam(value = "prevPage", required = false) String prevPage, HttpServletRequest request, String message, Model model) {
+    public String loginForm(@RequestParam(value = "prevPage", required = false) String prevPage, HttpServletRequest request, String message, Model model) {
 
         // 요청 시점의 사용자 URI 정보를 Session의 Attribute에 담아서 전달(잘 지워줘야 함)
         // 로그인이 틀려서 다시 하면 요청 시점의 URI가 로그인 페이지가 되므로 조건문 설정
@@ -36,7 +36,7 @@ public class SecurityController {
 
     // 로그인 Post
     @PostMapping("/login")
-    public String login2() {
+    public String login() {
         return "page/member_login";
     }
 

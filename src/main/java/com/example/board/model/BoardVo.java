@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class BoardVo extends CommonVo {
     private int boardNo;  // 게시판 번호
-    private String groupName;  // 속할 게시판 그룹명
+    private BoardGroupVo boardGroupInfo;  // 속할 게시판 그룹명
 
     @NotNull(message = "게시판 그룹을 선택하세요.")
     private Integer groupNo;  // 속할 게시판 그룹 번호
@@ -32,6 +32,9 @@ public class BoardVo extends CommonVo {
 
     @NotNull(message = "게시판 유형을 선택하세요.")
     private String type;  //게시판 유형 (basic/review “자유게시판/리뷰게시판”)
+
+    @NotNull(message = "게시판 목록 유형을 선택하세요.")
+    private String listType;  //게시판 목록유형
 
     private Integer usePhoto; //사진 첨부 사용여부 (1 : on, 0: off)
 

@@ -21,7 +21,7 @@
                 <tbody>
                 <tr th:object="${gradeUp}">
                     <!-- 세션 가져올것 -->
-                    <td th:text="*{nick}"></td>
+                    <td th:text="*{memberInfo.nick}"></td>
                     <td>
                         <select id="aftergrade" name="aftergrade" th:if="${possibleGrades} != 'NoData'">
                             <option selected value="">신청가능등급</option>

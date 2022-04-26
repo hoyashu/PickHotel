@@ -66,7 +66,13 @@ public class PostService {
         return posts;
     }
 
-    // 게시글 목록 조회
+    // 특정 게시판 내 게시글 정보 전체 조회 (유닛테스트 - 게시글 작성을 위함)
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
+    public List<PostVo> findPostListByBoard(int boardNo) {
+        return this.postDao.selectPostListByBoard(boardNo);
+    }
+
+    // 뷰에 출력될 게시글 목록 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
     public List<PostSummaryVo> findPostList(PostSummaryVo params) {
         List<PostSummaryVo> postList = new ArrayList<PostSummaryVo>();

@@ -34,7 +34,9 @@
 		<!-- 게시글 -->
 		<typeAlias type="com.example.board.model.AttachVo" alias="AttachVo" />
 		<typeAlias type="com.example.board.model.CommentVo" alias="CommentVo" />
+		<typeAlias type="com.example.board.model.PostUpdateCommentVo" alias="PostUpdateCommentVo" />
 		<typeAlias type="com.example.board.model.PostVo" alias="PostVo" />
+		<typeAlias type="com.example.board.model.PostSummaryVo" alias="PostSummaryVo" />
 		<typeAlias type="com.example.board.model.ReviewVo" alias="ReviewVo" />
 		<typeAlias type="com.example.board.model.RoomVo" alias="RoomVo" />
 

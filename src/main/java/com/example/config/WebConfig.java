@@ -1,6 +1,7 @@
 package com.example.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -14,6 +15,10 @@ public class WebConfig implements WebMvcConfigurer {
 //    private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { "classpath:/static/", "classpath:/public/", "classpath:/",
 //            "classpath:/resources/", "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/" };
 
+    @Value("${resources.location}")
+    private String resourcesLocation;
+    @Value("${resources.uri_path:}")
+    private String resourcesUriPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -25,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
         //registry.addResourceHandler("/upload/**").addResourceLocations("file:///C:/upload/");
 
         // 리눅스용 설정
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:///upload/");
+        registry.addResourceHandler(resourcesUriPath + "/**").addResourceLocations("file://" + resourcesLocation);
+        //registry.addResourceHandler("/upload/**").addResourceLocations("file:///Users/sojin/upload//");
     }
 
     //    소진 - xss처리 (https://inseok9068.github.io/springboot/springboot-xss-response/)

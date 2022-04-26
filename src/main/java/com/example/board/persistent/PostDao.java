@@ -1,6 +1,5 @@
 package com.example.board.persistent;
 
-import com.example.board.model.BoardVo;
 import com.example.board.model.PostSummaryVo;
 import com.example.board.model.PostUpdateCommentVo;
 import com.example.board.model.PostVo;
@@ -8,7 +7,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Repository("postDao")
@@ -22,30 +20,33 @@ public class PostDao {
         return this.sqlSession.selectOne("PostDao.selectLastInsertID"); //SELECT LAST_INSERT_ID() 처리 필요
     }
 
-    // 전체 게시글 목록 조회
+    // 태그로 게시글 검색
     public List<PostSummaryVo> selectPostByTag(String tag) {
         List<PostSummaryVo> lists = this.sqlSession.selectList("PostDao.selectPostByTag", tag);
         return lists;
     }
 
+    // 특정 게시판 내 게시글 전체 조회 (유닛테스트 - 게시글 작성을 위함)
+    public List<PostVo> selectPostListByBoard(int boardNo) {
+        return this.sqlSession.selectList("PostDao.selectPostListByBoard", boardNo);
+    }
+
+    //뷰에 출력되는 게시글 목록
     public List<PostSummaryVo> selectPostList(PostSummaryVo params) {
         return this.sqlSession.selectList("PostDao.selectPostList", params);
     }
 
+    //뷰에 출력되는 게시글 개수 조회
     public int selectPostCount(PostSummaryVo params) {
         return this.sqlSession.selectOne("PostDao.selectPostCount", params);
     }
 
-    //총 게시글 수를 구한다.
-    public int selectTotalPostCount(HashMap<String, String> map) {
-        int count = 0;
-        count = this.sqlSession.selectOne("PostDao.selectTotalPostCount", map);
-        return count;
-    }
-
-    public List<BoardVo> selectAllBoards() {
-        return this.sqlSession.selectList("PostDao.selectAllBoards");
-    }
+//    //뷰에 출력되는 게시글 수를 구한다.
+//    public int selectTotalPostCount(HashMap<String, String> map) {
+//        int count = 0;
+//        count = this.sqlSession.selectOne("PostDao.selectTotalPostCount", map);
+//        return count;
+//    }
 
     // 게시글 존재 여부 조회
     public Integer selectPostSearch(PostVo post) {
@@ -76,7 +77,6 @@ public class PostDao {
     public void updatePost(PostVo post) {
         this.sqlSession.update("PostDao.updatePost", post);
     }
-
 
     //게시글을 블라인드 처리한다.
     public void blindPost(int postNo, int isblind) {

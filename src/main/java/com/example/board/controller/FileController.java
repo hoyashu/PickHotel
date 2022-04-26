@@ -45,31 +45,11 @@ public class FileController {
     private MemberService memberService;
 
     @RequestMapping(value = "/member/uploadFile", method = RequestMethod.POST)
-    public String registerFiles(HttpServletRequest request, @RequestParam(value = "images", required = false) List<MultipartFile> images,
+    public String registerFiles(HttpServletRequest request,
+                                PostVo post, ReviewVo getReview, MapVoForApi map,
+                                @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                 @RequestParam(value = "videos", required = false) List<MultipartFile> videos,
-                                @RequestParam(value = "bordNo", required = false, defaultValue = "1") int boardNo,
-                                @RequestParam(value = "subject", required = false) String subject,
-                                @RequestParam(value = "content", required = false) String content,
-                                @RequestParam(value = "tag", required = false) String tag,
-                                @RequestParam(value = "address_name", required = false) String address_name,
-                                @RequestParam(value = "category_group_code", required = false, defaultValue = "noValue") String category_group_code,
-                                @RequestParam(value = "category_group_name", required = false, defaultValue = "noValue") String category_group_name,
-                                @RequestParam(value = "category_name", required = false, defaultValue = "noValue") String category_name,
-                                @RequestParam(value = "distance", required = false, defaultValue = "noValue") String distance,
-                                @RequestParam(value = "id", required = false, defaultValue = "noValue") int id,
-                                @RequestParam(value = "phone", required = false, defaultValue = "noValue") String phone,
-                                @RequestParam(value = "place_name", required = false, defaultValue = "noValue") String place_name,
-                                @RequestParam(value = "place_url", required = false, defaultValue = "noValue") String place_url,
-                                @RequestParam(value = "road_address_name", required = false, defaultValue = "noValue") String road_address_name,
-                                @RequestParam(value = "x", required = false, defaultValue = "noValue") String x,
-                                @RequestParam(value = "y", required = false, defaultValue = "noValue") String y,
-                                @RequestParam(value = "rateLoc", required = false, defaultValue = "0") int rateLoc,
-                                @RequestParam(value = "rateClean", required = false, defaultValue = "0") int rateClean,
-                                @RequestParam(value = "rateComu", required = false, defaultValue = "0") int rateComu,
-                                @RequestParam(value = "rateChip", required = false, defaultValue = "0") int rateChip,
-                                @RequestParam(value = "visitDate", required = false) String visitDate,
-                                @RequestParam(value = "recommendPlace", required = false) String recommendPlace,
-                                @RequestParam(value = "notRecommendPerson", required = false) String notRecommendPerson, @AuthenticationPrincipal UserAccount userAccount) throws Exception {
+                                @AuthenticationPrincipal UserAccount userAccount) throws Exception {
         HttpSession session = request.getSession();
 
         // 세션가져올 준비
@@ -77,40 +57,40 @@ public class FileController {
         int memNo = member.getMemNo();
 
         // 게시글
-        String newContent = content;
+        String newContent = post.getContent();
         PostVo postVo = new PostVo();
         postVo.setWriterNo(memNo);
-        postVo.setBoardNo(boardNo);
-        postVo.setSubject(subject);
+        postVo.setBoardNo(post.getBoardNo());
+        postVo.setSubject(post.getSubject());
         postVo.setContent(newContent);
-        postVo.setTag(tag);
+        postVo.setTag(post.getTag());
 
         int postNo = postService.addPost(postVo);
-        session.setAttribute("boardNo", boardNo);
+        session.setAttribute("boardNo", post.getBoardNo());
 
-        BoardVo board = this.boardService.retrieveBoard(boardNo);
+        BoardVo board = this.boardService.retrieveBoard(post.getBoardNo());
         if (board.getType().equals("basic")) {
 
         } else {
             // 숙소 정보, 리뷰 정보
-            if (address_name.trim().equals("")) {
+            if (map.getAddressName().trim().equals("")) {
 
             } else {
                 MapVoForApi mapVoForApi = new MapVoForApi();
-                mapVoForApi.setAddressName(address_name);
-                mapVoForApi.setCategoryGroupCode(category_group_code);
-                mapVoForApi.setCategoryGroupName(category_group_name);
-                mapVoForApi.setCategoryName(category_name);
-                mapVoForApi.setDistance(distance);
-                mapVoForApi.setId(id);
-                mapVoForApi.setPhone(phone);
-                mapVoForApi.setPlaceName(place_name);
-                mapVoForApi.setPlaceUrl(place_url);
-                mapVoForApi.setRoad_addressName(road_address_name);
-                mapVoForApi.setX(x);
-                mapVoForApi.setY(y);
+                mapVoForApi.setAddressName(map.getAddressName());
+                mapVoForApi.setCategoryGroupCode(map.getCategoryGroupCode());
+                mapVoForApi.setCategoryGroupName(map.getCategoryGroupName());
+                mapVoForApi.setCategoryName(map.getCategoryName());
+                mapVoForApi.setDistance(map.getDistance());
+                mapVoForApi.setId(map.getId());
+                mapVoForApi.setPhone(map.getPhone());
+                mapVoForApi.setPlaceName(map.getPlaceName());
+                mapVoForApi.setPlaceUrl(map.getPlaceUrl());
+                mapVoForApi.setRoad_addressName(map.getRoad_addressName());
+                mapVoForApi.setX(map.getX());
+                mapVoForApi.setY(map.getY());
 
-                MapVoForApi searchMap = this.mapServiceForApi.retrieveMap(id);
+                MapVoForApi searchMap = this.mapServiceForApi.retrieveMap(map.getId());
                 //신규 숙소인 경우
                 if (searchMap.getId() == 0) {
                     String registerMapUri = this.mapServiceForApi.registerMap(mapVoForApi);
@@ -118,19 +98,19 @@ public class FileController {
 
                 ReviewVo review = new ReviewVo();
 
-                if (visitDate.trim().equals("")) {
-                    visitDate = null;
+                if (getReview.getVisitDate().trim().equals("")) {
+                    getReview.setVisitDate(null);
                 }
 
                 review.setPostNo(postNo);
-                review.setRoomNo(id);
-                review.setRateLoc(rateLoc);
-                review.setRateClean(rateClean);
-                review.setRateComu(rateComu);
-                review.setRateChip(rateChip);
-                review.setVisitDate(visitDate);
-                review.setRecommendPlace(recommendPlace);
-                review.setNotRecommendPerson(notRecommendPerson);
+                review.setRoomNo(map.getId());
+                review.setRateLoc(getReview.getRateLoc());
+                review.setRateClean(getReview.getRateClean());
+                review.setRateComu(getReview.getRateComu());
+                review.setRateChip(getReview.getRateChip());
+                review.setVisitDate(getReview.getVisitDate());
+                review.setRecommendPlace(getReview.getRecommendPlace());
+                review.setNotRecommendPerson(getReview.getNotRecommendPerson());
                 this.reviewService.registerReview(review);
             }
         }
@@ -165,12 +145,12 @@ public class FileController {
                 }
             }
         }
-        this.boardService.reviseBoardPost(boardNo, 1);
+        this.boardService.reviseBoardPost(post.getBoardNo(), 1);
 
         //회원 게시글 갯수 증가
         this.memberService.reviseBoardCount(memNo, 1);
 
-        return "redirect:/board/" + boardNo + "/post/" + postVo.getPostNo();
+        return "redirect:/board/" + post.getBoardNo() + "/post/" + postVo.getPostNo();
     }
 
 //    private String convert(String oldStr) {

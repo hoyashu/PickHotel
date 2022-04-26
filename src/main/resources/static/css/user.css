@@ -605,6 +605,36 @@ li[class^=pw-condition] i {
 }
 
 
+/* 게시글 목록 */
+#postList .post-list-gallery ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#postList .post-list-gallery ul li {
+    width: 200px;
+    object-fit: cover;
+    object-position: bottom;
+    padding: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+#postList .post-list-gallery ul li .img-thumbnail {
+    overflow: hidden;
+    height: 190px;
+}
+
+#postList .post-list-gallery ul li .img-thumbnail img {
+    width: 100%;
+}
+
+
 /* 게시글 작성 */
 #postWrite {
     width: 860px;
@@ -752,7 +782,7 @@ li[class^=pw-condition] i {
     font-size: 22px;
 }
 
-/* 게시글 목록 */
+/* 게시글 목록 - 일반 */
 .post-list-table .post-subject {
     color: #000;
 }
@@ -762,6 +792,46 @@ li[class^=pw-condition] i {
     margin-left: 3px;
     color: red;
 }
+
+
+/* 게시글 목록 - 갤러리 */
+.post-list-gallery .img-thumbnailBox {
+    margin-bottom: 4px;
+}
+
+.post-list-gallery .post-comment {
+    font-size: .6em;
+    color: #de2b21;
+}
+
+.post-list-gallery .nick {
+    font-size: 0.9em;
+}
+
+.post-list-gallery .info {
+    font-size: 0.8em;
+}
+
+.post-list-gallery .info .time {
+    margin-right: 6px;
+    position: relative;
+}
+
+.post-list-gallery .info .time::after {
+    content: "";
+    width: 1px;
+    height: 1px;
+    background: black;
+    position: absolute;
+    top: 50%;
+    right: -6px;
+    margin-top: -.5px;
+}
+
+.post-list-gallery .info .views {
+    margin-left: 3px;
+}
+
 
 /* 게시글 상세보기 */
 #postDetail .videos video {
@@ -843,14 +913,14 @@ div#postDetail #placesList .item {
 }
 
 /* 게시글 상세보기 > 댓글 목록*/
-#ListComment .commont-noline {
+#ListComment .comment-noline {
     padding: 15px 0;
 }
 
-#ListComment .commont-line {
+#ListComment .comment-line {
 }
 
-#ListComment .commont-noline, #ListComment .commont-line > div {
+#ListComment .comment-noline, #ListComment .comment-line > div {
     padding: 32px 60px;
     -webkit-box-shadow: inset 0 -1px 0 0 #eeeff3;
     box-shadow: inset 0 -1px 0 0 #eeeff3;
@@ -862,11 +932,11 @@ div#postDetail #placesList .item {
     padding-left: 100px;
 }
 
-#ListComment .commont-line > div.delected-comment {
+#ListComment .comment-line > div.delected-comment {
     padding: 20px 60px;
 }
 
-#ListComment .commont-line .comment-inner:before {
+#ListComment .comment-line .comment-inner:before {
     position: absolute;
     top: 40px;
     left: 60px;
@@ -879,11 +949,11 @@ div#postDetail #placesList .item {
     background-position: 0 0;
 }
 
-#ListComment .commont-line.dept_0 .comment-inner:before {
+#ListComment .comment-line.dept_0 .comment-inner:before {
     content: none;
 }
 
-#ListComment .commont-line.quick {
+#ListComment .comment-line.quick {
     background-color: #ffff;
     -webkit-animation-name: quick; /* Chrome, Safari, Opera */
     -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */

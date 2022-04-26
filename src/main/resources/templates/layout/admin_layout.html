@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:th="http://www.thymeleaf.org">
 <!-- [head] 영역 시작 -->
 <head th:replace="fragment/admin_head :: headFragment">
@@ -49,8 +48,6 @@
 <!-- End of Page Wrapper -->
 
 <!-- 공통 스크립트 삽입 -->
-<th:block layout:fragment="live_alarm" sec:authorize="isAuthenticated()"
-          th:include="@{/fragment/live_alarm}"></th:block>
 <th:block layout:fragment="script" th:include="@{/fragment/script}"></th:block>
 
 <!-- 관리자 스크립트 -->

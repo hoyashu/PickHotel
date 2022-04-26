@@ -57,16 +57,16 @@ function alarmInit() {
     const getListAjax = function (url) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url     : url,
-                method  : 'POST',
+                url: url,
+                method: 'POST',
                 dataType: 'json',
-                data    : {
+                data: {
                     memNo: g_sUserMemNo
                 },
-                success : function (data) {
+                success: function (data) {
                     resolve(data);
                 },
-                error   : function (e) {
+                error: function (e) {
                     reject(e);
                 }
             });
@@ -117,15 +117,15 @@ function setAlarmCount() {
     const getAlarmCountAjax = function (url) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url    : url,
-                method : 'POST',
-                data   : {
+                url: url,
+                method: 'POST',
+                data: {
                     memNo: g_sUserMemNo
                 },
                 success: function (data) {
                     resolve(data);
                 },
-                error  : function (e) {
+                error: function (e) {
                     reject(e);
                 }
             });
@@ -155,16 +155,16 @@ function delectAlarm(alarmNo) {
     const delectAlarmAjax = function (url, alarmNo) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url    : url,
-                method : 'POST',
-                data   : {
+                url: url,
+                method: 'POST',
+                data: {
                     alarmNo: alarmNo,
-                    memNo  : g_sUserMemNo
+                    memNo: g_sUserMemNo
                 },
                 success: function (data) {
                     resolve(data);
                 },
-                error  : function (e) {
+                error: function (e) {
                     reject(e);
                 }
             });
@@ -196,15 +196,15 @@ function delectAllAlarm() {
     const delectAllAlarmAjax = function (url) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url    : url,
-                method : 'POST',
-                data   : {
+                url: url,
+                method: 'POST',
+                data: {
                     memNo: g_sUserMemNo
                 },
                 success: function (data) {
                     resolve(data);
                 },
-                error  : function (e) {
+                error: function (e) {
                     reject(e);
                 }
             });
@@ -254,8 +254,9 @@ $(document).ready(function () {
 
 //******알림AJAX작동 컨트롤 시작*******//
 //읽지 않은 알림 개수 셋팅
-setAlarmCount();
-
+$(window).load(function () {
+    setAlarmCount();
+});
 //알림 선택 삭제
 $(document).on("click", '.deleteAlarmBtn', function (e) {
     const alarmNo = this.value;

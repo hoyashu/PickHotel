@@ -27,7 +27,7 @@
                         class="post-subject"
 
                         th:text="${post.subject}"></span><span
-                        class="post-comment" th:text="'('+${post.comment}+')'"></span></a>
+                        class="post-comment" th:text="'('+${post.getComment}+')'"></span></a>
                 </td>
                 <td><span th:text="${post.createDate}"></span></td>
                 <td><span th:text="${post.memberInfo.nick}"></span></td>
@@ -37,7 +37,7 @@
         </table>
         <div id="writePost" style="text-align: right;">
 
-            <a th:href="@{/board/{boardNo}/write(boardNo=${board.boardNo})}">
+            <a th:href="@{/board/{boardNo}/post/register(boardNo=${board.boardNo})}">
                 <button class="btn btn-primary" type="button">글작성</button>
             </a>
         </div>
@@ -97,3 +97,4 @@
         </div>
     </div>
 </div>
+</html>

@@ -6,33 +6,24 @@
     <div class="col-lg-12">
         <div class="panel panel-default" th:object="${post}">
             <div class="p-sm-4 panel-heading">
-                <p><span class="post-groupName" th:text="*{groupName}"></span><i>&gt;</i>
-                    <span class="post-boardTitle"><a class="" th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}"
-                                                     th:text="*{boardTitle}"></a></span>
+                <p><span class="post-groupName" th:text="*{boardGroupInfo.groupName}"></span><i>&gt;</i>
+                    <span class="post-boardTitle"><a class=""
+                                                     th:href="@{/boardList/{boardNo}(boardNo=*{boardNo})}"
+                                                     th:text="*{boardInfo.title}"></a></span>
                 </p>
                 <div class="post-subject" th:text="*{subject}"></div>
                 <div class="post-info">
-                    <span th:text="*{writerNick}"></span>
+                    <span th:text="*{memberInfo.nick}"></span>
                     <i aria-hidden="true" class="fa fa-clock-o"></i> <span th:text="*{createDate}"></span>
                     <i aria-hidden="true" class="fa fa-eye"></i> <span th:text="*{views}"></span>
-                    <i aria-hidden="true" class="fa fa-comment-o"></i> <span th:text="*{commont}"></span>
+                    <i aria-hidden="true" class="fa fa-comment-o"></i> <span th:text="*{getComment}"></span>
                 </div>
             </div>
             <div class="panel-body post-content">
                 <div class="p-sm-4">
-                    <div class="map_wrap mb-5 " th:if="${mapVoForApi != null}">
-                        <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
-                        <div class="bg_white" id="menu_wrap">
-                            <div class="option">
-                                <div></div>
-                            </div>
-                            <ul id="placesList"></ul>
-                            <div id="pagination"></div>
-                        </div>
-                    </div>
                     <div class="review" th:if="${review != null}">
                         <div class="mb-5">
-                            <div class="fs-5 fw-bold mb-4 text-center">작성자가 남긴 숙소 평점
+                            <div class="fs-5 fw-bold mb-4 text-center">작성자가 남긴 평점
                                 <p class="fs-6 fw-light" style="color: #696969;">솔직하게 남겨주신 소중한 리뷰입니다</p>
                             </div>
                             <ul class="star-area">
@@ -69,19 +60,19 @@
                         </div>
                         <div class="mb-4" th:if="${review.visitDate != null}">
                             <p class="m-0">
-                                <label for="visitDate">방문 날짜</label>
+                                <label htmlFor="visitDate">방문 날짜</label>
                             </p>
                             <span id="visitDate" th:text="${review.visitDate}"></span>
                         </div>
                         <div class="mb-4" th:if="${review.recommendPlace != null}">
                             <p class="m-0">
-                                <label for="recommendPlace">주변 맛집과 관광지를 추천해주세요👍</label>
+                                <label htmlFor="recommendPlace">주변 맛집과 관광지를 추천해주세요👍</label>
                             </p>
                             <span id="recommendPlace" th:text="${review.recommendPlace}"></span>
                         </div>
                         <div class="mb-5" th:if="${review.notRecommendPerson != null}">
                             <p class="m-0">
-                                <label for="notRecommendPerson">이런 분들께는 비추에요👎</label>
+                                <label htmlFor="notRecommendPerson">이런 분들께는 비추에요👎</label>
                             </p>
                             <span id="notRecommendPerson" th:text="${review.notRecommendPerson}"></span>
                         </div>
@@ -90,7 +81,7 @@
                         <div class="photos">
                             <div id="images">
                                 <img th:each="attach : ${attachList}" th:if="${attach.fileType == 1}"
-                                     th:src="'/upload/' + ${attach.systemFileName}"/>
+                                     th:src="${@environment.getProperty('resources.location')}+'/'+${attach.systemFileName}"/>
                             </div>
                         </div>
                         <div class="videos">
@@ -108,10 +99,19 @@
                         </div>
                     </div>
                     <div class="mb-5">
-                        <label class="visually-hidden" for="content">내용</label>
+                        <label class="visually-hidden" htmlFor="content">내용</label>
                         <div id="content" th:utext="*{content}"></div>
                     </div>
-
+                    <div class="map_wrap mb-5 " th:if="${mapVoForApi != null}">
+                        <div id="map" style="height:100%;position:relative;overflow:hidden;"></div>
+                        <div class="bg_white" id="menu_wrap">
+                            <div class="option">
+                                <div></div>
+                            </div>
+                            <ul id="placesList"></ul>
+                            <div id="pagination"></div>
+                        </div>
+                    </div>
                     <div class="mb-3 tag-box" th:if="${post.tag != null && post.tag != ''}">
                         <div id="tag">
                             <a th:each="tag : ${post.tags}" th:href="@{/postListByTagName(encodedTagName=${tag})}"><span
@@ -148,8 +148,9 @@
                     <!-- 댓글 목록 -->
                     <ul class="list-group list-group-flush" id="ListComment">
 
-                        <li class="commont-noline" th:if="${comments==null or comments.isEmpty()}">첫번째 댓글을 남겨보세요✨</li>
-                        <li th:class="'commont-line dept_'+${comment.comClass}" th:each="comment : ${comments}"
+                        <li class="comment-noline" th:if="${comments==null or comments.isEmpty()}">첫번째 댓글을 남겨보세요✨
+                        </li>
+                        <li th:class="'comment-line dept_'+${comment.comClass}" th:each="comment : ${comments}"
                             th:id="'comment_'+${comment.comNo}"
                             th:if="${comments!=null and !comments.isEmpty()}">
 
@@ -338,15 +339,7 @@
                                 kakao.maps.event.addListener(marker, 'mouseout', function () {
                                     infowindow.close();
                                 });
-
-                                itemEl.onmouseover = function () {
-                                    displayInfowindow(marker, title);
-                                };
-
-                                itemEl.onmouseout = function () {
-                                    infowindow.close();
-                                };
-                            })(marker, documentsList[i].place_name);
+                            })(marker, documentsList[i].placeName);
 
                             fragment.appendChild(itemEl);
                         }
@@ -378,7 +371,7 @@
                         itemStr += '<a href="' + places.placeUrl + '" target="_blank"><button>상세보기</a></button>';
 
                         el.innerHTML = itemStr;
-                        el.className = 'item';
+                        el.class = 'item';
 
                         return el;
                     }
@@ -526,11 +519,11 @@
 
                                     //댓글이 존재하지 않을 경우
                                     if (rs.length == 0) {
-                                        htmlStr += `<li class="commont-noline" >첫번째 댓글을 남겨보세요✨</li>`;
+                                        htmlStr += `<li class="comment-noline" >첫번째 댓글을 남겨보세요✨</li>`;
                                     } else {
                                         //댓글이 존재하는 경우
                                         for (let i = 0; i < rs.length; i++) {
-                                            htmlStr += `<li id="comment_${rs[i].comNo}" class="commont-line dept_${rs[i].comClass}">`
+                                            htmlStr += `<li id="comment_${rs[i].comNo}" class="comment-line dept_${rs[i].comClass}">`
                                             if (rs[i].isDelect == 1) { //삭제된 댓글임
                                                 htmlStr += `<div class="delected-comment"><div class="cmtContent">작성자가 삭제한 댓글입니다.</div></div>`;
                                             }
@@ -782,7 +775,7 @@
                             e.preventDefault();
 
                             // 댓글 pk가져오기
-                            const getComNo = $(this).parents('.commont-line').attr('id');
+                            const getComNo = $(this).parents('.comment-line').attr('id');
                             const comNo = getComNo.split("_")[1];
 
                             //기존에 열려있던 수정 폼이 있다면 닫기
@@ -810,7 +803,7 @@
                         //댓글 수정
                         $(document).on("click", '#modifyBtn', function (e) {
                             e.preventDefault();
-                            const getComNo = $(this).parents('.commont-line').attr('id');
+                            const getComNo = $(this).parents('.comment-line').attr('id');
                             const comNo = getComNo.split("_")[1];
                             const cmtContent = $('#modifyCmtContent').val().trim();
                             updateComment(cmtContent, comNo)
@@ -827,7 +820,7 @@
                             e.preventDefault();
                             const con = confirm("해당 댓글을 삭제 하시겠습니까?\n삭제된 댓글은 복구할수 없습니다.");
                             if (con == true) {
-                                const getComNo = $(this).parents('.commont-line').attr('id');
+                                const getComNo = $(this).parents('.comment-line').attr('id');
                                 const comNo = getComNo.split("_")[1];
                                 delectComment(comNo)
                             }
@@ -837,7 +830,7 @@
                         const beforeStr = location.hash;
                         const afterStr = beforeStr.split('?')[0].replace("#", "");
                         if (beforeStr != "") {
-                            document.getElementById(afterStr).className += ' quick';
+                            document.getElementById(afterStr).class += ' quick';
                         }
                     });
                 </script>

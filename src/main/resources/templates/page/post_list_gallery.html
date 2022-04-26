@@ -5,39 +5,34 @@
         <h1 class="text-center" th:text="${board.title}"></h1>
     </div>
     <div class="todo-content">
-        <table class="table table-bordered table-striped table-condensed flip-content post-list-table">
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성일</th>
-                <th>작성자</th>
-                <th>조회수</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${posts==null}">
-                <td class="text-left" colspan="5">등록된 게시글이 없습니다.</td>
-            </tr>
-            <tr th:each="post : ${posts}" th:if="${posts!=null}">
-                <td th:text="${post.postNo}"></td>
+        <div class="post-list-gallery">
+            <ul>
+                <li th:if="${posts==null}">
+                    <div class="no-line">등록된 게시글이 없습니다.</div>
+                </li>
+                <li th:each="post : ${posts}" th:if="${posts!=null}">
+                    <a th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.postNo},boardNo=${post.boardNo})}">
+                        <div class="img-thumbnailBox"><img alt="게시글 썸네일" class="img-thumbnail" th:src="${post.thumb}">
+                        </div>
+                        <div>
+                            <span class="post-subject" th:text="${post.subject}"></span>
+                            <span class="post-comment" th:text="'('+${post.getComment}+')'"></span>
+                        </div>
+                    </a>
+                    <div class="nick">
+                        <span th:text="${post.memberInfo.nick}"></span>
+                    </div>
+                    <div class="info">
+                        <span class="time" th:text="${post.createDate}"></span>
+                        조회<span class="views" th:text="${post.views}"></span>
+                    </div>
 
-                <td class="text-left"><a
-                        th:href="@{/board/{boardNo}/post/{postNo}(postNo=${post.postNo},boardNo=${post.boardNo})}"><span
-                        class="post-subject"
-
-                        th:text="${post.subject}"></span><span
-                        class="post-comment" th:text="'('+${post.comment}+')'"></span></a>
-                </td>
-                <td><span th:text="${post.createDate}"></span></td>
-                <td><span th:text="${post.memberInfo.nick}"></span></td>
-                <td><span th:text="${post.views}"></span></td>
-            </tr>
-            </tbody>
-        </table>
+                </li>
+                <li></li>
+            </ul>
+        </div>
         <div id="writePost" style="text-align: right;">
-
-            <a th:href="@{/board/{boardNo}/write(boardNo=${board.boardNo})}">
+            <a th:href="@{/board/{boardNo}/post/register(boardNo=${board.boardNo})}">
                 <button class="btn btn-primary" type="button">글작성</button>
             </a>
         </div>
@@ -97,3 +92,4 @@
         </div>
     </div>
 </div>
+</html>

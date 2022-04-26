@@ -1,5 +1,6 @@
 package com.example.board.model;
 
+import com.example.member.model.MemberVo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /*
     작성자 : 김소진
@@ -22,11 +22,11 @@ import java.util.List;
 public class PostVo {
     @NotNull(message = "[개발자] 게시글 번호가 누락되었습니다.")
     private int postNo;
-    private String groupName;
 
+    private BoardGroupVo boardGroupInfo;  // 게시판 그룹명을 가져오기 위한 게시판 그룹 객체
     @NotNull(message = "[개발자] 게시판 번호가 누락되었습니다.")
     private int boardNo;
-    private String boardTitle;
+    private BoardVo boardInfo;  // 게시판이름을 가져오기 위한 게시판 객체
 
     @NotEmpty(message = "게시글 제목을 입력하세요.")
     private String subject;
@@ -34,14 +34,18 @@ public class PostVo {
     @NotEmpty(message = "게시글 내용을 입력하세요.")
     private String content;
     private int writerNo;
-    private String writerNick;
+    private MemberVo memberInfo;  // 실시간 회원닉네임을 가져오기 위한 회원 객체
+    //private String nick;
+
     private String tag;
     private String[] tags;
     private int views;
-    private int commont;
-    private List<CommentVo> commentVoList;
+    private int comment;
+    //private List<CommentVo> commentVoList;
     private String createDate;
+    private String createDateTime;
     private int blind;
+    private String thumb;
 
-    private boolean open; //ready, open
+    //private boolean open; //ready, open
 }

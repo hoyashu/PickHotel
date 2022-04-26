@@ -8,7 +8,9 @@ import com.example.member.model.MemberVo;
 import com.example.member.model.UserAccount;
 import com.example.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +20,25 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @Slf4j
 public class BoardController {
 
-
     @Autowired
     public MemberService memberService;
+
+    @Value("${resources.thumb_img}")
+    private String thumbImgUrl;
+
+    @Value("${resources.location}")
+    private String resourcesLocation;
+
+    @Value("${resources.uri_path:}")
+    private String resourcesUriPath;
 
     @Autowired
     private BoardService boardService;
@@ -100,20 +109,66 @@ public class BoardController {
     // 게시글 목록
     @GetMapping("/boardList/{boardNo}")
     public String list(@PathVariable(name = "boardNo", required = false) Integer boardNo, Model model,
-                       @ModelAttribute("params") PostSummaryVo params) {
+                       @ModelAttribute("params") PostSummaryVo params) throws ParseException {
 
         //게시판 ID로 해당 게시판 내 게시글 목록을 가져온다.
         List<PostSummaryVo> posts = this.postService.findPostList(params);
+
+        Date now = new Date();
+
+        // 날짜 정보 가공
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // date1, date2 두 날짜를 parse()를 통해 Date형으로 변환.
+        Date nowDate = transFormat.parse(transFormat.format(now));
+
+        for (PostSummaryVo post : posts) {
+            String postCreateDateTime = post.getCreateDateTime();
+            Date creatDate = transFormat.parse(postCreateDateTime);
+            // Date로 변환된 두 날짜를 계산한 뒤 그 리턴값으로 long type 변수를 초기화 하고 있다.
+            // 연산결과 -950400000. long type 으로 return 된다.
+            long calDate = nowDate.getTime() - creatDate.getTime();
+
+            // Date.getTime() 은 해당날짜를 기준으로1970년 00:00:00 부터 몇 초가 흘렀는지를 반환해준다.
+            // 이제 24*60*60*1000(각 시간값에 따른 차이점) 을 나눠주면 일수가 나온다.
+            long calDateDays = calDate / (24 * 60 * 60 * 1000);
+
+            calDateDays = Math.abs(calDateDays);
+
+            if (calDateDays < 7) {
+                PrettyTime p = new PrettyTime();
+                String setDate = p.format(creatDate);
+                post.setCreateDate(setDate);
+            } else {
+                post.setCreateDate(post.getCreateDate());
+            }
+        }
         if (posts.size() == 0) {
             posts = null;
         }
-        model.addAttribute("posts", posts);
 
         //게시판 ID로 해당 게시판 정보를 가져온다
         BoardVo board = boardService.retrieveBoard(boardNo);
+        System.out.println("ㅋㅋㅋㅋ");
+        System.out.println(board);
         model.addAttribute("board", board);
 
-        return "page/post_list";
+        if (board.getListType().equals("basic")) {
+            model.addAttribute("posts", posts);
+            return "page/post_list_basic";
+        } else {
+            //앨범형 게시판 목록인 경우 썸네일을 셋팅해준다.
+            for (PostSummaryVo post : posts) {
+                List<AttachVo> attachVoList = this.attachService.retrievePostAttach(post.getPostNo());
+                if (attachVoList.size() > 0) {
+                    String systemFileName = "s_" + attachVoList.get(0).getSystemFileName();
+                    post.setThumb(resourcesLocation + "/" + systemFileName);
+                } else {
+                    post.setThumb(thumbImgUrl);
+                }
+            }
+            model.addAttribute("posts", posts);
+            return "page/post_list_gallery";
+        }
     }
 
     // 유형별 게시판 조회 - headr에서 사용
