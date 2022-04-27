@@ -5,9 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
     작성자 : 김소진
@@ -20,7 +23,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class PostVo {
-    @NotNull(message = "[개발자] 게시글 번호가 누락되었습니다.")
     private int postNo;
 
     private BoardGroupVo boardGroupInfo;  // 게시판 그룹명을 가져오기 위한 게시판 그룹 객체
@@ -37,7 +39,11 @@ public class PostVo {
     private MemberVo memberInfo;  // 실시간 회원닉네임을 가져오기 위한 회원 객체
     //private String nick;
 
+
+    private List<MultipartFile> images = new ArrayList<>();
+
     private String tag;
+
     private String[] tags;
     private int views;
     private int comment;
@@ -48,4 +54,12 @@ public class PostVo {
     private String thumb;
 
     //private boolean open; //ready, open
+
+    public PostVo(int boardNo, String subject, String content, List<MultipartFile> images) {
+        this.boardNo = boardNo;
+        this.subject = subject;
+        this.content = content;
+        this.images = images;
+    }
+
 }

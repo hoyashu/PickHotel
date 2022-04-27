@@ -1,11 +1,7 @@
 package com.example.sec.basic;
 
-import com.example.board.model.PostVo;
-import com.example.board.service.PostService;
 import com.example.demo.PickHotel2Application;
-import com.example.member.service.AccountService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import groovy.util.logging.Slf4j;
 import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,14 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,19 +39,11 @@ public class UserAccessTest {
     String board2detail = "/board/34/post/95";
     String board3detail = "/board/42/post/153";
 
-    //게시글 작성
-    String boardwrite = "/member/uploadFile";
 
     @Autowired
     private WebApplicationContext context;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private ObjectMapper mapper;
 
     //    @Test
 //    @Transactional
@@ -234,82 +215,6 @@ public class UserAccessTest {
                         .andExpect(view().name("page/post_detail"));
             }
         }
-//    @DisplayName("1. user로 user페이지를 접근할 수 있다.")
-//    @Test
-//    @WithMockUser(username = "user1", roles = {""})
-//    void test_user_access_userpage() throws Exception {
-//        /// 게시판 등급 1을 사용하는 boardList/33페이지를 접근하면 접근되어야 한다.
-//        String resp = mockMvc.perform(get("/boardList/33"))
-//                .andExpect(status().isOk())
-//                .andReturn().getResponse().getContentAsString();
-//        SecurityMessage message = mapper.readValue(resp, SecurityMessage.class);
-//        assertEquals("user page", message.getMessage());
-//    }
-    }
-
-    @Nested
-    @DisplayName("게시글 작성")
-    class boardWrite {
-        @DisplayName("일반 게시판 작성")
-        @Test
-        @WithUserDetails(value = "admin@java.com", userDetailsServiceBeanName = "accountService")
-        public void write() throws Exception {
-            // given
-            String boardNo = "42";
-            String title = "게시글 제ㅇㅇ목";
-            String content = "content";
-            //String writerNo = "4";
-
-
-            //MockMultipartFile image = new MockMultipartFile("image", "image.png", "image/png", "<<png data>>" .getBytes());
-            MockMultipartFile image = new MockMultipartFile("image", "", "multipart/form-data", "{\"image\": \"Users\\sojin\\Downloads\\testimg.JPG\"}" .getBytes());
-
-            File fis = new File("/Users/sojin/Downloads/testimg.JPG");
-            FileInputStream fi1 = new FileInputStream(fis);
-            MockMultipartFile file = new MockMultipartFile("file", fis.getName(), "multipart/form-data", fi1);
-
-            //when
-//            mockMvc.perform(MockMvcRequestBuilders.fileUpload(boardwrite)
-//                    .file(file) //(post(boardwrite)
-//                    .param("boardNo", boardNo)
-//                    .param("subject", title)
-//                    .param("content", content)
-//                    .param("writerNo", writerNo)
-//            );
-            mockMvc.perform(multipart(boardwrite)
-                            .file(image)
-                            .param("boardNo", boardNo)
-                            .param("subject", title)
-                            .param("content", content)
-                    //.param("writerNo", writerNo)
-            ).andDo(print());
-
-            PostVo post = PostVo.builder()
-                    .boardNo(32)
-                    .subject(title)
-                    .content(content)
-                    .writerNo(4)
-                    .build();
-
-//            ResultActions resultActions = mockMvc.perform(post(board0write)
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            // 본문(Body) 영역은 문자열로 표현하기 위해 ObjectMapper를 통해 문자열 JSON으로 변환한다. (맵타입이 json형식의 string으로 변환된다)
-//                            .content(mapper.writeValueAsString(post)))
-//                    .andExpect(status().isOk());
-            //then
-            List<PostVo> all = postService.findPostListByBoard(42);
-            assertThat(all.get(0).getSubject()).isEqualTo(title);
-            assertThat(all.get(0).getContent()).isEqualTo(content);
-
-//            resultActions.andExpect(jsonPath("data").exists())
-//                    .andExpect(jsonPath("data").hasJsonPath())
-//                    .andExpect(jsonPath("data.id").exists())
-//                    .andExpect(jsonPath("message").value("success"))
-//                    .andExpect(jsonPath("data.id").value(1))
-//                    .andExpect(status().isCreated()).andDo(print());
-
-        }
-
     }
 }
 

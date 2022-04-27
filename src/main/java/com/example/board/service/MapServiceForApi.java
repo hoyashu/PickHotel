@@ -34,7 +34,7 @@ public class MapServiceForApi {
 
     // 숙소 생성
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
-    public String registerMap(MapVoForApi mapVoForApi) throws Exception {
+    public String registerMap(MapVoForApi mapVoForApi) {
         URI uri = restTemplate.postForLocation(URI_MAP, mapVoForApi);
 
         return uri.toString();
@@ -42,7 +42,7 @@ public class MapServiceForApi {
 
     // 숙소id로 숙소 조회
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, rollbackFor = {RuntimeException.class})
-    public MapVoForApi retrieveMap(int id) throws Exception {
+    public MapVoForApi retrieveMap(int id) {
         Map<String, Integer> params = new HashMap<String, Integer>();
         params.put("id", id);
 
