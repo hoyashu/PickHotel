@@ -18,8 +18,6 @@
 ### 3.알림 기능
 실시간 알림 (댓글, 등업)
 
-## Folder structure
-
 ## Backend architecture
 ### 사용 언어
 - JAVA 11
@@ -49,6 +47,13 @@
 - 네이밍, 코드 순서, git협업처럼 혼자서 할 때는 생각하지 못했던 부분을 이제는 생각할 수 있게 되었다
 
 ### 향후 추가 할 기능들
+
+기능 추가하려고 욕심 부렸지만..!
+기존 프로젝트에 유닛 테스트를 적용할 것이다. 새로운 프로젝트로 새롭게 시작할까 많이 고민했다. 하지만 커뮤니티로써는 이미지 업로드, xxs처리, spring security를 계층형으로 적용한 나쁘지 않은 녀석이니에. 있는 기능을 더 견고하게 다듬고, 디버깅 한 다음! 기능을 더 추가하거나 새로운 프로젝트를 진행할 것이다. (아주 튼튼하게 만들어 줘야겠다 🏃🏻)
+
+![R1280x0](https://user-images.githubusercontent.com/42165121/166186507-58493f3f-a6cb-4f40-a547-f1129b7253f8.png)<br>
+유닛테스트 하는 중...
+다음번 프로젝트에서는 꼭 사이트에 목적에 맞는 기능을 확실하게 기획하고 진행할 것!
 
 ## 발표PPT
 <a href="https://docs.google.com/presentation/d/1mQgNFeXBURNA9e6sBy7bVlvAA39sX9ka/edit?usp=sharing&ouid=111027105502862009493&rtpof=true&sd=true" target="_blank">구글PPT로 이동</a>
